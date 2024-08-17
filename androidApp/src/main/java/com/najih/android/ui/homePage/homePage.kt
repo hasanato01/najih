@@ -10,17 +10,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.najih.android.ui.homePage.components.Categories
-import com.najih.android.ui.homePage.components.LatestNews
-import com.najih.android.ui.homePage.components.Navbar
-import com.najih.android.ui.homePage.components.SuggestedLessons
+import com.najih.android.ui.homePage.components.latestNews
+import com.najih.android.ui.homePage.components.suggestedLessons
+import com.najih.android.ui.homePage.components.categories
+import com.najih.android.ui.homePage.components.homePage_navbar
+
 
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { Navbar() }
+        topBar = { homePage_navbar() }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -30,17 +31,17 @@ fun HomePage(modifier: Modifier = Modifier) {
         ) {
             // Display Categories first
             item {
-                Categories()
+                categories()
             }
 
             // Display LatestNews
             item {
-                LatestNews()
+                latestNews()
             }
 
             // Display SuggestedLessons
             item {
-                SuggestedLessons()
+                suggestedLessons()
             }
         }
     }
