@@ -10,18 +10,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.najih.android.ui.homePage.components.latestNews
-import com.najih.android.ui.homePage.components.suggestedLessons
-import com.najih.android.ui.homePage.components.categories
-import com.najih.android.ui.homePage.components.homePage_navbar
-
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.najih.android.ui.homePage.components.Categories
+import com.najih.android.ui.homePage.components.HomePage_navbar
+import com.najih.android.ui.homePage.components.LatestNews
+import com.najih.android.ui.homePage.components.SuggestedLessons
 
 
 @Composable
-fun HomePage(modifier: Modifier = Modifier) {
+fun HomePage(navController: NavController, modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { homePage_navbar() }
+        topBar = { HomePage_navbar(navController ) }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -31,17 +32,17 @@ fun HomePage(modifier: Modifier = Modifier) {
         ) {
             // Display Categories first
             item {
-                categories()
+                Categories()
             }
 
             // Display LatestNews
             item {
-                latestNews()
+                LatestNews()
             }
 
             // Display SuggestedLessons
             item {
-                suggestedLessons()
+                SuggestedLessons()
             }
         }
     }
@@ -54,5 +55,8 @@ fun HomePage(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun PreviewHomePage() {
-    HomePage()
+    val navController = rememberNavController()
+
+    // Pass the mock NavController to your composable
+    HomePage(navController = navController)
 }
