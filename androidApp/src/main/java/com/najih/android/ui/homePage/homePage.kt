@@ -12,9 +12,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.najih.android.ui.homePage.components.Categories
 import com.najih.android.ui.homePage.components.HomePage_navbar
 import com.najih.android.ui.homePage.components.LatestNews
+import com.najih.android.ui.homePage.components.Stages
 import com.najih.android.ui.homePage.components.SuggestedLessons
 
 
@@ -32,7 +32,7 @@ fun HomePage(navController: NavController, modifier: Modifier = Modifier) {
         ) {
             // Display Categories first
             item {
-                Categories()
+                Stages(navController)
             }
 
             // Display LatestNews
@@ -56,7 +56,6 @@ fun HomePage(navController: NavController, modifier: Modifier = Modifier) {
 @Composable
 fun PreviewHomePage() {
     val navController = rememberNavController()
-
     // Pass the mock NavController to your composable
     HomePage(navController = navController)
 }
