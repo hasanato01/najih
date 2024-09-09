@@ -3,6 +3,7 @@ package com.najih.android.ui.auth
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -48,8 +50,28 @@ fun SignIn(navController: NavController ) {
             TopAppBar(
                 title = { Text(text = "") },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFFF0F0F0))
+
+                    ) {
+                        IconButton(
+                            onClick = {
+                                navController.navigate("Home_Page")
+                            },
+                            modifier = Modifier
+                                .matchParentSize() // Ensure the button fills the Box
+                        ) {
+                            Icon(
+                                modifier = Modifier.padding(10.dp),
+                                painter = painterResource(id = R.drawable.back_button),
+                                contentDescription = "Back",
+                                tint = Color.Black
+
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -125,14 +147,14 @@ fun SignIn(navController: NavController ) {
                                         email = "studnt@najih.com",
                                         password = "123123"
                                     )
-                                    // Handle the response as needed
+                                    if(response.success){
+                                        navController.navigate("Home_Page")
+                                    }
                                     Log.d(
                                         "SignInButton",
                                         "Sign-in successful: ${response.accessToken}"
                                     )
                                 } catch (e: Exception) {
-                                    // Update error message state
-
                                     Log.e("SignInButton", "Sign-in failed: ${e.message}")
                                 }
                             }
@@ -171,8 +193,7 @@ fun SignIn(navController: NavController ) {
 @Composable
 fun SignInPreview() {
     val navController = rememberNavController()
-
-    // Pass the mock NavController to your composable
+    SignIn(navController)
 
 
 }

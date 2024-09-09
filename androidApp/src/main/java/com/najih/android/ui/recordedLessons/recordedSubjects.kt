@@ -2,25 +2,34 @@ package com.najih.android.ui.recordedLessons
 
 
 import GetSubjectsResponse
+import LanguageContent
+import OtherPrice
+import android.graphics.Paint.Align
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.subjects.GetLessonsBySubject
 import com.najih.android.ui.homePage.components.SearchBar
@@ -50,7 +59,7 @@ fun RecordedLessons(navController: NavController, resultObjects: List<GetSubject
             .fillMaxHeight()
             .padding(6.dp)
     ) {
-        navbar()
+        navbar(navController)
         SearchBar()
         Text(
             text = level,
@@ -67,7 +76,7 @@ fun RecordedLessons(navController: NavController, resultObjects: List<GetSubject
         } ?: run {
             // Optional: Display a message if no subjects are available
             Text(
-                text = "No subjects available",
+                text = stringResource(R.string.no_subjects_available),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.padding(top = 16.dp, start = 11.dp)
@@ -79,17 +88,23 @@ fun RecordedLessons(navController: NavController, resultObjects: List<GetSubject
 
 @Composable
 fun ClassSection(className: String) {
-    Text(
-        text = className,
-        color = Color.White,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Light,
+    Box(
         modifier = Modifier
+            .width(150.dp)
             .padding(8.dp)
             .clip(RoundedCornerShape(28.dp))
             .background(Color(0xFFF4BC43))
             .padding(8.dp)
-    )
+    ) {
+        Text(
+            text = className,
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier.align(Alignment.Center) // Center the text within the Box
+        )
+    }
+
 }
 
 @Composable
@@ -132,9 +147,7 @@ fun SubjectButton(
         onClick = {
             coroutineScope.launch {
                 try {
-                    // Perform the HTTP request to fetch subject info
                     val subjectInfo = GetLessonsBySubject(httpClient, subjectId)
-
                     // Check if subjectInfo is not null and serialize it
                     if (subjectInfo != null) {
                         val serializedSubjectInfo = Json.encodeToString(subjectInfo)
@@ -150,9 +163,11 @@ fun SubjectButton(
             }
         },
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .border(width = 0.5.dp, color = Color.Blue, shape = RoundedCornerShape(16.dp))
             .background(Color.White)
-            .padding(10.dp)
+            .padding(10.dp) ,
+        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
     ) {
         Text(
             text = subject,
@@ -169,5 +184,49 @@ fun SubjectButton(
 @Preview
 @Composable
 fun recordedSubjectsPreview () {
-//    RecordedLessons()
+    val navController = rememberNavController()
+  RecordedLessons(navController , listOf(
+      GetSubjectsResponse(
+          id = "1",
+          name = LanguageContent("Mathematics" , ""),
+          level = LanguageContent("Intermediate" , ""),
+          lessonCount = 10,
+          startDate = "2024-09-01",
+          endDate = "2024-12-01",
+          availableSeats = 20,
+          remainingSeats = 5,
+          lessonDuration = "1 hour",
+          lessonPrice = "$100",
+          paymentMethod = "Credit Card",
+          lessonPriceAll = "$1000",
+          classNumber = 101,
+          otherPrices = listOf(
+              OtherPrice(1, 20)
+          ),
+          lessons = listOf("lesson1", "lesson2"),
+          createdAt = "2024-08-01T10:00:00Z",
+          updatedAt = "2024-08-15T10:00:00Z",
+          version = 1
+      ),   GetSubjectsResponse(
+          id = "1",
+          name = LanguageContent("Mathematics" , ""),
+          level = LanguageContent("Intermediate" , ""),
+          lessonCount = 10,
+          startDate = "2024-09-01",
+          endDate = "2024-12-01",
+          availableSeats = 20,
+          remainingSeats = 5,
+          lessonDuration = "1 hour",
+          lessonPrice = "$100",
+          paymentMethod = "Credit Card",
+          lessonPriceAll = "$1000",
+          classNumber = 101,
+          otherPrices = listOf(
+              OtherPrice(1, 20)
+          ),
+          lessons = listOf("lesson1", "lesson2"),
+          createdAt = "2024-08-01T10:00:00Z",
+          updatedAt = "2024-08-15T10:00:00Z",
+          version = 1
+      )), )
 }

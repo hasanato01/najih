@@ -19,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -56,8 +57,28 @@ fun SignUp(navController: NavController) {
             TopAppBar(
                 title = { Text(text = "Sign Up") },
                 navigationIcon = {
-                    IconButton(onClick = {navController.navigate("sign_in") }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFFF0F0F0))
+
+                    ) {
+                        IconButton(
+                            onClick = {
+                                navController.navigate("Sign_in")
+                            },
+                            modifier = Modifier
+                                .matchParentSize() // Ensure the button fills the Box
+                        ) {
+                            Icon(
+                                modifier = Modifier.padding(10.dp),
+                                painter = painterResource(id = R.drawable.back_button),
+                                contentDescription = "Back",
+                                tint = Color.Black
+
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

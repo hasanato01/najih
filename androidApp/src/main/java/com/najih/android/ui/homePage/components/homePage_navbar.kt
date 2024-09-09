@@ -1,5 +1,6 @@
 package com.najih.android.ui.homePage.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,16 +37,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.najih.android.R
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.najih.android.util.GlobalFunctions
+
 
 
 @Composable
 fun HomePage_navbar(navController: NavController) {
+    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     var languageExpanded by remember { mutableStateOf(false) }
     var selectedLanguage by remember { mutableStateOf("English") }
     var profileMenuExpanded by remember { mutableStateOf(false) }
+    var userInfo by remember { mutableStateOf(GlobalFunctions.getUserInfo(context)) }
+
+    var userName = userInfo.userName
+    val greetingText = userInfo.userName ?: "Welcome to Najih"
+    Log.d("ApiClient" , userInfo.toString())
 
     Column(
         modifier = Modifier
@@ -74,17 +84,28 @@ fun HomePage_navbar(navController: NavController) {
                         .clip(CircleShape)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "welcome to najih", fontSize = 18.sp, color = Color.White)
+                Text(text =greetingText, fontSize = 18.sp, color = Color.White)
             }
             DropdownMenu(expanded = profileMenuExpanded, onDismissRequest = { profileMenuExpanded = false }) {
-                DropdownMenuItem(
-                    text = { Text(text = "sign in") },
-                    onClick = { profileMenuExpanded = false ; navController.navigate("sign_in") }
+                if(userName != null)
+                { DropdownMenuItem(
+                    text = { Text(text = "Log out") },
+                    onClick = {
+                        GlobalFunctions.clearUserInfo(context)
+                        userInfo = GlobalFunctions.getUserInfo(context)
+                        profileMenuExpanded = false }
                 )
-//                DropdownMenuItem(
-//                    text = { Text(text = "sign in") },
-//                    onClick = { profileMenuExpanded = false ; navController.navigate("sign_in") }
-//                )
+//
+                }else {
+
+                    DropdownMenuItem(
+                        text = { Text(text = "sign in") },
+                        onClick = { profileMenuExpanded = false ; navController.navigate("sign_in") }
+                    )
+                }
+
+
+//
             }
 
             // Icons for Language and List

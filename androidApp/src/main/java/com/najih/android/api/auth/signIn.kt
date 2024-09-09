@@ -43,7 +43,9 @@ suspend fun signIn(
             HttpStatusCode.OK -> {
                 val signInResponse = response.body<SignInResponse>()
                 val accessToken = signInResponse.accessToken
-                GlobalFunctions.saveAccessToken(context, accessToken)
+                val userName = signInResponse.user.name
+                val userEmail = signInResponse.user.username
+                GlobalFunctions.saveUserInfo(context, accessToken , userName , userEmail)
                 val responseBody = response.bodyAsText()
                 Log.d("ApiClient", "Response Body: $responseBody")
                 json.decodeFromString(responseBody)

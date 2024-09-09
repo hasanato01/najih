@@ -54,7 +54,7 @@ fun Lessons (navController: NavController ,subjectInfo : GetSubjectLessons ?) {
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        navbar()
+        navbar(navController)
         SearchBar()
         Text(
             text = subjectName,

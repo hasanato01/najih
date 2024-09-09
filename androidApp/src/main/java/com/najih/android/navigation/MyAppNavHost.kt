@@ -42,6 +42,7 @@ fun MyAppNavHost() {
                 try {
                     Json.decodeFromString<GetSubjectLessons>(Uri.decode(it))
                 } catch (e: Exception) {
+
                     null
                 }
             }

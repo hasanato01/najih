@@ -38,3 +38,8 @@ import kotlinx.serialization.Serializable
     @Serializable
     data class SignUpResponse(val token: String, val userId: String)
 
+data class UserInfo(
+    val token: String?,
+    val userName: String?,
+    val userEmail: String?
+)
