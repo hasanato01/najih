@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.najih.android.ui.ContactUsForm
 import com.najih.android.ui.auth.SignIn
 import com.najih.android.ui.auth.SignUp
 import com.najih.android.ui.homePage.HomePage
@@ -28,6 +29,9 @@ fun MyAppNavHost() {
         }
         composable("sign_up") {
             SignUp(navController)
+        }
+        composable("contact_us") {
+            ContactUsForm(navController)
         }
         composable("subjects/{serializedSubjects}") { backStackEntry ->
             val serializedSubjects = backStackEntry.arguments?.getString("serializedSubjects")

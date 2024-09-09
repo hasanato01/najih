@@ -157,7 +157,7 @@ fun HomePage_navbar(navController: NavController) {
                     onDismissRequest = { expanded = false },
                     modifier = Modifier.background(Color.White)
                 ) {
-                    DropdownMenuItem(text = { Text("Label text") }, onClick = { /* Handle link 1 click */ })
+                    DropdownMenuItem(text = { Text("contact us") }, onClick = {navController.navigate("contact_us")})
                     DropdownMenuItem(text = { Text("Label text") }, onClick = { /* Handle link 2 click */ })
                     DropdownMenuItem(text = { Text("Label text") }, onClick = { /* Handle link 3 click */ })
                 }
