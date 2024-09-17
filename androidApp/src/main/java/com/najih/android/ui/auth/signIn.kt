@@ -144,7 +144,7 @@ fun SignIn(navController: NavController ) {
                                     val response = signIn(
                                         httpClient,
                                         context,
-                                        email = "studnt@najih.com",
+                                        email = "admin@najih.com",
                                         password = "123123"
                                     )
                                     if(response.success){

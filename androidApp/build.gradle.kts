@@ -62,4 +62,8 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    //images
+    implementation(libs.coil.compose)
+
+
 }

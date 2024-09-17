@@ -1,21 +1,32 @@
+import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.najih.android.api.CreateHttpClient
+import com.najih.android.api.globalData.GlobalData
+import com.najih.android.dataClasses.Exam
 import com.najih.android.ui.ContactUsForm
 import com.najih.android.ui.auth.SignIn
 import com.najih.android.ui.auth.SignUp
+import com.najih.android.ui.exams.ExamPaper
+import com.najih.android.ui.exams.Exams
 import com.najih.android.ui.homePage.HomePage
 import com.najih.android.ui.recordedLessons.Lessons
 import com.najih.android.ui.recordedLessons.RecordedLessons
+import io.ktor.client.engine.android.Android
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 @Composable
 fun MyAppNavHost() {
     val navController = rememberNavController()
+    val httpClient = CreateHttpClient(Android)
+    val context = LocalContext.current
 
     NavHost(
         navController = navController,
@@ -51,6 +62,13 @@ fun MyAppNavHost() {
                 }
             }
             Lessons(navController, subjectInfo = subjectInfo)
+        }
+        composable("exams") {
+          Exams(navController = navController, httpClient  , context  )
+        }
+        composable("exam_paper/{examId}") { backStackEntry ->
+            val examId = backStackEntry.arguments?.getString("examId") ?: return@composable
+            ExamPaper(navController, httpClient, context,examId )
         }
 
     }

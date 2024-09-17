@@ -57,6 +57,7 @@ fun Lessons (navController: NavController ,subjectInfo : GetSubjectLessons ?) {
         navbar(navController)
         SearchBar()
         Text(
+            
             text = subjectName,
             fontSize = 20.sp,
             fontWeight = FontWeight.Normal,

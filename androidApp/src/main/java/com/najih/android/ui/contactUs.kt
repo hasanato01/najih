@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,10 +15,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,11 +37,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.contactUsForm.postContactForm
 import io.ktor.client.engine.android.Android
@@ -48,49 +61,57 @@ fun ContactUsForm (navController: NavController) {
     val isFormValid =
         name.isNotEmpty() && email.isNotEmpty() && phoneNumber.isNotEmpty() && country.isNotEmpty() && message.isNotEmpty()
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Contact Us", style = MaterialTheme.typography.headlineMedium)
+
+
+    Column(
+        modifier = Modifier
+            .background(color = Color(0xfff9f9f9))
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .padding(16.dp)
+    ) {
+        navbar(navController)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text("Get in touch", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(8.dp))
 
         // Name Input
-        TextField(
+        StyledTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+            label = "Name",
+            icon = { Icon(Icons.Filled.Person, contentDescription = "Person Icon") } // Optional icon
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         // Email Input
-        TextField(
+        StyledTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            label = "Email",
+            icon = { Icon(Icons.Filled.Email, contentDescription = "Email Icon") }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         // Phone Number Input
-        TextField(
+        StyledTextField(
             value = phoneNumber,
             onValueChange = { phoneNumber = it },
-            label = { Text("Phone Number") },
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+            label = "Phone Number",
+            icon = { Icon(Icons.Filled.Phone, contentDescription = "Phone Icon") }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         // Country Input
-        TextField(
+        StyledTextField(
             value = country,
             onValueChange = { country = it },
-            label = { Text("Country") },
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+            label = "Country",
+                    icon = { Icon(Icons.Filled.LocationOn, contentDescription = "Location Icon") } // Country Icon
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -102,17 +123,15 @@ fun ContactUsForm (navController: NavController) {
                 .height(200.dp)
                 .verticalScroll(rememberScrollState()) // Enables scrolling
         ) {
-            TextField(
+            StyledTextField(
                 value = message,
                 onValueChange = { message = it },
-                label = { Text("Message") },
-                modifier = Modifier.fillMaxSize().height(200.dp).clip(RoundedCornerShape(8.dp)),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                singleLine = false, // Allows multiline input
-                maxLines = Int.MAX_VALUE // Allows unlimited lines, but will scroll
+                label = "Message",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(200.dp)
             )
         }
-
         Spacer(modifier = Modifier.height(16.dp))
         // Send Button
         Button(
@@ -125,7 +144,9 @@ fun ContactUsForm (navController: NavController) {
                 }
             } },
             enabled = isFormValid,
-            modifier = Modifier.fillMaxWidth().background(Color.White)
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
         ) {
             Text("Send")
         }
@@ -135,5 +156,6 @@ fun ContactUsForm (navController: NavController) {
 @Preview
 @Composable
 fun  ContactUs () {
-//    ContactUsForm()
+    val navController = rememberNavController()
+    ContactUsForm(navController)
 }
