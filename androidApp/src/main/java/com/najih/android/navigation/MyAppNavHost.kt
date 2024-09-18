@@ -44,24 +44,17 @@ fun MyAppNavHost() {
         composable("contact_us") {
             ContactUsForm(navController)
         }
-        composable("subjects/{serializedSubjects}") { backStackEntry ->
-            val serializedSubjects = backStackEntry.arguments?.getString("serializedSubjects")
-            val subjects = serializedSubjects?.let {
-                Json.decodeFromString<List<GetSubjectsResponse>>(Uri.decode(it))
-            } ?: emptyList()
-            RecordedLessons(navController, resultObjects = subjects)
-        }
-        composable("subject_lessons/{serializedSubjectInfo}") { backStackEntry ->
-            val serializedSubjectInfo = backStackEntry.arguments?.getString("serializedSubjectInfo")
-            val subjectInfo = serializedSubjectInfo?.let {
-                try {
-                    Json.decodeFromString<GetSubjectLessons>(Uri.decode(it))
-                } catch (e: Exception) {
-
-                    null
-                }
+        composable("subjects/{type}") { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type")
+            if (type != null) {
+                RecordedLessons(navController, type )
             }
-            Lessons(navController, subjectInfo = subjectInfo)
+        }
+        composable("subject_lessons/{subjectId}") { backStackEntry ->
+            val subjectId = backStackEntry.arguments?.getString("subjectId")
+            if (subjectId != null) {
+                Lessons(navController, subjectId )
+            }
         }
         composable("exams") {
           Exams(navController = navController, httpClient  , context  )

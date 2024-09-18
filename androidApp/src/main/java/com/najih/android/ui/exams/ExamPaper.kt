@@ -106,7 +106,6 @@ fun ExamPaper(navController: NavController,
         mutableStateOf<Boolean>(false)
     }
     val coroutineScope = rememberCoroutineScope()
-
     // Fetch exam details
     LaunchedEffect(Unit) {
         try {
@@ -150,8 +149,6 @@ fun ExamPaper(navController: NavController,
                         remainingTime = "${remainingTime / 60}:${remainingTime % 60}" // Display time in MM:SS format
                     )
                 }
-                ReviewButton(onReviewClick = { showReviewDialog = true })
-
                 AnimatedContent(targetState = currentQuestionIndex,
                     transitionSpec = {
                         // Define your custom transition here
@@ -167,7 +164,7 @@ fun ExamPaper(navController: NavController,
                             onAnswer = { answer ->
                                 Log.d("ExamPaper", "Answer selected: $answer")
                                 // Update currentQuestionIndex to flip to the next question
-                                currentQuestionIndex = (currentQuestionIndex + 1) % staticExam.questions.size
+
                             }
                         )
 
@@ -184,6 +181,10 @@ fun ExamPaper(navController: NavController,
                         onDismiss = { showReviewDialog = false }
                     )
                 }
+                ExamBottomNavBar(onReviewClick =  { showReviewDialog = true },
+                    onSubmitClick = { /*TODO*/ },
+                    onNextClick = {currentQuestionIndex = (currentQuestionIndex + 1) % staticExam.questions.size})
+
             }
 
         }

@@ -16,7 +16,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.subjects.GetLessonsBySubject
+import com.najih.android.api.subjects.getSubjects
 import com.najih.android.ui.homePage.components.SearchBar
 import com.najih.android.ui.navbar
 import com.najih.android.util.GlobalFunctions
@@ -43,14 +49,29 @@ import kotlinx.serialization.json.Json
 import java.util.Objects
 
 @Composable
-fun RecordedLessons(navController: NavController, resultObjects: List<GetSubjectsResponse>?) {
-    Log.d("LessonsSubjects", resultObjects.toString())
+fun RecordedLessons(navController: NavController, type: String) {
+    val httpClient = CreateHttpClient(Android)
+    val coroutineScope = rememberCoroutineScope()
 
+    // State for subjects, class grouping, and level
+    var subjects by remember { mutableStateOf<List<GetSubjectsResponse>>(emptyList()) }
+    var groupByClass by remember { mutableStateOf<Map<Int, List<GetSubjectsResponse>>>(emptyMap()) }
+    var level by remember { mutableStateOf("Unknown Level") }
 
-    // Grouping the subjects by class
-    val groupByClass = resultObjects?.groupBy { it.classNumber }
-    val level = resultObjects?.firstOrNull()?.level?.en ?: "Unknown Level"
-    Log.d("groupClasses", groupByClass.toString())
+    LaunchedEffect(type) {
+        coroutineScope.launch {
+            try {
+                val fetchedSubjects = getSubjects(httpClient, type)
+                subjects = fetchedSubjects
+                groupByClass = fetchedSubjects.groupBy { it.classNumber }
+                level = fetchedSubjects.firstOrNull()?.level?.en ?: "Unknown Level"
+                Log.d("LessonsSubjects", fetchedSubjects.toString())
+                Log.d("groupClasses", groupByClass.toString())
+            } catch (e: Exception) {
+                Log.e("SubjectFetchError", "Error fetching subjects", e)
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -69,12 +90,14 @@ fun RecordedLessons(navController: NavController, resultObjects: List<GetSubject
         )
 
         // Iterating through each class group
-        groupByClass?.forEach { (classNumber, subjects) ->
+        groupByClass.forEach { (classNumber, subjects) ->
             ClassSection("Class $classNumber")
             val subjectPair = subjects.map { it.name.en to it.id }
             SubjectRow(navController, subjectPair)
-        } ?: run {
-            // Optional: Display a message if no subjects are available
+        }
+
+        // Optional: Display a message if no subjects are available
+        if (subjects.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_subjects_available),
                 fontSize = 16.sp,
@@ -140,28 +163,9 @@ fun SubjectButton(
     subjectId: String,
     modifier: Modifier = Modifier
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val httpClient = CreateHttpClient(Android) // Assuming CreateHttpClient is a function that returns an HttpClient instance
 
     Button(
-        onClick = {
-            coroutineScope.launch {
-                try {
-                    val subjectInfo = GetLessonsBySubject(httpClient, subjectId)
-                    // Check if subjectInfo is not null and serialize it
-                    if (subjectInfo != null) {
-                        val serializedSubjectInfo = Json.encodeToString(subjectInfo)
-                        val encodedSubjectInfo = Uri.encode(serializedSubjectInfo) // Encode for URL safety
-                        navController.navigate("subject_lessons/$encodedSubjectInfo")
-                    } else {
-                        Log.d("SubjectLessons", "No subject info found for id: $subjectId")
-                    }
-
-                } catch (e: Exception) {
-                    Log.e("SubjectInfoError", "Error fetching subject info", e)
-                }
-            }
-        },
+        onClick = { navController.navigate("subject_lessons/$subjectId") },
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .border(width = 0.5.dp, color = Color.Blue, shape = RoundedCornerShape(16.dp))
@@ -181,52 +185,52 @@ fun SubjectButton(
 
 
 
-@Preview
-@Composable
-fun recordedSubjectsPreview () {
-    val navController = rememberNavController()
-  RecordedLessons(navController , listOf(
-      GetSubjectsResponse(
-          id = "1",
-          name = LanguageContent("Mathematics" , ""),
-          level = LanguageContent("Intermediate" , ""),
-          lessonCount = 10,
-          startDate = "2024-09-01",
-          endDate = "2024-12-01",
-          availableSeats = 20,
-          remainingSeats = 5,
-          lessonDuration = "1 hour",
-          lessonPrice = "$100",
-          paymentMethod = "Credit Card",
-          lessonPriceAll = "$1000",
-          classNumber = 101,
-          otherPrices = listOf(
-              OtherPrice(1, 20)
-          ),
-          lessons = listOf("lesson1", "lesson2"),
-          createdAt = "2024-08-01T10:00:00Z",
-          updatedAt = "2024-08-15T10:00:00Z",
-          version = 1
-      ),   GetSubjectsResponse(
-          id = "1",
-          name = LanguageContent("Mathematics" , ""),
-          level = LanguageContent("Intermediate" , ""),
-          lessonCount = 10,
-          startDate = "2024-09-01",
-          endDate = "2024-12-01",
-          availableSeats = 20,
-          remainingSeats = 5,
-          lessonDuration = "1 hour",
-          lessonPrice = "$100",
-          paymentMethod = "Credit Card",
-          lessonPriceAll = "$1000",
-          classNumber = 101,
-          otherPrices = listOf(
-              OtherPrice(1, 20)
-          ),
-          lessons = listOf("lesson1", "lesson2"),
-          createdAt = "2024-08-01T10:00:00Z",
-          updatedAt = "2024-08-15T10:00:00Z",
-          version = 1
-      )), )
-}
+//@Preview
+//@Composable
+//fun recordedSubjectsPreview () {
+//    val navController = rememberNavController()
+//  RecordedLessons(navController , listOf(
+//      GetSubjectsResponse(
+//          id = "1",
+//          name = LanguageContent("Mathematics" , ""),
+//          level = LanguageContent("Intermediate" , ""),
+//          lessonCount = 10,
+//          startDate = "2024-09-01",
+//          endDate = "2024-12-01",
+//          availableSeats = 20,
+//          remainingSeats = 5,
+//          lessonDuration = "1 hour",
+//          lessonPrice = "$100",
+//          paymentMethod = "Credit Card",
+//          lessonPriceAll = "$1000",
+//          classNumber = 101,
+//          otherPrices = listOf(
+//              OtherPrice(1, 20)
+//          ),
+//          lessons = listOf("lesson1", "lesson2"),
+//          createdAt = "2024-08-01T10:00:00Z",
+//          updatedAt = "2024-08-15T10:00:00Z",
+//          version = 1
+//      ),   GetSubjectsResponse(
+//          id = "1",
+//          name = LanguageContent("Mathematics" , ""),
+//          level = LanguageContent("Intermediate" , ""),
+//          lessonCount = 10,
+//          startDate = "2024-09-01",
+//          endDate = "2024-12-01",
+//          availableSeats = 20,
+//          remainingSeats = 5,
+//          lessonDuration = "1 hour",
+//          lessonPrice = "$100",
+//          paymentMethod = "Credit Card",
+//          lessonPriceAll = "$1000",
+//          classNumber = 101,
+//          otherPrices = listOf(
+//              OtherPrice(1, 20)
+//          ),
+//          lessons = listOf("lesson1", "lesson2"),
+//          createdAt = "2024-08-01T10:00:00Z",
+//          updatedAt = "2024-08-15T10:00:00Z",
+//          version = 1
+//      )), )
+//}

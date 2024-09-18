@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.najih.android.R
 import com.najih.android.dataClasses.Answer
@@ -29,7 +32,7 @@ import com.najih.android.util.NetworkImage
 fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Char>, onAnswer: (Answer) -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val selectedAnswer = userAnswers[index]
-    Column(modifier = Modifier.padding(8.dp)) {
+    Column(modifier = Modifier.padding(16.dp)) {
         // Display question image
         Image(
             painter = painterResource(id = R.drawable.images),
@@ -38,6 +41,7 @@ fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Cha
             modifier = Modifier
                 .fillMaxWidth()
                 .height((screenHeight / 2.2).dp)
+                .clip(RoundedCornerShape(8.dp))
 
         )
 
@@ -52,10 +56,11 @@ fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Cha
                             onAnswer(Answer(index, 'A'))
                             userAnswers[index] = 'A'
                         }
+                        .clip(RoundedCornerShape(8.dp))
                         .padding(8.dp)
                         .background(
-                            if (selectedAnswer =='A') Color.Green else Color.Transparent
-                        )
+                            if (selectedAnswer == 'A') Color.Blue else Color.Transparent
+                        ).padding(start = 16.dp,end= 16.dp, top = 8.dp, bottom = 8.dp)
                 )
 
                 Text(
@@ -66,10 +71,11 @@ fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Cha
                             onAnswer(Answer(index, 'B'))
                             userAnswers[index] = 'B'
                         }
+                        .clip(RoundedCornerShape(8.dp))
                         .padding(8.dp)
                         .background(
-                            if (selectedAnswer =='B') Color.Green else Color.Transparent
-                        )
+                            if (selectedAnswer == 'B') Color.Blue else Color.Transparent
+                        ).padding(start = 16.dp,end= 16.dp, top = 8.dp, bottom = 8.dp)
                 )
             }
 
@@ -83,10 +89,11 @@ fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Cha
                             onAnswer(Answer(index, 'C'))
                             userAnswers[index] = 'C'
                         }
+                        .clip(RoundedCornerShape(8.dp))
                         .padding(8.dp)
                         .background(
-                            if (selectedAnswer =='C') Color.Green else Color.Transparent
-                        )
+                            if (selectedAnswer == 'C') Color.Blue else Color.Transparent
+                        ).padding(start = 16.dp,end= 16.dp, top = 8.dp, bottom = 8.dp)
                 )
 
                 Text(
@@ -97,12 +104,39 @@ fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Cha
                             onAnswer(Answer(index, 'D'))
                             userAnswers[index] = 'D'
                         }
+                        .clip(RoundedCornerShape(8.dp))
                         .padding(8.dp)
                         .background(
-                            if (selectedAnswer =='D') Color.Green else Color.Transparent
-                        )
+                            if (selectedAnswer == 'D') Color.Blue else Color.Transparent
+                        ).padding(start = 16.dp,end= 16.dp, top = 8.dp, bottom = 8.dp)
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewQuestionCard() {
+    val sampleQuestion = Question(
+        A = true,
+        B = false,
+        C = true,
+        D = false,
+        image = com.najih.android.dataClasses.Image(
+            filename = "sample_image.jpg",
+            url = "https://example.com/images/sample_image.jpg",
+            message = "Sample Question Image",
+            status = 200
+        )
+    )
+    val userAnswers = mutableMapOf<Int, Char>()
+    MaterialTheme {
+        QuestionCard(
+            question = sampleQuestion,
+            index = 0,
+            userAnswers = userAnswers,
+            onAnswer = { /* Handle answer */ }
+        )
     }
 }

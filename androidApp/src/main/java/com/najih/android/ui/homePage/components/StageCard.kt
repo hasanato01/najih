@@ -40,10 +40,7 @@ fun StageCard(
     modifier: Modifier, // Pass modifier here
     navController: NavController
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val httpClient = CreateHttpClient(Android)
 
-    // Apply the passed modifier to the Card itself
     Card(
         modifier = modifier
             .shadow(5.dp, RoundedCornerShape(10.dp))
@@ -79,20 +76,7 @@ fun StageCard(
                     modifier = Modifier
                         .size(33.dp)
                         .clickable {
-                            coroutineScope.launch {
-                                try {
-                                    val subjects = getSubjects(httpClient, type)
-                                    if (subjects.isNotEmpty()) {
-                                        val serializedSubjects = GlobalFunctions.serializeSubjects(subjects)
-                                        val encodedSubjects = Uri.encode(serializedSubjects) // Encode for URL safety
-                                        navController.navigate("subjects/$encodedSubjects")
-                                    }
-                                    Log.d(
-                                        "LessonsSubjects", subjects.toString()) // Properly log the result
-                                } catch (e: Exception) {
-                                    Log.e("LessonsSubjectsError", "Error fetching lesson subjects", e)
-                                }
-                            }
+                            navController.navigate("subjects/$type")
                         }
                 )
             }
