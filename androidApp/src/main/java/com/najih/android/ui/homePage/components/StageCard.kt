@@ -27,7 +27,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
-import com.najih.android.api.subjects.getSubjects
+import com.najih.android.api.globalData.RECORDED_SUBJECTS_ENDPOINT
+import com.najih.android.api.globalData.STREAMS_SUBJECTS_ENDPOINT
 import com.najih.android.util.GlobalFunctions
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
@@ -68,7 +69,9 @@ fun StageCard(
                 Image(
                     painter = painterResource(id = R.drawable.play),
                     contentDescription = "$stage image 1",
-                    modifier = Modifier.size(37.dp)
+                    modifier = Modifier.size(37.dp) .clickable {
+                        navController.navigate("subjects/$type/$STREAMS_SUBJECTS_ENDPOINT")
+                    }
                 )
                 Image(
                     painter = painterResource(id = R.drawable.play),
@@ -76,7 +79,7 @@ fun StageCard(
                     modifier = Modifier
                         .size(33.dp)
                         .clickable {
-                            navController.navigate("subjects/$type")
+                            navController.navigate("subjects/$type/$RECORDED_SUBJECTS_ENDPOINT")
                         }
                 )
             }

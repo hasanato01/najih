@@ -1,6 +1,7 @@
 import android.content.Context
 import android.util.Log
-import com.najih.android.api.globalData.GlobalData
+import com.najih.android.api.globalData.BASE_URL
+import com.najih.android.api.globalData.EXAM_ENDPOINT
 import com.najih.android.dataClasses.Exam
 import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
@@ -23,7 +24,7 @@ suspend fun GetAllExams(
         ignoreUnknownKeys = true
     }
 
-    val requestUrl = "${GlobalData.baseUrl}${GlobalData.examsEndPoint}"
+    val requestUrl = "${BASE_URL}${EXAM_ENDPOINT}"
 
     // Retrieve the JWT token using the getUserInfo function
     val token = GlobalFunctions.getUserInfo(context).token

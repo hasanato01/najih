@@ -1,6 +1,10 @@
 package com.najih.android.api.globalData
 
-object GlobalData {
-    const val baseUrl = "https://nserver.najih1.com/"
-    const val examsEndPoint = "exams"
-}
+
+const val BASE_URL = "https://nserver.najih1.com/"
+const val EXAM_ENDPOINT = "exams"
+const val RECORDED_SUBJECTS_ENDPOINT="r_subjects"
+const val STREAMS_SUBJECTS_ENDPOINT="t_subjects"
+const val STREAMS_TEACHERS_ENDPOINT="apply_teacher/getTeachersForWeb/"
+const val STREAMS_ENDPOINT="t_lessons/getLessonsForWeb/"
+

@@ -1,7 +1,9 @@
 package com.najih.android.api.subjects
 
-import GetSubjectsResponse
 import android.util.Log
+import com.najih.android.api.globalData.BASE_URL
+import com.najih.android.api.globalData.STREAMS_TEACHERS_ENDPOINT
+import com.najih.android.dataClasses.StreamsSubjectWithTeachers
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
@@ -11,17 +13,16 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 
-suspend fun getSubjects(
+suspend fun GetTeachersBySubject  (
     httpClient: HttpClient,
-    type: String
-): List<GetSubjectsResponse> {  // Return type is now a list of GetSubjectsResponse
+    subjectId : String
+) : StreamsSubjectWithTeachers {
     val json = Json {
         prettyPrint = true
         ignoreUnknownKeys = true
     }
-
-    val endPoint = "r_subjects"
-    val requestUrl = "https://nserver.najih1.com/$endPoint?type=$type"
+    val requestUrl = "${BASE_URL}${STREAMS_TEACHERS_ENDPOINT}${subjectId}"
+    // Log the request details
 
     // Log the request details
     Log.d("ApiClient", "Making GET request to URL: $requestUrl")
@@ -36,16 +37,17 @@ suspend fun getSubjects(
             HttpStatusCode.OK -> {
                 val responseBody = response.bodyAsText()
                 Log.d("ApiClient", "Response Body: $responseBody")
-                json.decodeFromString<List<GetSubjectsResponse>>(responseBody)  // Deserialize into a list
+                json.decodeFromString<StreamsSubjectWithTeachers>(responseBody)  // Deserialize into a list
             }
             else -> {
-                val errorMessage = "get Subjects failed with status ${response.status}\nResponse: ${response.bodyAsText()}"
+                val errorMessage = "get Subject data failed with status ${response.status}\nResponse: ${response.bodyAsText()}"
                 Log.e("ApiClient", errorMessage)
                 throw Exception(errorMessage)
             }
         }
     } catch (e: Exception) {
-        Log.e("ApiClient", "Error during getting subjects: ${e.message}", e)
+        Log.e("ApiClient", "Error during getting subject data: ${e.message}", e)
         throw e
     }
+
 }

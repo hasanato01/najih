@@ -1,11 +1,7 @@
-package com.najih.android.ui.recordedLessons
+package com.najih.android.ui.subjects
 
 
 import GetSubjectsResponse
-import LanguageContent
-import OtherPrice
-import android.graphics.Paint.Align
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,52 +20,68 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
-import com.najih.android.api.subjects.GetLessonsBySubject
-import com.najih.android.api.subjects.getSubjects
+import com.najih.android.api.subjects.getRecordedSubjects
+import com.najih.android.api.subjects.getStreamsSubjects
+import com.najih.android.dataClasses.StreamsSubjects
 import com.najih.android.ui.homePage.components.SearchBar
 import com.najih.android.ui.navbar
-import com.najih.android.util.GlobalFunctions
 import io.ktor.client.engine.android.Android
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.util.Objects
 
 @Composable
-fun RecordedLessons(navController: NavController, type: String) {
+fun Subjects(navController: NavController, type: String , endPoint:String) {
     val httpClient = CreateHttpClient(Android)
     val coroutineScope = rememberCoroutineScope()
 
     // State for subjects, class grouping, and level
-    var subjects by remember { mutableStateOf<List<GetSubjectsResponse>>(emptyList()) }
-    var groupByClass by remember { mutableStateOf<Map<Int, List<GetSubjectsResponse>>>(emptyMap()) }
+    var Recordedsubjects by remember { mutableStateOf<List<GetSubjectsResponse>>(emptyList()) }
+    var StreamsSubjects by remember { mutableStateOf<List<StreamsSubjects>>(emptyList()) }
+    var groupByRecordedClass by remember { mutableStateOf<Map<Int, List<GetSubjectsResponse>>>(emptyMap()) }
+    var groupByStreamsClass by remember { mutableStateOf<Map<Int, List<StreamsSubjects>>>(emptyMap()) }
     var level by remember { mutableStateOf("Unknown Level") }
 
     LaunchedEffect(type) {
         coroutineScope.launch {
             try {
-                val fetchedSubjects = getSubjects(httpClient, type)
-                subjects = fetchedSubjects
-                groupByClass = fetchedSubjects.groupBy { it.classNumber }
-                level = fetchedSubjects.firstOrNull()?.level?.en ?: "Unknown Level"
-                Log.d("LessonsSubjects", fetchedSubjects.toString())
-                Log.d("groupClasses", groupByClass.toString())
+                if(endPoint == "r_subjects") {
+                    Recordedsubjects = getRecordedSubjects(httpClient, type,endPoint)
+                    groupByRecordedClass = Recordedsubjects.groupBy { it.classNumber}
+                    level = Recordedsubjects.firstOrNull()?.level?.en ?: "Unknown Level"
+                    Log.d("Subjects", Recordedsubjects.toString())
+                    Log.d("groupClasses", groupByRecordedClass.toString())
+                }else if(endPoint == "t_subjects") {
+                    StreamsSubjects = getStreamsSubjects(httpClient, type,endPoint)
+                    groupByStreamsClass = StreamsSubjects.groupBy { it.classNumber }
+                    level = StreamsSubjects.firstOrNull()?.level?.en ?: "Unknown Level"
+                    Log.d("Subjects", StreamsSubjects.toString())
+                    Log.d("groupClasses", groupByStreamsClass.toString())
+                }
+
             } catch (e: Exception) {
                 Log.e("SubjectFetchError", "Error fetching subjects", e)
             }
         }
+    }
+
+    val groupByClass = when (endPoint) {
+        "r_subjects" -> groupByRecordedClass
+        "t_subjects" -> groupByStreamsClass
+        else -> emptyMap()
+    }
+
+    // Determine which subjects list to check
+    val subjects = when (endPoint) {
+        "r_subjects" -> Recordedsubjects
+        "t_subjects" -> StreamsSubjects
+        else -> emptyList()
     }
 
     Column(
@@ -92,8 +103,17 @@ fun RecordedLessons(navController: NavController, type: String) {
         // Iterating through each class group
         groupByClass.forEach { (classNumber, subjects) ->
             ClassSection("Class $classNumber")
-            val subjectPair = subjects.map { it.name.en to it.id }
-            SubjectRow(navController, subjectPair)
+
+            // Handle mapping dynamically based on whether it's Recorded or Streamed subjects
+            val subjectPair = subjects.map {
+                when (it) {
+                    is GetSubjectsResponse -> it.name.en to it.id // Recorded subjects
+                    is StreamsSubjects -> it.name.en to it.id      // Streams subjects
+                    else -> "Unknown" to "0"
+                }
+            }
+
+            SubjectRow(navController, subjectPair,endPoint)
         }
 
         // Optional: Display a message if no subjects are available
@@ -131,7 +151,7 @@ fun ClassSection(className: String) {
 }
 
 @Composable
-fun SubjectRow(navController: NavController,subjects: List<Pair<String, String>>) {
+fun SubjectRow(navController: NavController,subjects: List<Pair<String, String>>,endPoint: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,7 +165,7 @@ fun SubjectRow(navController: NavController,subjects: List<Pair<String, String>>
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 pair.forEach { (subjectName, subjectId) ->
-                    SubjectButton(navController, subjectName, subjectId, Modifier.weight(1f))
+                    SubjectButton(navController, subjectName, subjectId,endPoint, Modifier.weight(1f))
                 }
                 // If there's an odd number of subjects, add an empty spacer to balance the row
                 if (pair.size < 2) {
@@ -161,11 +181,20 @@ fun SubjectButton(
     navController: NavController,
     subject: String,
     subjectId: String,
+    endPoint:String,
     modifier: Modifier = Modifier
 ) {
 
     Button(
-        onClick = { navController.navigate("subject_lessons/$subjectId") },
+       onClick = {
+            if (endPoint == "r_subjects") {
+                // Navigate to subject lessons
+                navController.navigate("subject_lessons/$subjectId")
+            } else if (endPoint == "t_subjects") {
+                // Navigate to subject teachers
+                navController.navigate("subject_teachers/$subjectId")
+            }
+        },
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .border(width = 0.5.dp, color = Color.Blue, shape = RoundedCornerShape(16.dp))
