@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.najih.android.R
 import com.najih.android.dataClasses.Answer
 import com.najih.android.dataClasses.Question
@@ -35,7 +37,7 @@ fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Cha
     Column(modifier = Modifier.padding(16.dp)) {
         // Display question image
         Image(
-            painter = painterResource(id = R.drawable.images),
+            painter = rememberAsyncImagePainter(model = question.image.url),
             contentDescription = "Profile Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -46,7 +48,6 @@ fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Cha
         )
 
         Column(modifier = Modifier.padding(top = 8.dp)) {
-            // First row with 2 answers (A and B)
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "A.${question.A}",

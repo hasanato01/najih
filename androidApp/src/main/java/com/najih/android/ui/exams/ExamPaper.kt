@@ -48,53 +48,7 @@ fun ExamPaper(navController: NavController,
               httpClient: HttpClient,
               context: Context,
               examId: String){
-    val staticExam = Exam(
-        id = "exam1",
-        name = Name(en = "Math Test", ar = "اختبار رياضيات"),
-        describtion = Description(en = "A test covering basic mathematics.", ar = "اختبار يغطي أساسيات الرياضيات."),
-        time = 300, // 5 minutes in seconds
-        questions = listOf(
-            Question(
-                A = true,   // Correct answer
-                B = true,
-                C = false,
-                D = false,
-                image = Image(
-                    filename = "math_question_1.jpg",
-                    url = "https://example.com/images/math_question_1.jpg",
-                    message = "Solve the equation",
-                    status = 200
-                )
-            ),
-            Question(
-                A = false,
-                B = false,
-                C = true,   // Correct answer
-                D = false,
-                image = Image(
-                    filename = "math_question_2.jpg",
-                    url = "https://example.com/images/math_question_2.jpg",
-                    message = "Calculate the sum",
-                    status = 200
-                )
-            ),
-            Question(
-                A = false,
-                B = true,   // Correct answer
-                C = false,
-                D = false,
-                image = Image(
-                    filename = "math_question_3.jpg",
-                    url = "https://example.com/images/math_question_3.jpg",
-                    message = "Determine the difference",
-                    status = 200
-                )
-            )
-        ),
-        createdAt = "2024-09-14T12:00:00Z",
-        updatedAt = "2024-09-14T12:00:00Z",
-        version = 1
-    )
+
     val userName = GlobalFunctions.getUserInfo(context).userName
     val userAnswers = remember { mutableStateMapOf<Int, Char>() }
     var exam by remember { mutableStateOf<Exam?>(null) }
@@ -117,7 +71,7 @@ fun ExamPaper(navController: NavController,
                         delay(1000)
                         remainingTime -= 1
                     }
-                    // Handle time up, e.g., submit answers
+
                     Log.d("ExamPaper", "Time is up!")
                     // You might want to navigate or submit results here
                 }
@@ -144,27 +98,27 @@ fun ExamPaper(navController: NavController,
                     ExamHeader(
                         studentName = userName,
                         examName = exam.name.en,
-                        currentQuestion = currentQuestionIndex + 1, // Progress tracking
-                        totalQuestions = staticExam.questions.size,
-                        remainingTime = "${remainingTime / 60}:${remainingTime % 60}" // Display time in MM:SS format
+                        currentQuestion = currentQuestionIndex + 1,
+                        totalQuestions = exam.questions.size,
+                        remainingTime = "${remainingTime / 60}:${remainingTime % 60}"
                     )
                 }
                 AnimatedContent(targetState = currentQuestionIndex,
                     transitionSpec = {
-                        // Define your custom transition here
                         (expandIn(animationSpec = tween(durationMillis = 300)) + fadeIn()).togetherWith(
                             shrinkOut(animationSpec = tween(durationMillis = 300)) + fadeOut()
                         )
                     }, label = ""
                 ) { targetIndex ->
                         QuestionCard(
-                            question = staticExam.questions[targetIndex],
+                            question = exam.questions[targetIndex],
                             index = targetIndex,
                             userAnswers,
                             onAnswer = { answer ->
                                 Log.d("ExamPaper", "Answer selected: $answer")
-                                // Update currentQuestionIndex to flip to the next question
-
+                                userAnswers[targetIndex] = answer.selectedOption
+                                Log.d("ExamPaper", "userAnswers: $userAnswers" +
+                                        "")
                             }
                         )
 
@@ -172,7 +126,7 @@ fun ExamPaper(navController: NavController,
 
                 if (showReviewDialog) {
                     ReviewDialog(
-                        totalQuestions = staticExam.questions.size,
+                        totalQuestions = exam.questions.size,
                         userAnswers = userAnswers,
                         onQuestionClick = { selectedQuestionIndex ->
                             currentQuestionIndex = selectedQuestionIndex
@@ -183,7 +137,7 @@ fun ExamPaper(navController: NavController,
                 }
                 ExamBottomNavBar(onReviewClick =  { showReviewDialog = true },
                     onSubmitClick = { /*TODO*/ },
-                    onNextClick = {currentQuestionIndex = (currentQuestionIndex + 1) % staticExam.questions.size})
+                    onNextClick = {currentQuestionIndex = (currentQuestionIndex + 1) % exam.questions.size})
 
             }
 

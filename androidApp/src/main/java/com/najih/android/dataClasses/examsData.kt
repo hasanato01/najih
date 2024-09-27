@@ -1,5 +1,6 @@
 package com.najih.android.dataClasses
 
+import LanguageContent
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -49,3 +50,40 @@ data class Answer(
     val selectedOption: Char
 )
 
+
+@Serializable
+data class Result(
+    val question: Question,
+    val userAnswer: String,
+    val correctAnswer: String,
+    val isCorrect: Boolean,
+    @SerialName("_id") val id: String,
+)
+@Serializable
+data class ExamResults(
+    val results: List<Result>
+)
+@Serializable
+data class SubmittedExamResponse(
+    val status: String
+)
+@Serializable
+data class SubmitExamRequest(
+    val examId: String,
+    val userId: String,
+    val results: ExamResults,
+    val correctAnswersCount: Int,
+    val examName: LanguageContent,
+    val totalQuestions: Int,
+    val submittedAt: String
+)
+
+
+data class QuestionResult(
+    val question: Map<String, Boolean>,
+    val userAnswer: String,
+    val correctAnswer: String,
+    val isCorrect: Boolean,
+    val _id: String
+)
+data class ImageData(val filename: String, val url: String)
