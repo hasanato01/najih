@@ -9,8 +9,10 @@ import com.najih.android.ui.StreamsLessons.Streams
 import com.najih.android.ui.StreamsLessons.Teachers
 import com.najih.android.ui.auth.SignIn
 import com.najih.android.ui.auth.SignUp
+import com.najih.android.ui.examResults.UserExamResult
 import com.najih.android.ui.exams.ExamPaper
 import com.najih.android.ui.exams.Exams
+import com.najih.android.ui.examResults.UserExams
 import com.najih.android.ui.homePage.HomePage
 import com.najih.android.ui.recordedLessons.Lessons
 import com.najih.android.ui.subjects.Subjects
@@ -37,6 +39,12 @@ fun MyAppNavHost() {
         }
         composable("contact_us") {
             ContactUsForm(navController)
+        }
+        composable("My_profile") {
+            MyProfile(navController )
+        }
+        composable("user_exams") {
+            UserExams(navController, httpClient , context )
         }
         composable("subjects/{type}/{endpoint}") { backStackEntry ->
             val type = backStackEntry.arguments?.getString("type")
@@ -72,6 +80,10 @@ fun MyAppNavHost() {
         composable("exam_paper/{examId}") { backStackEntry ->
             val examId = backStackEntry.arguments?.getString("examId") ?: return@composable
             ExamPaper(navController, httpClient, context,examId )
+        }
+        composable("exam_result/{examResultId}") { backStackEntry ->
+            val examResultId = backStackEntry.arguments?.getString("examResultId") ?: return@composable
+            UserExamResult(httpClient, context, examResultId)
         }
 
     }

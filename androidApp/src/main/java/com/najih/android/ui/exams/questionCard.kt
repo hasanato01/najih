@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,15 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import com.najih.android.R
 import com.najih.android.dataClasses.Answer
 import com.najih.android.dataClasses.Question
-import com.najih.android.util.NetworkImage
 
 @Composable
 fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Char>, onAnswer: (Answer) -> Unit) {
@@ -116,28 +110,28 @@ fun QuestionCard(question: Question, index: Int,userAnswers: MutableMap<Int, Cha
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewQuestionCard() {
-    val sampleQuestion = Question(
-        A = true,
-        B = false,
-        C = true,
-        D = false,
-        image = com.najih.android.dataClasses.Image(
-            filename = "sample_image.jpg",
-            url = "https://example.com/images/sample_image.jpg",
-            message = "Sample Question Image",
-            status = 200
-        )
-    )
-    val userAnswers = mutableMapOf<Int, Char>()
-    MaterialTheme {
-        QuestionCard(
-            question = sampleQuestion,
-            index = 0,
-            userAnswers = userAnswers,
-            onAnswer = { /* Handle answer */ }
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewQuestionCard() {
+//    val sampleQuestion = Question(
+//        A = true,
+//        B = false,
+//        C = true,
+//        D = false,
+//        image = com.najih.android.dataClasses.Image(
+//            filename = "sample_image.jpg",
+//            url = "https://example.com/images/sample_image.jpg",
+//            message = "Sample Question Image",
+//            status = 200
+//        )
+//    )
+//    val userAnswers = mutableMapOf<Int, Char>()
+//    MaterialTheme {
+//        QuestionCard(
+//            question = sampleQuestion,
+//            index = 0,
+//            userAnswers = userAnswers,
+//            onAnswer = { /* Handle answer */ }
+//        )
+//    }
+//}

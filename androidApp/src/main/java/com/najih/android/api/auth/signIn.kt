@@ -3,6 +3,8 @@ package com.najih.android.api.auth
 
 import android.content.Context
 import android.util.Log
+import com.najih.android.api.globalData.BASE_URL
+import com.najih.android.api.globalData.SIGNING_ENDPOINT
 import com.najih.android.dataClasses.SignInRequest
 import com.najih.android.dataClasses.SignInResponse
 import com.najih.android.util.GlobalFunctions
@@ -29,12 +31,12 @@ suspend fun signIn(
         prettyPrint = true
         ignoreUnknownKeys = true
     }
-    val endPoint = "users/login"
+
     val requestBody = json.encodeToString(SignInRequest(email, password))
     Log.d("ApiClient", "Request Body: $requestBody")
 
     return try {
-        val response: HttpResponse = httpClient.post("https://nserver.najih1.com/${endPoint}") {
+        val response: HttpResponse = httpClient.post("${BASE_URL}${SIGNING_ENDPOINT}") {
             contentType(ContentType.Application.Json)
             setBody(SignInRequest(email, password))
         }
@@ -42,10 +44,11 @@ suspend fun signIn(
         when (response.status) {
             HttpStatusCode.OK -> {
                 val signInResponse = response.body<SignInResponse>()
+                val userId = signInResponse.user.id
                 val accessToken = signInResponse.accessToken
                 val userName = signInResponse.user.name
                 val userEmail = signInResponse.user.username
-                GlobalFunctions.saveUserInfo(context, accessToken , userName , userEmail)
+                GlobalFunctions.saveUserInfo(context, accessToken ,userId, userName , userEmail)
                 val responseBody = response.bodyAsText()
                 Log.d("ApiClient", "Response Body: $responseBody")
                 json.decodeFromString(responseBody)

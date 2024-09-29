@@ -56,8 +56,11 @@ fun navbar(navController: NavController) {
     var profileMenuExpanded by remember { mutableStateOf(false) }
     var userInfo by remember { mutableStateOf(GlobalFunctions.getUserInfo(context)) }
 
-    var userName = userInfo.userName
-    val greetingText = userInfo.userName ?: "Welcome to Najih"
+
+    val isLoggedIn = userInfo.userId.isNotEmpty() && userInfo.token.isNotEmpty()
+    val greetingText = userInfo.userName.ifEmpty {
+        "Welcome to Najih"
+    }
 
     Column(
         modifier = Modifier
@@ -88,7 +91,7 @@ fun navbar(navController: NavController) {
                 Text(text = "Hi $greetingText" , fontSize = 18.sp, color = Color.White)
             }
             DropdownMenu(expanded = profileMenuExpanded, onDismissRequest = { profileMenuExpanded = false }) {
-                if(userName != null)
+                if(isLoggedIn)
                 { DropdownMenuItem(
                     text = { Text(text = "Log out") },
                     onClick = {
@@ -96,19 +99,14 @@ fun navbar(navController: NavController) {
                         userInfo = GlobalFunctions.getUserInfo(context)
                         profileMenuExpanded = false }
                 )
-//
-                }else {
-
+                }else{
                     DropdownMenuItem(
                         text = { Text(text = "sign in") },
                         onClick = { profileMenuExpanded = false ; navController.navigate("sign_in") }
                     )
                 }
 
-
-//
             }
-            // Icons for Language and List
             Row {
                 IconButton(onClick = { languageExpanded = !languageExpanded }) {
                     val languageIcon = if (selectedLanguage == "English") {
@@ -161,21 +159,21 @@ fun navbar(navController: NavController) {
                         text = { Text("Exams") },
                         onClick = {
                             coroutineScope.launch {
-                                try{
-
-
-                               navController.navigate("exams")
-
-
-
-                                }catch (e:Exception){
+                                try{ navController.navigate("exams") }
+                                catch (e:Exception){
                                     Log.e("examsError","error while getting exams")
                                 }
                             }
                         })
                     DropdownMenuItem(
-                        text = { Text("Label text") },
-                        onClick = { /* Handle link 2 click */ })
+                        text = { Text("profile") },
+                        onClick = {
+                            coroutineScope.launch {
+                                try{ navController.navigate("My_profile") }
+                                catch (e:Exception){
+                                    Log.e("examsError","error while getting exams")
+                                }
+                            }})
                     DropdownMenuItem(
                         text = { Text("Label text") },
                         onClick = { /* Handle link 3 click */ })

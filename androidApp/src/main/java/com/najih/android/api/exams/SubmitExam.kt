@@ -4,37 +4,47 @@ import LanguageContent
 import android.util.Log
 import com.najih.android.api.globalData.BASE_URL
 import com.najih.android.api.globalData.SUBMIT_EXAM_ENDPOINT
-import com.najih.android.dataClasses.ExamResults
+import com.najih.android.dataClasses.QuestionResultData
 import com.najih.android.dataClasses.SubmitExamRequest
 import com.najih.android.dataClasses.SubmittedExamResponse
 import io.ktor.client.HttpClient
+import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 
-suspend fun SubmitExam(
-   httpClient: HttpClient,
+suspend fun submitExam(
+    httpClient: HttpClient,
     userId:String,
+    token : String,
     examId:String,
-    resultsArray:ExamResults,
-   correctAnswersCount: Int,
-   examName: LanguageContent,
-   totalQuestions: Int,
+    resultsArray:List<QuestionResultData>,
+    correctAnswersCount: Int,
+    examName: LanguageContent,
+    totalQuestions: Int,
     submittedAt: String) : SubmittedExamResponse {
     val json = Json {
         prettyPrint = true
         ignoreUnknownKeys = true
     }
+
     val requestUrl="${BASE_URL}${SUBMIT_EXAM_ENDPOINT}"
+
     return try {
         val response: HttpResponse = httpClient.post(requestUrl) {
             contentType(ContentType.Application.Json)
-            setBody(SubmitExamRequest(examId, userId, resultsArray, correctAnswersCount, examName, totalQuestions, submittedAt))
+            setBody(SubmitExamRequest(id = null ,examId, userId, resultsArray, correctAnswersCount, examName, totalQuestions, submittedAt))
+
+            // Add Authorization header
+            headers {
+                append(HttpHeaders.Authorization, "Bearer $token")
+            }
         }
         when (response.status) {
             HttpStatusCode.OK -> {

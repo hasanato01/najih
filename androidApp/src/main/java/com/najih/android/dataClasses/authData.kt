@@ -1,5 +1,6 @@
 package com.najih.android.dataClasses
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
     @Serializable
@@ -15,7 +16,7 @@ import kotlinx.serialization.Serializable
 
     @Serializable
     data class User(
-        val _id: String,
+        @SerialName("_id") val id: String,
         val name: String,
         val role: String,
         val verificationToken: String,
@@ -39,7 +40,8 @@ import kotlinx.serialization.Serializable
     data class SignUpResponse(val token: String, val userId: String)
 
 data class UserInfo(
-    val token: String?,
-    val userName: String?,
-    val userEmail: String?
+    val token: String,
+    val userId: String,
+    val userName: String,
+    val userEmail: String
 )
