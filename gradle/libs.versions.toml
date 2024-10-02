@@ -9,9 +9,11 @@ kotlinxSerializationJson = "1.5.1"
 ktorClientCore = "2.0.0"
 ktorClientHttpsRedirect = "2.3.3"
 navigationCompose = "2.7.7"
+navigationComposeVersion = "2.6.0"
 
 [libraries]
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-compose-v260 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +28,8 @@ import androidx.navigation.NavController
 import com.najih.android.api.exams.getUserExams
 import com.najih.android.dataClasses.SubmitExamRequest
 import com.najih.android.ui.homePage.components.SearchBar
-import com.najih.android.ui.navbar
+import com.najih.android.ui.uitilis.BottomNavBar
+import com.najih.android.ui.uitilis.navbar
 import io.ktor.client.HttpClient
 
 @Composable
@@ -50,43 +52,49 @@ fun UserExams (navController: NavController, httpClient: HttpClient, context: Co
             isLoading = false
         }
     }
-    Column(
-        modifier = Modifier
-            .background(Color(0xfff9f9f9))
-            .fillMaxSize()
-            .padding(6.dp)
-    ) {
 
-        navbar(navController)
-        SearchBar()
-        Spacer(modifier = Modifier.height(16.dp))
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { navbar(navController) },
+        bottomBar = { BottomNavBar(navController) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .background(Color(0xfff9f9f9))
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
 
-        if (isLoading) {
-            Text("Loading exams...", modifier = Modifier.padding(top = 16.dp))
-        } else if (errorMessage != null) {
-            Text(errorMessage ?: "Unknown error", modifier = Modifier.padding(top = 16.dp))
-        } else if (examResults.isEmpty()) {
-            Text("No exams available", modifier = Modifier.padding(top = 16.dp))
-        } else {
-            // Render the list of exams using LazyColumn
-            Text(
-                text = "Exams",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Normal,
-                modifier = Modifier.padding(top = 16.dp, start = 11.dp)
-            )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                items(examResults) { examResult ->
-                 ExamResultsCard(navController , examResult  )
+//            SearchBar()
+            Spacer(modifier = Modifier.height(16.dp))
 
+            if (isLoading) {
+                Text("Loading exams...", modifier = Modifier.padding(top = 16.dp))
+            } else if (errorMessage != null) {
+                Text(errorMessage ?: "Unknown error", modifier = Modifier.padding(top = 16.dp))
+            } else if (examResults.isEmpty()) {
+                Text("No exams available", modifier = Modifier.padding(top = 16.dp))
+            } else {
+                // Render the list of exams using LazyColumn
+                Text(
+                    text = "Exams",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.padding(top = 16.dp, start = 11.dp)
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    items(examResults) { examResult ->
+                        ExamResultsCard(navController, examResult)
+
+                    }
                 }
             }
         }
     }
-
 }

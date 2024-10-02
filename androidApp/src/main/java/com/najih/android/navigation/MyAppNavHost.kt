@@ -4,7 +4,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.najih.android.api.CreateHttpClient
-import com.najih.android.ui.ContactUsForm
+import com.najih.android.ui.uitilis.ContactUsForm
+import com.najih.android.ui.uitilis.SplashScreen
 import com.najih.android.ui.StreamsLessons.Streams
 import com.najih.android.ui.StreamsLessons.Teachers
 import com.najih.android.ui.auth.SignIn
@@ -16,6 +17,7 @@ import com.najih.android.ui.examResults.UserExams
 import com.najih.android.ui.homePage.HomePage
 import com.najih.android.ui.recordedLessons.Lessons
 import com.najih.android.ui.subjects.Subjects
+import com.najih.android.ui.uitilis.LanguageSelectionScreen
 import io.ktor.client.engine.android.Android
 
 @Composable
@@ -26,10 +28,16 @@ fun MyAppNavHost() {
 
     NavHost(
         navController = navController,
-        startDestination = "Home_page"
+        startDestination = "splash_screen"
     ) {
+        composable("splash_screen") {
+            SplashScreen(navController,context)
+        }
         composable("Home_page") {
             HomePage(navController)
+        }
+        composable("LanguageSelection") {
+            LanguageSelectionScreen(navController)
         }
         composable("sign_in") {
             SignIn(navController)

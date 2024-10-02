@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class Exam(
     @SerialName("_id") val id: String,
     val name: LanguageContent,
-    val description: LanguageContent,
+    val describtion: LanguageContent,
     val time: Int,
     val questions: List<Question>,
     val createdAt: String,

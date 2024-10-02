@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,8 +34,9 @@ import com.najih.android.api.subjects.GetStreams
 import com.najih.android.dataClasses.Streams
 import com.najih.android.dataClasses.StreamsInfo
 import com.najih.android.ui.homePage.components.SearchBar
-import com.najih.android.ui.navbar
+import com.najih.android.ui.uitilis.navbar
 import com.najih.android.ui.recordedLessons.EnrollmentButtons
+import com.najih.android.ui.uitilis.BottomNavBar
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
@@ -63,27 +65,33 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
             }
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        navbar(navController)
-        SearchBar()
-        Text(
 
-            text = subjectName,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Normal,
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {navbar(navController) },
+        bottomBar = { BottomNavBar(navController) }
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 11.dp, top = 49.dp)
-        )
-        EnrollmentButtons(navController,stage , showDialog)
-        streamList?.map { stream ->
-            StreamCard(stream)
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            SearchBar()
+            Text(
+
+                text = subjectName,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(start = 11.dp, top = 49.dp)
+            )
+            EnrollmentButtons(navController, stage, showDialog)
+            streamList?.map { stream ->
+                StreamCard(stream)
+            }
         }
     }
 }

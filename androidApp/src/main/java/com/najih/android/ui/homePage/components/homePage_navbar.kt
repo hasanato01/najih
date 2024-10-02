@@ -47,15 +47,16 @@ import com.najih.android.util.GlobalFunctions
 @Composable
 fun HomePage_navbar(navController: NavController) {
     val context = LocalContext.current
+    val userLanguage = GlobalFunctions.getUserLanguage(context)
     var expanded by remember { mutableStateOf(false) }
     var languageExpanded by remember { mutableStateOf(false) }
-    var selectedLanguage by remember { mutableStateOf("English") }
     var profileMenuExpanded by remember { mutableStateOf(false) }
     var userInfo by remember { mutableStateOf(GlobalFunctions.getUserInfo(context)) }
 
-    var userName = userInfo.userName
+    val userName = userInfo.userName
     val greetingText = userInfo.userName ?: "Welcome to Najih"
     Log.d("ApiClient" , userInfo.toString())
+    Log.d("ApiClient" , userLanguage.toString())
 
     Column(
         modifier = Modifier
@@ -111,7 +112,7 @@ fun HomePage_navbar(navController: NavController) {
             // Icons for Language and List
             Row {
                 IconButton(onClick = { languageExpanded = !languageExpanded }) {
-                    val languageIcon = if (selectedLanguage == "English") {
+                    val languageIcon = if (userLanguage === "en") {
                         painterResource(id = R.drawable.uk)
                     }else {
                         painterResource(id = R.drawable.egypt)
@@ -131,21 +132,21 @@ fun HomePage_navbar(navController: NavController) {
                     DropdownMenuItem(
                         text = { Text("English") },
                         onClick = {
-                            selectedLanguage = "English"
+                           GlobalFunctions.saveUserLanguage(context,"en")
                             languageExpanded = false
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Other") },
+                        text = { Text("Arabic") },
                         onClick = {
-                            selectedLanguage = "Other"
+                            GlobalFunctions.saveUserLanguage(context,"ar")
                             languageExpanded = false
                         }
                     )
                 }
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.four_circle),
+                        painter = painterResource(id = R.drawable.menuwhite),
                         contentDescription = "List",
                         modifier = Modifier.size(24.dp),
                         tint = Color.Unspecified

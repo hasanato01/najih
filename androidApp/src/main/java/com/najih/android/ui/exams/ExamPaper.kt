@@ -14,7 +14,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,7 +61,10 @@ fun ExamPaper(
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
     var showReviewDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    var showSubmissionDialog by remember { mutableStateOf(false) }
+    var submissionMessage by remember { mutableStateOf("") }
 
+    // Fetch exam details
     // Fetch exam details
     LaunchedEffect(Unit) {
         try {
@@ -72,6 +77,34 @@ fun ExamPaper(
                         remainingTime -= 1
                     }
                     Log.d("ExamPaper", "Time is up!")
+
+                    // Trigger exam submission when time is up
+                    val resultsArray = buildExamResults(exam!!, userAnswers)
+                    val correctAnswersCount = calculateCorrectAnswersCount(exam!!, userAnswers)
+                    val examName = LanguageContent(
+                        en = exam!!.name.en,
+                        ar = exam!!.name.ar
+                    )
+                    val submittedAt = System.currentTimeMillis().toString()
+
+                    try {
+                        val response = submitExam(
+                            httpClient = httpClient,
+                            userId = userID,
+                            token = token,
+                            examId = exam!!.id,
+                            resultsArray = resultsArray,
+                            correctAnswersCount = correctAnswersCount,
+                            examName = examName,
+                            totalQuestions = exam!!.questions.size,
+                            submittedAt = submittedAt
+                        )
+                        submissionMessage = "Time is up! The exam has been submitted successfully."
+                        showSubmissionDialog = true  // Show dialog when time is up
+                        Log.d("ExamSubmission", "Exam submitted successfully: $response")
+                    } catch (e: Exception) {
+                        Log.e("ExamSubmission", "Error submitting exam: ${e.message}", e)
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -81,6 +114,7 @@ fun ExamPaper(
             isLoading = false
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -135,6 +169,22 @@ fun ExamPaper(
                         onDismiss = { showReviewDialog = false }
                     )
                 }
+                if (showSubmissionDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showSubmissionDialog = false },
+                        confirmButton = {
+                            TextButton(onClick = { showSubmissionDialog = false }) {
+                                Text("OK")
+                            }
+                        },
+                        title = {
+                            Text(text = "Exam Submitted")
+                        },
+                        text = {
+                            Text(text = submissionMessage)
+                        }
+                    )
+                }
 
                 ExamBottomNavBar(
                     onReviewClick = { showReviewDialog = true },
@@ -159,6 +209,8 @@ fun ExamPaper(
                                     totalQuestions = exam.questions.size,
                                     submittedAt = submittedAt
                                 )
+                                submissionMessage = "The exam has been submitted successfully."
+                                showSubmissionDialog = true  // Show dialog for manual submission
                                 Log.d("ExamSubmission", "Exam submitted successfully: $response")
                             } catch (e: Exception) {
                                 Log.e("ExamSubmission", "Error submitting exam: ${e.message}", e)
@@ -166,9 +218,7 @@ fun ExamPaper(
                             }
                         }
                     },
-
-
-                onNextClick = {
+                    onNextClick = {
                         currentQuestionIndex = (currentQuestionIndex + 1) % exam.questions.size
                     }
                 )
@@ -176,6 +226,8 @@ fun ExamPaper(
         }
     }
 }
+
+
 
 // Helper function to build the exam results
 fun buildExamResults(exam: Exam, userAnswers: MutableMap<Int, Char>): List<QuestionResultData> {

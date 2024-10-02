@@ -1,10 +1,6 @@
 package com.najih.android.util
 
 import android.content.Context
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import GetSubjectsResponse
-import android.provider.ContactsContract.CommonDataKinds.Email
 import com.najih.android.dataClasses.UserInfo
 
 
@@ -50,10 +46,33 @@ object  GlobalFunctions {
         editor.apply() // Apply changes asynchronously
     }
 
-
-    fun serializeSubjects(subjects: List<GetSubjectsResponse>): String {
-        return Json.encodeToString(subjects)
+    // Function to save the language selection and mark the user as not first-time
+    fun setFirstTimeUser(context: Context, isFirstTime: Boolean) {
+        val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("IS_FIRST_TIME_USER", isFirstTime)
+        editor.apply()
     }
+
+    // Function to save the selected language
+    fun saveUserLanguage(context: Context, language: String) {
+        val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("USER_LANGUAGE", language)
+        editor.apply()
+    }
+
+    // Function to check if it's the user's first time selecting a language
+    fun isFirstTimeUser(context: Context): Boolean {
+    val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+    return sharedPreferences.getBoolean("IS_FIRST_TIME_USER", true)
+}
+
+    // Function to retrieve the saved language
+    fun getUserLanguage(context: Context): String? {
+    val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+    return sharedPreferences.getString("USER_LANGUAGE", "en") // Default language is English ("en")
+}
 
 
 }

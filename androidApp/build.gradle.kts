@@ -60,10 +60,9 @@ dependencies {
     // Kotlinx Serialization JSON
     implementation(libs.kotlinx.serialization.json)
 
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
     //images
     implementation(libs.coil.compose)
-
+    // Navigation
+    implementation(libs.androidx.navigation.compose.v260)
 
 }

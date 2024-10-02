@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,7 +44,8 @@ import androidx.navigation.compose.rememberNavController
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.subjects.GetLessonsBySubject
 import com.najih.android.ui.homePage.components.SearchBar
-import com.najih.android.ui.navbar
+import com.najih.android.ui.uitilis.BottomNavBar
+import com.najih.android.ui.uitilis.navbar
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
@@ -65,7 +67,7 @@ fun Lessons(navController: NavController, subjectId: String) {
             try {
                 subjectInfo = GetLessonsBySubject(httpClient, subjectId)
                 subjectName = subjectInfo?.name?.en ?: "Unknown"
-                stage = "${subjectInfo?.level?.en} ${subjectInfo?.classNumber}"
+                stage = "${subjectInfo?.level?.en} Class ${subjectInfo?.classNumber}"
                 lessonsList = subjectInfo?.listoflessons
                 Log.d("ApiClient", "Subject info fetched: $subjectInfo")
             } catch (e: Exception) {
@@ -73,32 +75,41 @@ fun Lessons(navController: NavController, subjectId: String) {
             }
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        navbar(navController)
-        SearchBar()
-        Text(
-            
-            text = subjectName,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Normal,
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { navbar(navController) },
+        bottomBar = { BottomNavBar(navController) }
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 11.dp, top = 49.dp)
-        )
-        EnrollmentButtons(navController,stage , showDialog)
-        lessonsList?.map { lesson ->
-            LessonCard(lesson)
-        }
-        if(showDialog.value ){
-            EnrollmentDialog(onDismiss = { showDialog.value = false}, subjectInfo = subjectInfo )
-        }
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
+
+            Text(
+
+                text = subjectName,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(start = 11.dp, top = 49.dp)
+            )
+            EnrollmentButtons(navController, stage, showDialog)
+            lessonsList?.map { lesson ->
+                LessonCard(lesson)
+            }
+            if (showDialog.value) {
+                EnrollmentDialog(
+                    onDismiss = { showDialog.value = false },
+                    subjectInfo = subjectInfo
+                )
+            }
+
+        }
     }
 }
 
@@ -107,7 +118,7 @@ fun EnrollmentButtons(navController: NavController,stage : String , showDialog :
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 28.dp),
+            .padding( 10.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Button(

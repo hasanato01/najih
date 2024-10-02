@@ -1,6 +1,7 @@
 package com.najih.android.ui.exams
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,55 +27,45 @@ import com.najih.android.dataClasses.Exam
 fun ExamCard( navController: NavController,exam: Exam) {
     val examId = exam.id
     val examName = exam.name.en
-    val examDesc = exam.description.en
+    val examDesc = exam.describtion.en
     val numberOfQuestions = exam.questions.size
     val examTime = exam.time
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
-            .padding(top = 20.dp)
-            .shadow(4.dp, RoundedCornerShape(5.dp))
+            .padding(10.dp)
+            .border(width = 0.5.dp,  color = Color(0xb8b8b8FF), shape = RoundedCornerShape(8.dp))
             .clickable {
                 navController.navigate("exam_paper/$examId")
             }
     ) {
-        Card(
 
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
-            shape = RoundedCornerShape(5.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-                    modifier = Modifier.fillMaxSize().clickable {
-
-                    }
-        ) {
             Column(
                 modifier = Modifier.padding(10.dp)
             ) {
                 Text(
                     text = examName,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light
+                    fontSize = 20.sp,
                 )
                 Text(
                     text = examDesc,
-                    fontSize = 10.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Light,
                     modifier = Modifier.padding(top = 16.dp)
                 )
                 Text(
                     text = "Questions : $numberOfQuestions",
-                    fontSize = 10.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(top = 11.dp)
                 )
                 Text(
                     text = "Time : $examTime",
-                    fontSize = 10.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(top = 11.dp)
                 )
             }
         }
     }
-}
