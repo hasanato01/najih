@@ -54,7 +54,7 @@ fun ContactUsForm (navController: NavController) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { navbar(navController) },
+        topBar = { HomeNavbar(navController) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(
@@ -64,7 +64,7 @@ fun ContactUsForm (navController: NavController) {
                 .fillMaxHeight()
                 .padding(innerPadding)
         ) {
-            navbar(navController)
+            HomeNavbar(navController)
             Spacer(modifier = Modifier.height(8.dp))
             Text("Get in touch", style = MaterialTheme.typography.headlineMedium)
 

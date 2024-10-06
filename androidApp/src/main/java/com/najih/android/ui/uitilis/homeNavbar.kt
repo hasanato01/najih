@@ -1,9 +1,7 @@
 package com.najih.android.ui.uitilis
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,12 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,10 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,13 +37,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.najih.android.R
-import com.najih.android.api.CreateHttpClient
 import com.najih.android.util.GlobalFunctions
-import io.ktor.client.engine.android.Android
-import kotlinx.coroutines.launch
 
 @Composable
-fun navbar(navController: NavController) {
+fun HomeNavbar(navController: NavController) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -138,52 +129,9 @@ fun navbar(navController: NavController) {
                 }
             }
 
-//                IconButton(onClick = { languageExpanded = !languageExpanded }) {
-//                    val languageIcon = if (selectedLanguage == "English") {
-//                        painterResource(id = R.drawable.uk)
-//                    } else {
-//                        painterResource(id = R.drawable.egypt)
-//                    }
-//                    Icon(
-//                        painter = languageIcon,
-//                        contentDescription = "Language",
-//                        modifier = Modifier.size(24.dp),
-//                        tint = Color.Unspecified
-//                    )
-//                }
-//                DropdownMenu(
-//                    expanded = languageExpanded,
-//                    onDismissRequest = { languageExpanded = false },
-//                    modifier = Modifier.background(Color.White)
-//                ) {
-//                    DropdownMenuItem(
-//                        text = { Text("English") },
-//                        onClick = {
-//                            selectedLanguage = "English"
-//                            languageExpanded = false
-//                        }
-//                    )
-//                    DropdownMenuItem(
-//                        text = { Text("Other") },
-//                        onClick = {
-//                            selectedLanguage = "Other"
-//                            languageExpanded = false
-//                        }
-//                    )
-//                }
-
-            // Dropdown Menu for List Auth
-
-
             }
         }
 
     }
 
 
-@Preview
-@Composable
-fun PreviewNavBar() {
-    val navController = rememberNavController()
-  navbar(navController)
-}

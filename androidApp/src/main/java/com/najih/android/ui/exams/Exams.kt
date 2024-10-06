@@ -1,8 +1,7 @@
 package com.najih.android.ui.exams
 
-import GetAllExams
+
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,50 +16,41 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.najih.android.dataClasses.Exam
-import com.najih.android.ui.homePage.components.SearchBar
-import com.najih.android.ui.uitilis.navbar
 import io.ktor.client.HttpClient
-import androidx.compose.runtime.setValue
-import com.najih.android.ui.homePage.components.HomePage_navbar
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.najih.android.ui.uitilis.BottomNavBar
+import com.najih.android.ui.uitilis.HomeNavbar
+import com.najih.android.ui.uitilis.Navbar
+import com.najih.android.viewModels.exams.ExamViewModelFactory
+import com.najih.android.viewModels.exams.ExamsViewModel
 
 
 @Composable
 fun Exams (navController: NavController ,httpClient: HttpClient , context: Context) {
 
-    // State to hold the fetched exams
-    var exams by remember { mutableStateOf<List<Exam>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val viewModelFactory = ExamViewModelFactory(httpClient)
+    val examsViewModel: ExamsViewModel = viewModel(factory = viewModelFactory)
+
+    // Observe the state from the ViewModel
+    val exams by examsViewModel.exams.observeAsState(emptyList())
+    val isLoading by examsViewModel.isLoading.observeAsState(true)
+    val errorMessage by examsViewModel.errorMessage.observeAsState(null)
 
     // Fetch exams when the composable is displayed
     LaunchedEffect(Unit) {
-        try {
-            // Call your API to fetch exams
-            val fetchedExams = GetAllExams(httpClient, context)
-            exams = fetchedExams
-        } catch (e: Exception) {
-            // Handle error and set an error message if needed
-            errorMessage = "Error fetching exams"
-            Log.e("ExamsError", "Failed to fetch exams", e)
-        } finally {
-            isLoading = false
-        }
+        examsViewModel.fetchExams(context)
     }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { navbar(navController) },
+        topBar = { Navbar(navController  , backText = "test your self" , titleText = "Exams" ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding  ->
         Column(
@@ -104,10 +94,3 @@ fun Exams (navController: NavController ,httpClient: HttpClient , context: Conte
 }
 
 
-@Preview
-@Composable
-fun ExamsPreview() {
-    val navController = rememberNavController()
-//    val expExam = List<Exam>()
-//    Exams(navController,expExam)
-}

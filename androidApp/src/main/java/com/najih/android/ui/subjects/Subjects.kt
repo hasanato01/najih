@@ -2,7 +2,6 @@ package com.najih.android.ui.subjects
 
 
 import GetSubjectsResponse
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,67 +10,43 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.najih.android.R
+import com.najih.android.viewModels.Subjects.SubjectsViewModelFactory
 import com.najih.android.api.CreateHttpClient
-import com.najih.android.api.subjects.getRecordedSubjects
-import com.najih.android.api.subjects.getStreamsSubjects
 import com.najih.android.dataClasses.StreamsSubjects
 import com.najih.android.ui.subjects.components.ClassSection
 import com.najih.android.ui.subjects.components.SubjectRow
 import com.najih.android.ui.uitilis.BottomNavBar
-import com.najih.android.ui.uitilis.navbar
+import com.najih.android.ui.uitilis.Navbar
+import com.najih.android.viewModels.Subjects.SubjectsViewModel
 import io.ktor.client.engine.android.Android
-import kotlinx.coroutines.launch
 
 @Composable
 fun Subjects(navController: NavController, type: String , endPoint:String) {
     val httpClient = CreateHttpClient(Android)
-    val coroutineScope = rememberCoroutineScope()
-
-    // State for subjects, class grouping, and level
-    var recordedsubjects by remember { mutableStateOf<List<GetSubjectsResponse>>(emptyList()) }
-    var streamsSubjects by remember { mutableStateOf<List<StreamsSubjects>>(emptyList()) }
-    var groupByRecordedClass by remember {
-        mutableStateOf<Map<Int, List<GetSubjectsResponse>>>(
-            emptyMap()
-        )
-    }
-    var groupByStreamsClass by remember { mutableStateOf<Map<Int, List<StreamsSubjects>>>(emptyMap()) }
-    var level by remember { mutableStateOf("Unknown Level") }
+    val viewModel: SubjectsViewModel = viewModel(factory = SubjectsViewModelFactory(httpClient))
 
     LaunchedEffect(type) {
-        coroutineScope.launch {
-            try {
-                if (endPoint == "r_subjects") {
-                    recordedsubjects = getRecordedSubjects(httpClient, type, endPoint)
-                    groupByRecordedClass = recordedsubjects.groupBy { it.classNumber }
-                    level = recordedsubjects.firstOrNull()?.level?.en ?: "Unknown Level"
-                    Log.d("Subjects", recordedsubjects.toString())
-                    Log.d("groupClasses", groupByRecordedClass.toString())
-                } else if (endPoint == "t_subjects") {
-                    streamsSubjects = getStreamsSubjects(httpClient, type, endPoint)
-                    groupByStreamsClass = streamsSubjects.groupBy { it.classNumber }
-                    level = streamsSubjects.firstOrNull()?.level?.en ?: "Unknown Level"
-                    Log.d("Subjects", StreamsSubjects.toString())
-                    Log.d("groupClasses", groupByStreamsClass.toString())
-                }
-
-            } catch (e: Exception) {
-                Log.e("SubjectFetchError", "Error fetching subjects", e)
-            }
-        }
+        viewModel.fetchSubjects(type, endPoint)
     }
+
+    val recordedSubjects by viewModel.recordedSubjects
+    val streamsSubjects by viewModel.streamsSubjects
+    val groupByRecordedClass by viewModel.groupByRecordedClass
+    val groupByStreamsClass by viewModel.groupByStreamsClass
+    val level by viewModel.level
+    val isLoading by viewModel.isLoading
+    val errorMessage by viewModel.errorMessage
+
+
 
     val groupByClass = when (endPoint) {
         "r_subjects" -> groupByRecordedClass
@@ -81,13 +56,13 @@ fun Subjects(navController: NavController, type: String , endPoint:String) {
 
     // Determine which subjects list to check
     val subjects = when (endPoint) {
-        "r_subjects" -> recordedsubjects
+        "r_subjects" -> recordedSubjects
         "t_subjects" -> streamsSubjects
         else -> emptyList()
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { navbar(navController) },
+        topBar = { Navbar(navController  , backText = type , titleText = "Subjects" ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
 
@@ -104,7 +79,7 @@ fun Subjects(navController: NavController, type: String , endPoint:String) {
             // Iterate through the groupByClass map directly
             groupByClass.forEach { (classNumber, subjects) ->
                 item {
-                    ClassSection("$level Class $classNumber")
+                    ClassSection("Class $classNumber")
                 }
 
                 // Mapping the subject data to pairs for each subject row

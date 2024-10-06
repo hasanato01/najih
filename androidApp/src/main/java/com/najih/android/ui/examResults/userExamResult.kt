@@ -3,15 +3,13 @@ package com.najih.android.ui.examResults
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,26 +18,38 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import androidx.navigation.compose.rememberNavController
 import com.najih.android.api.exams.getExamResultById
-import com.najih.android.dataClasses.QuestionResultData
 import com.najih.android.dataClasses.SubmitExamRequest
+import com.najih.android.ui.uitilis.BottomNavBar
+import com.najih.android.ui.uitilis.HomeNavbar
+import com.najih.android.ui.uitilis.Navbar
 import io.ktor.client.HttpClient
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
 fun UserExamResult(httpClient: HttpClient, context: Context, examResultId: String) {
+    val navController = rememberNavController()
     var examResult by remember { mutableStateOf<SubmitExamRequest?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    val submittedAt = examResult?.submittedAt ?: "ssss" // Use ?: to provide a default value
+    val parsedDate = try {
+        ZonedDateTime.parse(submittedAt)
+    } catch (e: Exception) {
+        null // Handle parse failure (e.g., if the string is not a valid date format)
+    }
+    val formatter = DateTimeFormatter.ofPattern("d/M/yyyy HH:mm")
+    val formattedDate = parsedDate?.format(formatter) ?: "Invalid Date" // Provide a fallback if parsing fails
+
     Log.e("ExamPaperError", examResultId)
+
     LaunchedEffect(Unit) {
         try {
             examResult = getExamResultById(httpClient, context, examResultId)
@@ -51,93 +61,85 @@ fun UserExamResult(httpClient: HttpClient, context: Context, examResultId: Strin
         }
     }
 
-    if (isLoading) {
-        // Show loading UI
-        CircularProgressIndicator(modifier = Modifier.fillMaxSize().wrapContentSize())
-    } else if (examResult != null) {
-        // Display the exam result details and questions
-        val result = examResult!!
 
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Header
-            Text(
-                text = result.examName.en,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Navbar(
+                navController = navController,
+                backText = formattedDate ,
+                titleText = examResult?.examName?.en ?: "Exam Title" // Fallback if null
             )
-            Text(
-                text = "Submitted At: ${result.submittedAt}",
-                fontSize = 16.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Text(
-                text = "Score: ${result.correctAnswersCount} / ${result.totalQuestions}",
-                fontSize = 16.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Text(
-                text = "Correct: ${result.correctAnswersCount}, Incorrect: ${result.totalQuestions - result.correctAnswersCount}",
-                fontSize = 16.sp,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+        },
+        bottomBar = { BottomNavBar(navController) }
+    ) { innerPadding ->
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .padding(15.dp)) {
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize())
+            } else if (examResult != null) {
+                // Display the exam result details
+                val result = examResult!!
+                val submittedAt = result.submittedAt
+                val parsedDate = ZonedDateTime.parse(submittedAt)
+                val formatter = DateTimeFormatter.ofPattern("d/M/yyyy HH:mm")
+                val formattedDate = parsedDate.format(formatter)
+                Column(modifier = Modifier.padding(15.dp)) {
 
-            // Map over the questions and display the results
-            result.results.forEachIndexed { index, questionResult ->
-                QuestionResultCard(questionResult, index + 1)
+                // Header
+                Text(
+                    text = result.examName.en,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text(
+                    text = "Submitted At: $formattedDate",
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text(
+                    text = "Score: ${result.correctAnswersCount} / ${result.totalQuestions}",
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text(
+                    text = "Correct: ${result.correctAnswersCount}, Incorrect: ${result.totalQuestions - result.correctAnswersCount}",
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                    }
+
+                // Check if results is not null or empty
+                val resultsCount = result.results.size
+                if (resultsCount > 0) {
+                    // Display questions in a LazyColumn
+                    LazyColumn {
+                        itemsIndexed(result.results) { index, questionResult ->
+                            QuestionResultCard(questionResult, questionIndex = index + 1) // Ensure index is an integer
+                        }
+                    }
+                } else {
+                    // Handle the case where there are no results
+                    Text(
+                        text = "No results available for this exam.",
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            } else if (errorMessage != null) {
+                // Show error message
+                Text(
+                    text = errorMessage ?: "Unknown error",
+                    color = Color.Red,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
-    } else if (errorMessage != null) {
-        // Show error message
-        Text(
-            text = errorMessage ?: "Unknown error",
-            color = Color.Red,
-            modifier = Modifier.padding(16.dp)
-        )
     }
 }
 
-@Composable
-fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
-    // Display if the question was correct or not
-    val isCorrectText = if (result.isCorrect) "Correct" else "Incorrect"
-    val isCorrectColor = if (result.isCorrect) Color.Green else Color.Red
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .shadow(4.dp, RoundedCornerShape(8.dp)),
-
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Question index and correctness
-            Text(
-                text = "Question $questionIndex - $isCorrectText",
-                color = isCorrectColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Display question image
-            AsyncImage(
-                model = result.question.image.url,
-                contentDescription = "Question Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Display answer options
-            Text(text = "Your Answer: ${result.userAnswer}", fontSize = 14.sp)
-            Text(text = "Correct Answer: ${result.correctAnswer}", fontSize = 14.sp)
-        }
-    }
-}

@@ -11,7 +11,7 @@ android {
     compileSdk = 34
     defaultConfig {
         applicationId = "com.najih.android"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -44,8 +44,8 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.runtime.livedata)
     debugImplementation(libs.compose.ui.tooling)
-
     // Ktor dependencies for the Android module
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.json)
@@ -55,14 +55,14 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
-
-
+    implementation(libs.androidx.core.ktx)
     // Kotlinx Serialization JSON
     implementation(libs.kotlinx.serialization.json)
-
     //images
     implementation(libs.coil.compose)
     // Navigation
     implementation(libs.androidx.navigation.compose.v260)
+    // viewModel
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
 }

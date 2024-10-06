@@ -34,9 +34,9 @@ import com.najih.android.api.subjects.GetStreams
 import com.najih.android.dataClasses.Streams
 import com.najih.android.dataClasses.StreamsInfo
 import com.najih.android.ui.homePage.components.SearchBar
-import com.najih.android.ui.uitilis.navbar
 import com.najih.android.ui.recordedLessons.EnrollmentButtons
 import com.najih.android.ui.uitilis.BottomNavBar
+import com.najih.android.ui.uitilis.HomeNavbar
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
@@ -68,7 +68,7 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {navbar(navController) },
+        topBar = { HomeNavbar(navController) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(

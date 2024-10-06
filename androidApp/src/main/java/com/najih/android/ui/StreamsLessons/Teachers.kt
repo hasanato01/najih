@@ -36,7 +36,8 @@ import com.najih.android.dataClasses.StreamsSubjectWithTeachers
 import com.najih.android.dataClasses.Teacher
 import com.najih.android.ui.homePage.components.SearchBar
 import com.najih.android.ui.uitilis.BottomNavBar
-import com.najih.android.ui.uitilis.navbar
+import com.najih.android.ui.uitilis.HomeNavbar
+import com.najih.android.ui.uitilis.Navbar
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
@@ -69,7 +70,7 @@ fun Teachers (navController: NavController,subjectId:String){
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { navbar(navController) },
+        topBar = { Navbar(navController  , backText = stage , titleText = subjectName ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(

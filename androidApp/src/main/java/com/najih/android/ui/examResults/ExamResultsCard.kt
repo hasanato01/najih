@@ -1,18 +1,27 @@
 package com.najih.android.ui.examResults
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -22,7 +31,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.najih.android.dataClasses.SubmitExamRequest
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
+
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun ExamResultsCard (navController: NavController, examResult: SubmitExamRequest) {
 
@@ -30,17 +43,17 @@ fun ExamResultsCard (navController: NavController, examResult: SubmitExamRequest
     val examResultId = examResult.id
     val examName = examResult.examName.en
     val numberOfQuestions = examResult.totalQuestions
+    val correctAnswers = examResult.correctAnswersCount
     val submittedAt = examResult.submittedAt
-    Box(
-    modifier = Modifier
-        .fillMaxWidth()
-        .height(200.dp)
-        .padding(top = 20.dp)
-        .shadow(4.dp, RoundedCornerShape(5.dp))
-    ) {
+    val parsedDate = ZonedDateTime.parse(submittedAt)
+    val formatter = DateTimeFormatter.ofPattern("d/M/yyyy HH:mm")
+    val formattedDate = parsedDate.format(formatter)
+
         Card(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .height(150.dp)
+                .padding(10.dp)
                 .clickable {
                     coroutineScope.launch {
                         navController.navigate("exam_result/${examResultId}")
@@ -50,35 +63,57 @@ fun ExamResultsCard (navController: NavController, examResult: SubmitExamRequest
             shape = RoundedCornerShape(5.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            Column(
-                modifier = Modifier.padding(10.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth().
+                        fillMaxHeight()
+                    .padding(10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (examResultId != null) {
+                // Left section - Info
+                Column {
                     Text(
-                        text = examResultId,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light
+                        text = examName,
+                        fontSize = 20.sp,
+                    )
+
+                    Text(
+                        text = "Correct Answers: $correctAnswers/$numberOfQuestions",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(top = 11.dp)
+                    )
+
+                    Text(
+                        text = "Time: $formattedDate",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(top = 11.dp)
                     )
                 }
-                Text(
-                    text = examName,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light
-                )
 
-                Text(
-                    text = "Questions : $numberOfQuestions",
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(top = 11.dp)
-                )
-                Text(
-                    text = "Time : $submittedAt",
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(top = 11.dp)
-                )
+                // Right section - Circular percentage indicator
+                val percentage = (correctAnswers.toFloat() / numberOfQuestions.toFloat()) * 100
+
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(100.dp) // Adjust the size of the circle
+                ) {
+                    CircularProgressIndicator(
+                        progress = { correctAnswers.toFloat() / numberOfQuestions.toFloat() },
+                        modifier = Modifier.size(100.dp), // Same size as the box
+                        color = Color(0xFFfCAF50),
+                        strokeWidth = 6.dp,
+                    )
+                    Text(
+                        text = "${percentage.toInt()}%", // Show percentage inside circle
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
             }
         }
+
     }
-}

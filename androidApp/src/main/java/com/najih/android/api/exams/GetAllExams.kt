@@ -1,3 +1,5 @@
+package com.najih.android.api.exams
+
 import android.content.Context
 import android.util.Log
 import com.najih.android.api.globalData.BASE_URL
@@ -15,7 +17,7 @@ import io.ktor.http.contentType
 import io.ktor.http.HttpHeaders
 import kotlinx.serialization.json.Json
 
-suspend fun GetAllExams(
+suspend fun getAllExams(
     httpClient: HttpClient,
     context: Context // Add context to retrieve token
 ): List<Exam> {

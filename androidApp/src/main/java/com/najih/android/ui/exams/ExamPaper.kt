@@ -65,7 +65,6 @@ fun ExamPaper(
     var submissionMessage by remember { mutableStateOf("") }
 
     // Fetch exam details
-    // Fetch exam details
     LaunchedEffect(Unit) {
         try {
             exam = getExamById(httpClient, context, examId)

@@ -20,14 +20,14 @@ import com.najih.android.ui.homePage.components.LatestNews
 import com.najih.android.ui.homePage.components.Stages
 import com.najih.android.ui.homePage.components.SuggestedLessons
 import com.najih.android.ui.uitilis.BottomNavBar
-import com.najih.android.ui.uitilis.navbar
+import com.najih.android.ui.uitilis.HomeNavbar
 
 
 @Composable
 fun HomePage(navController: NavController, modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { navbar(navController) },
+        topBar = { HomeNavbar(navController) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(

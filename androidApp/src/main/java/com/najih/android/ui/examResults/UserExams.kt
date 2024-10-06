@@ -1,7 +1,9 @@
 package com.najih.android.ui.examResults
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,8 +31,10 @@ import com.najih.android.api.exams.getUserExams
 import com.najih.android.dataClasses.SubmitExamRequest
 import com.najih.android.ui.homePage.components.SearchBar
 import com.najih.android.ui.uitilis.BottomNavBar
-import com.najih.android.ui.uitilis.navbar
+import com.najih.android.ui.uitilis.HomeNavbar
+import com.najih.android.ui.uitilis.Navbar
 import io.ktor.client.HttpClient
+
 
 @Composable
 fun UserExams (navController: NavController, httpClient: HttpClient, context: Context) {
@@ -55,7 +59,7 @@ fun UserExams (navController: NavController, httpClient: HttpClient, context: Co
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { navbar(navController) },
+        topBar = {Navbar(navController  , backText = "submitted Exams" , titleText = "My Exams" ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(
@@ -78,7 +82,7 @@ fun UserExams (navController: NavController, httpClient: HttpClient, context: Co
             } else {
                 // Render the list of exams using LazyColumn
                 Text(
-                    text = "Exams",
+                    text = "My Exams",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier.padding(top = 16.dp, start = 11.dp)
