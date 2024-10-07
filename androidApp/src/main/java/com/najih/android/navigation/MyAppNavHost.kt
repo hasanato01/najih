@@ -91,7 +91,7 @@ fun MyAppNavHost() {
         }
         composable("exam_result/{examResultId}") { backStackEntry ->
             val examResultId = backStackEntry.arguments?.getString("examResultId") ?: return@composable
-            UserExamResult(httpClient, context, examResultId)
+            UserExamResult(navController , httpClient, context, examResultId)
         }
 
     }

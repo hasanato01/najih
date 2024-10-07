@@ -80,13 +80,7 @@ fun UserExams (navController: NavController, httpClient: HttpClient, context: Co
             } else if (examResults.isEmpty()) {
                 Text("No exams available", modifier = Modifier.padding(top = 16.dp))
             } else {
-                // Render the list of exams using LazyColumn
-                Text(
-                    text = "My Exams",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier.padding(top = 16.dp, start = 11.dp)
-                )
+
 
                 LazyColumn(
                     modifier = Modifier
