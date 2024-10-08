@@ -22,17 +22,21 @@ import androidx.compose.ui.unit.sp
 import com.najih.android.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.auth.signIn
+import com.najih.android.ui.uitilis.Navbar
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
@@ -46,42 +50,7 @@ fun SignIn(navController: NavController ) {
     var password by remember { mutableStateOf("") }
     var signInError by remember { mutableStateOf<String?>(null) }
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "") },
-                navigationIcon = {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFFF0F0F0))
-
-                    ) {
-                        IconButton(
-                            onClick = {
-                                navController.navigate("Home_Page")
-                            },
-                            modifier = Modifier
-                                .matchParentSize() // Ensure the button fills the Box
-                        ) {
-                            Icon(
-                                modifier = Modifier.padding(10.dp),
-                                painter = painterResource(id = R.drawable.back_button),
-                                contentDescription = "Back",
-                                tint = Color.Black
-
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Black,
-                    navigationIconContentColor = Color.Black
-                ),
-
-            )
-        },
+        topBar = { Navbar(navController, backText ="Nice to have you back" , titleText = "Sign in" )},
         content = { paddingValues ->
             Box(
                 modifier = Modifier
@@ -93,7 +62,8 @@ fun SignIn(navController: NavController ) {
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(12.dp)
                 ) {
                     // Logo Image
                     Image(
@@ -103,44 +73,64 @@ fun SignIn(navController: NavController ) {
                         modifier = Modifier
                             .height(200.dp)
                             .width(200.dp)
-                            .padding(bottom = 24.dp)
+                            .padding( 24.dp)
                     )
 
                     // Email Field
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Email") },
+                        label = { Text("Email", color = Color.Gray) },
+                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFFc0c0c0 )) },  // Add a leading icon
                         singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            focusedBorderColor =Color(0xFFc0c0c0 ),
+                            unfocusedBorderColor = Color.Gray,
+
+                            ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp)
+                            .padding( vertical = 8.dp)
+                            .background(Color.LightGray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp))
                     )
 
-                    // Password Field
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Password") },
+                        label = { Text("password", color = Color.Gray) },  // Use a subtle color for the label
+                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFFc0c0c0 )) },  // Add a leading icon
                         singleLine = true,
+                        shape = RoundedCornerShape(12.dp),  // Rounded corners for a modern look
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            focusedBorderColor =Color(0xFFc0c0c0 ),
+                            unfocusedBorderColor = Color.Gray,
+
+                        ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
-                            imeAction = ImeAction.Done
+                            imeAction = ImeAction.Next
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 24.dp)
+                            .padding( vertical = 8.dp)  // Add some padding for better spacing
+                            .background(Color.LightGray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp))  // Light background for contrast
                     )
+
+
+
+
                     // Sign In Button
                     Button(
                         onClick = {
                             coroutineScope.launch {
                                 try {
-                                    // Call the signIn function
                                     val response = signIn(
                                         httpClient,
                                         context,
@@ -161,7 +151,8 @@ fun SignIn(navController: NavController ) {
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp),
+                            .height(60.dp)
+                            .padding(top = 10.dp),
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {

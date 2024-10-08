@@ -40,15 +40,14 @@ fun ReviewDialog(
         text = {
             Column (modifier = Modifier.fillMaxWidth()){
 
-                // Create a grid of question numbers
                 val rows = (0 until totalQuestions).chunked(5)
                 rows.forEach { row ->
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
                         row.forEach { questionIndex ->
                             val backgroundColor = if (userAnswers.containsKey(questionIndex)) {
-                                Color.Green // Question answered
+                                Color(0xFF4EA27A)// Question answered
                             } else {
-                                Color.Gray // Question skipped or unanswered
+                                Color(0xFFC0C0C0)// Question skipped or unanswered
                             }
                             Box(
                                 modifier = Modifier
