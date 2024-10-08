@@ -1,6 +1,7 @@
 package com.najih.android.ui.exams
 
 import LanguageContent
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,12 +39,15 @@ import com.najih.android.dataClasses.Question
 import com.najih.android.dataClasses.QuestionResult
 import com.najih.android.dataClasses.QuestionResultData
 import com.najih.android.dataClasses.ResultImage
+import com.najih.android.ui.uitilis.BottomNavBar
+import com.najih.android.ui.uitilis.Navbar
 import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun ExamPaper(
     navController: NavController,
@@ -69,12 +74,23 @@ fun ExamPaper(
         try {
             exam = getExamById(httpClient, context, examId)
             exam?.let {
-                remainingTime = it.time
+                // Convert the exam time from minutes to seconds
+                remainingTime = it.time * 60
                 coroutineScope.launch {
                     while (remainingTime > 0) {
                         delay(1000)
                         remainingTime -= 1
+
+                        val minutes = remainingTime / 60
+                        val seconds = remainingTime % 60
+
+                        // Optionally log remaining time for debugging
+                        Log.d(
+                            "ExamPaper",
+                            "Remaining time: ${String.format("%02d:%02d", minutes, seconds)}"
+                        )
                     }
+
                     Log.d("ExamPaper", "Time is up!")
 
                     // Trigger exam submission when time is up
@@ -113,120 +129,134 @@ fun ExamPaper(
             isLoading = false
         }
     }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { exam?.let { exam ->
+            // Format the remaining time
+            val minutes = remainingTime / 60
+            val seconds = remainingTime % 60
+            val formattedTime = String.format("%02d:%02d", minutes, seconds)
 
-
-    Column(
-        modifier = Modifier
-            .background(Color(0xfff9f9f9))
-            .fillMaxSize()
-            .padding(6.dp)
-    ) {
-        // Display loading, error, or exam details
-        if (isLoading) {
-            Text("Loading exam...")
-        } else if (errorMessage != null) {
-            Text(errorMessage ?: "Unknown error")
-        } else {
-            exam?.let { exam ->
-
-                    ExamHeader(
-                        studentName = userName,
-                        examName = exam.name.en,
-                        currentQuestion = currentQuestionIndex + 1,
-                        totalQuestions = exam.questions.size,
-                        remainingTime = "${remainingTime / 60}:${remainingTime % 60}"
-                    )
-
-                AnimatedContent(
-                    targetState = currentQuestionIndex,
-                    transitionSpec = {
-                        (expandIn(animationSpec = tween(durationMillis = 300)) + fadeIn()).togetherWith(
-                            shrinkOut(animationSpec = tween(durationMillis = 300)) + fadeOut()
+            ExamHeader(
+                studentName = userName,
+                examName = exam.name.en,
+                currentQuestion = currentQuestionIndex + 1,
+                totalQuestions = exam.questions.size,
+                remainingTime = formattedTime
+            )} },
+        bottomBar = { exam?.let{exam ->
+            ExamBottomNavBar(
+                onReviewClick = { showReviewDialog = true },
+                onSubmitClick = {
+                    coroutineScope.launch {
+                        val resultsArray = buildExamResults(exam, userAnswers)
+                        val correctAnswersCount =
+                            calculateCorrectAnswersCount(exam, userAnswers)
+                        val examName = LanguageContent(
+                            en = exam.name.en,
+                            ar = exam.name.ar
                         )
-                    }, label = ""
-                ) { targetIndex ->
-                    QuestionCard(
-                        question = exam.questions[targetIndex],
-                        index = targetIndex,
-                        userAnswers,
-                        onAnswer = { answer ->
-                            Log.d("ExamPaper", "Answer selected: $answer")
-                            userAnswers[targetIndex] = answer.selectedOption
-                            Log.d("ExamPaper", "userAnswers: $userAnswers")
-                        }
-                    )
-                }
-
-                if (showReviewDialog) {
-                    ReviewDialog(
-                        totalQuestions = exam.questions.size,
-                        userAnswers = userAnswers,
-                        onQuestionClick = { selectedQuestionIndex ->
-                            currentQuestionIndex = selectedQuestionIndex
-                            showReviewDialog = false
-                        },
-                        onDismiss = { showReviewDialog = false }
-                    )
-                }
-                if (showSubmissionDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showSubmissionDialog = false },
-                        confirmButton = {
-                            TextButton(onClick = { showSubmissionDialog = false }) {
-                                Text("OK")
-                            }
-                        },
-                        title = {
-                            Text(text = "Exam Submitted")
-                        },
-                        text = {
-                            Text(text = submissionMessage)
-                        }
-                    )
-                }
-
-                ExamBottomNavBar(
-                    onReviewClick = { showReviewDialog = true },
-                    onSubmitClick = {
-                        coroutineScope.launch {
-                            val resultsArray = buildExamResults(exam, userAnswers)
-                            val correctAnswersCount = calculateCorrectAnswersCount(exam, userAnswers)
-                            val examName = LanguageContent(
-                                en = exam.name.en,
-                                ar = exam.name.ar
+                        val submittedAt = System.currentTimeMillis().toString()
+                        try {
+                            val response = submitExam(
+                                httpClient = httpClient,
+                                userId = userID,
+                                token = token,
+                                examId = exam.id,
+                                resultsArray = resultsArray,
+                                correctAnswersCount = correctAnswersCount,
+                                examName = examName,
+                                totalQuestions = exam.questions.size,
+                                submittedAt = submittedAt
                             )
-                            val submittedAt = System.currentTimeMillis().toString()
-                            try {
-                                val response = submitExam(
-                                    httpClient = httpClient,
-                                    userId = userID,
-                                    token=token,
-                                    examId = exam.id,
-                                    resultsArray = resultsArray,
-                                    correctAnswersCount = correctAnswersCount,
-                                    examName = examName,
-                                    totalQuestions = exam.questions.size,
-                                    submittedAt = submittedAt
-                                )
-                                submissionMessage = "The exam has been submitted successfully."
-                                showSubmissionDialog = true  // Show dialog for manual submission
-                                Log.d("ExamSubmission", "Exam submitted successfully: $response")
-                            } catch (e: Exception) {
-                                Log.e("ExamSubmission", "Error submitting exam: ${e.message}", e)
-
-                            }
+                            submissionMessage = "The exam has been submitted successfully."
+                            showSubmissionDialog =
+                                true  // Show dialog for manual submission
+                            Log.d(
+                                "ExamSubmission",
+                                "Exam submitted successfully: $response"
+                            )
+                        } catch (e: Exception) {
+                            Log.e(
+                                "ExamSubmission",
+                                "Error submitting exam: ${e.message}",
+                                e
+                            )
                         }
-                    },
-                    onNextClick = {
-                        currentQuestionIndex = (currentQuestionIndex + 1) % exam.questions.size
                     }
-                )
+                },
+                onNextClick = {
+                    currentQuestionIndex = (currentQuestionIndex + 1) % exam.questions.size
+                }
+            )
+        } }
+    ) { innerPadding ->
+
+        Column(
+            modifier = Modifier
+                .background(Color(0xfff9f9f9))
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            if (isLoading) {
+                Text("Loading exam...")
+            } else if (errorMessage != null) {
+                Text(errorMessage ?: "Unknown error")
+            } else {
+                exam?.let { exam ->
+                    AnimatedContent(
+                        targetState = currentQuestionIndex,
+                        transitionSpec = {
+                            (expandIn(animationSpec = tween(durationMillis = 300)) + fadeIn()).togetherWith(
+                                shrinkOut(animationSpec = tween(durationMillis = 300)) + fadeOut()
+                            )
+                        }, label = ""
+                    ) { targetIndex ->
+                        QuestionCard(
+                            question = exam.questions[targetIndex],
+                            index = targetIndex,
+                            userAnswers,
+                            onAnswer = { answer ->
+                                Log.d("ExamPaper", "Answer selected: $answer")
+                                userAnswers[targetIndex] = answer.selectedOption
+                                Log.d("ExamPaper", "userAnswers: $userAnswers")
+                            }
+                        )
+                    }
+
+                    if (showReviewDialog) {
+                        ReviewDialog(
+                            totalQuestions = exam.questions.size,
+                            userAnswers = userAnswers,
+                            onQuestionClick = { selectedQuestionIndex ->
+                                currentQuestionIndex = selectedQuestionIndex
+                                showReviewDialog = false
+                            },
+                            onDismiss = { showReviewDialog = false }
+                        )
+                    }
+                    if (showSubmissionDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showSubmissionDialog = false },
+                            confirmButton = {
+                                TextButton(onClick = { showSubmissionDialog = false }) {
+                                    Text("OK")
+                                }
+                            },
+                            title = {
+                                Text(text = "Exam Submitted")
+                            },
+                            text = {
+                                Text(text = submissionMessage)
+                            }
+                        )
+                    }
+                }
             }
         }
     }
+
 }
-
-
 
 // Helper function to build the exam results
 fun buildExamResults(exam: Exam, userAnswers: MutableMap<Int, Char>): List<QuestionResultData> {
