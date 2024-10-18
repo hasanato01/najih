@@ -14,20 +14,37 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.najih.android.R
 import com.najih.android.dataClasses.Exam
+import com.najih.android.util.GlobalFunctions
 
 @Composable
 fun ExamCard( navController: NavController,exam: Exam) {
+    val context= LocalContext.current
+    val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
     val examId = exam.id
-    val examName = exam.name.en
-    val examDesc = exam.describtion.en
+    val examName = when (currentLanguage) {
+        "ar" -> exam.name.ar
+        else -> exam.name.en
+    }
+
+    val examDesc = when (currentLanguage) {
+        "ar" -> exam.describtion.ar
+        else -> exam.describtion.en
+    }
     val numberOfQuestions = exam.questions.size
     val examTime = exam.time
     Box(
@@ -55,13 +72,13 @@ fun ExamCard( navController: NavController,exam: Exam) {
                     modifier = Modifier.padding(top = 16.dp)
                 )
                 Text(
-                    text = "Questions : $numberOfQuestions",
+                    text = stringResource(id = R.string.questions_label, numberOfQuestions),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(top = 11.dp)
                 )
                 Text(
-                    text = "Time : $examTime",
+                    text = stringResource(id = R.string.time_label, examTime),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(top = 11.dp)

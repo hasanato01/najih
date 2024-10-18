@@ -1,23 +1,26 @@
 package com.najih.android
 
+import CustomTypography
 import MyAppNavHost
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.najih.android.api.CreateHttpClient
-import com.najih.android.ui.homePage.HomePage
-import okhttp3.OkHttp
+import com.najih.android.util.GlobalFunctions
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        val savedLanguage = GlobalFunctions.getUserLanguage(this) ?: "en" // Default to English if not set
+        val localizedContext = GlobalFunctions.setAppLocale(this, savedLanguage)
         setContent {
-            MaterialTheme {
-                MyAppNavHost()
+            MaterialTheme(
+                typography = CustomTypography // Use the custom typography
+            ) {
+                MyAppNavHost(localizedContext) // Your navigation host here
             }
         }
     }

@@ -32,15 +32,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.auth.signIn
 import com.najih.android.ui.uitilis.Navbar
+import com.najih.android.util.GlobalFunctions
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+
 @Composable
 fun SignIn(navController: NavController ) {
     val context = LocalContext.current
@@ -48,9 +50,11 @@ fun SignIn(navController: NavController ) {
     val coroutineScope = rememberCoroutineScope()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var signInError by remember { mutableStateOf<String?>(null) }
+    val signInError by remember { mutableStateOf<String?>(null) }
     Scaffold(
-        topBar = { Navbar(navController, backText ="Nice to have you back" , titleText = "Sign in" )},
+        topBar = { Navbar(navController, backText = stringResource(R.string.nice_to_have_you_back) , titleText = stringResource(
+            R.string.sign_in
+        ) )},
         content = { paddingValues ->
             Box(
                 modifier = Modifier
@@ -73,45 +77,46 @@ fun SignIn(navController: NavController ) {
                         modifier = Modifier
                             .height(200.dp)
                             .width(200.dp)
-                            .padding( 24.dp)
+                            .padding(24.dp)
                     )
 
                     // Email Field
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Email", color = Color.Gray) },
+                        label = { Text(stringResource(id = R.string.email_label), color = Color.Gray) },
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFFc0c0c0 )) },  // Add a leading icon
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.Black,
-                            focusedBorderColor =Color(0xFFc0c0c0 ),
+                            focusedBorderColor = Color(0xFFc0c0c0),
                             unfocusedBorderColor = Color.Gray,
-
-                            ),
+                        ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding( vertical = 8.dp)
-                            .background(Color.LightGray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp))
+                            .padding(vertical = 8.dp)
+                            .background(
+                                Color.LightGray.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
                     )
 
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("password", color = Color.Gray) },  // Use a subtle color for the label
+                        label = { Text(stringResource(id = R.string.password_label), color = Color.Gray) },  // Use a subtle color for the label
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFFc0c0c0 )) },  // Add a leading icon
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),  // Rounded corners for a modern look
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.Black,
-                            focusedBorderColor =Color(0xFFc0c0c0 ),
+                            focusedBorderColor = Color(0xFFc0c0c0),
                             unfocusedBorderColor = Color.Gray,
-
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
@@ -119,12 +124,12 @@ fun SignIn(navController: NavController ) {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding( vertical = 8.dp)  // Add some padding for better spacing
-                            .background(Color.LightGray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp))  // Light background for contrast
+                            .padding(vertical = 8.dp)  // Add some padding for better spacing
+                            .background(
+                                Color.LightGray.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(12.dp)
+                            )  // Light background for contrast
                     )
-
-
-
 
                     // Sign In Button
                     Button(
@@ -134,16 +139,13 @@ fun SignIn(navController: NavController ) {
                                     val response = signIn(
                                         httpClient,
                                         context,
-                                        email = "admin@najih.com",
+                                        email = "hazem@gmail.com",
                                         password = "123123"
                                     )
-                                    if(response.success){
+                                    if(response.success) {
                                         navController.navigate("Home_Page")
                                     }
-                                    Log.d(
-                                        "SignInButton",
-                                        "Sign-in successful: ${response.accessToken}"
-                                    )
+                                    Log.d("SignInButton", "Sign-in successful: ${response.accessToken}")
                                 } catch (e: Exception) {
                                     Log.e("SignInButton", "Sign-in failed: ${e.message}")
                                 }
@@ -156,26 +158,29 @@ fun SignIn(navController: NavController ) {
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
-                        Text("Sign In", fontSize = 16.sp, color = Color.White)
+                        Text(stringResource(id = R.string.sign_in_button), fontSize = 16.sp, color = Color.White)
                     }
+
                     // Show sign-in error if any
                     signInError?.let { error ->
                         Text(
-                            text = error,
+                            text = stringResource(id = R.string.sign_in_error, error),
                             color = Color.Red,
                             modifier = Modifier.padding(top = 16.dp)
                         )
                     }
+
                     // Sign Up Text Button
                     TextButton(
-                        onClick = {navController.navigate("sign_up")},
+                        onClick = { navController.navigate("sign_up") },
                         modifier = Modifier.padding(top = 16.dp)
                     ) {
-                        Text("Sign Up", color = Color.Blue)
+                        Text(stringResource(id = R.string.sign_up_button), color = Color.Blue)
                     }
                 }
             }
         }
+
     )
 }
 

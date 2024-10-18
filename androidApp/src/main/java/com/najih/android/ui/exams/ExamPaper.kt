@@ -32,7 +32,9 @@ import com.najih.android.api.exams.getExamById
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.najih.android.R
 import com.najih.android.api.exams.submitExam
 import com.najih.android.dataClasses.Exam
 import com.najih.android.dataClasses.Question
@@ -55,6 +57,7 @@ fun ExamPaper(
     context: Context,
     examId: String
 ) {
+    var currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
     val token = GlobalFunctions.getUserInfo(context).token
     val userID = GlobalFunctions.getUserInfo(context).userId
     val userName = GlobalFunctions.getUserInfo(context).userName
@@ -68,6 +71,8 @@ fun ExamPaper(
     val coroutineScope = rememberCoroutineScope()
     var showSubmissionDialog by remember { mutableStateOf(false) }
     var submissionMessage by remember { mutableStateOf("") }
+    val timeUpMessage = stringResource(id = R.string.time_up_message)
+    val submitMessage = stringResource(id = R.string.manual_submission_message)
 
     // Fetch exam details
     LaunchedEffect(Unit) {
@@ -80,18 +85,9 @@ fun ExamPaper(
                     while (remainingTime > 0) {
                         delay(1000)
                         remainingTime -= 1
-
                         val minutes = remainingTime / 60
                         val seconds = remainingTime % 60
-
-                        // Optionally log remaining time for debugging
-                        Log.d(
-                            "ExamPaper",
-                            "Remaining time: ${String.format("%02d:%02d", minutes, seconds)}"
-                        )
                     }
-
-                    Log.d("ExamPaper", "Time is up!")
 
                     // Trigger exam submission when time is up
                     val resultsArray = buildExamResults(exam!!, userAnswers)
@@ -114,8 +110,8 @@ fun ExamPaper(
                             totalQuestions = exam!!.questions.size,
                             submittedAt = submittedAt
                         )
-                        submissionMessage = "Time is up! The exam has been submitted successfully."
-                        showSubmissionDialog = true  // Show dialog when time is up
+                        submissionMessage = timeUpMessage
+                        showSubmissionDialog = true
                         Log.d("ExamSubmission", "Exam submitted successfully: $response")
                     } catch (e: Exception) {
                         Log.e("ExamSubmission", "Error submitting exam: ${e.message}", e)
@@ -139,7 +135,11 @@ fun ExamPaper(
 
             ExamHeader(
                 studentName = userName,
-                examName = exam.name.en,
+                 examName = when (currentLanguage) {
+            "en" -> exam.name.en
+            "ar" -> exam.name.ar
+            else -> exam.name.en
+        },
                 currentQuestion = currentQuestionIndex + 1,
                 totalQuestions = exam.questions.size,
                 remainingTime = formattedTime
@@ -169,13 +169,9 @@ fun ExamPaper(
                                 totalQuestions = exam.questions.size,
                                 submittedAt = submittedAt
                             )
-                            submissionMessage = "The exam has been submitted successfully."
-                            showSubmissionDialog =
-                                true  // Show dialog for manual submission
-                            Log.d(
-                                "ExamSubmission",
-                                "Exam submitted successfully: $response"
-                            )
+                            submissionMessage = submitMessage
+                            showSubmissionDialog = true
+
                         } catch (e: Exception) {
                             Log.e(
                                 "ExamSubmission",
@@ -240,11 +236,11 @@ fun ExamPaper(
                             onDismissRequest = { showSubmissionDialog = false },
                             confirmButton = {
                                 TextButton(onClick = { showSubmissionDialog = false }) {
-                                    Text("OK")
+                                    Text(stringResource(id = R.string.ok_button))  // OK button text
                                 }
                             },
                             title = {
-                                Text(text = "Exam Submitted")
+                                Text(text = stringResource(id = R.string.exam_submitted_title))  // Dialog title
                             },
                             text = {
                                 Text(text = submissionMessage)

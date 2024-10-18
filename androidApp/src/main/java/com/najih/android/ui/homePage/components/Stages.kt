@@ -11,50 +11,50 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.najih.android.R
 import com.najih.android.dataClasses.Stage
 
 @Composable
 fun Stages(navController: NavController) {
     val stages = listOf(
-        Stage(stage = "HighSchool", type = "High School"),
-        Stage(stage = "Preparatory", type = "Preparatory"),
-        Stage(stage = "Primary", type = "Primary"),
-        Stage(stage = "Kindergarten1", type = "Kindergarten 1"),
-        Stage(stage = "Kindergarten2", type = "Kindergarten 2")
+        Stage(stage = stringResource(R.string.highschool), type = "High School"),
+        Stage(stage = stringResource(R.string.preparatory), type = "Preparatory"),
+        Stage(stage = stringResource(R.string.primary), type = "Primary"),
+        Stage(stage = stringResource(R.string.kindergarten1), type = "Kindergarten 1"),
+        Stage(stage = stringResource(R.string.kindergarten2), type = "Kindergarten 2")
     )
 
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-        stages.chunked(2).forEach { pair ->
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp)) {
+        stages.forEach { stage ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp) // Space between the two StageCards
             ) {
-                pair.forEach { stage ->
                     StageCard(
                         stage = stage.stage,
                         type = stage.type,
                         modifier = Modifier
                             .weight(1f) // Ensure each StageCard takes equal space
-                            .height(150.dp) // Adjust height as needed
+                            .height(100.dp) // Adjust height as needed
                             .padding(4.dp),
                         navController = navController
                     )
                 }
 
-                // If there is only one item in this pair, add an empty space to fill the row
-                if (pair.size < 2) {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
+
             }
         }
     }
-}
+
 
 
 

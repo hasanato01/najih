@@ -35,12 +35,15 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.najih.android.dataClasses.QuestionResultData
 
+import androidx.compose.ui.res.stringResource
+import com.najih.android.R
+
 @Composable
 fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
     var isExpanded by remember { mutableStateOf(false) }
 
     // Display if the question was correct or not
-    val isCorrectText = if (result.isCorrect) "Correct" else "Incorrect"
+    val isCorrectText = if (result.isCorrect) stringResource(id = R.string.correct) else stringResource(id = R.string.incorrect)
     val correctnessIcon = if (result.isCorrect) {
         Icons.Default.CheckCircle // Use a checkmark icon for correct answers
     } else {
@@ -52,7 +55,7 @@ fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
             .fillMaxWidth()
             .padding(10.dp)
             .clickable { isExpanded = !isExpanded },  // Toggles expanded state
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
@@ -63,19 +66,18 @@ fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f) // Allow this row to take available space
                 ) {
                     Icon(
                         imageVector = correctnessIcon,
-                        contentDescription = if (result.isCorrect) "Correct" else "Incorrect",
+                        contentDescription = isCorrectText,
                         tint = if (result.isCorrect) Color.Green else Color.Red,
                         modifier = Modifier.padding(end = 8.dp) // Space between icon and text
                     )
                     Text(
-                        text = "Question $questionIndex",
+                        text = stringResource(id = R.string.question_index, questionIndex),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -83,7 +85,7 @@ fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
                 // Expand/Collapse Icon
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded) stringResource(id = R.string.collapse) else stringResource(id = R.string.expand),
                     modifier = Modifier.clickable { isExpanded = !isExpanded }
                 )
             }
@@ -96,7 +98,7 @@ fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
                 if (result.question.image.url.isNotEmpty()) {
                     AsyncImage(
                         model = result.question.image.url,
-                        contentDescription = "Question Image",
+                        contentDescription = stringResource(id = R.string.question_image),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(150.dp)
@@ -109,8 +111,8 @@ fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
                 }
 
                 // Display answer options
-                Text(text = "Your Answer: ${result.userAnswer}", fontSize = 14.sp)
-                Text(text = "Correct Answer: ${result.correctAnswer}", fontSize = 14.sp)
+                Text(text = stringResource(id = R.string.your_answer, result.userAnswer), fontSize = 14.sp)
+                Text(text = stringResource(id = R.string.correct_answer, result.correctAnswer), fontSize = 14.sp)
             }
         }
     }

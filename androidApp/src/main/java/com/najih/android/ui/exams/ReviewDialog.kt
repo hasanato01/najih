@@ -19,8 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.najih.android.R
 
 @Composable
 fun ReviewDialog(
@@ -33,10 +35,10 @@ fun ReviewDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             Button(onClick = { onDismiss() }) {
-                Text("Close")
+                Text(text = stringResource(id = R.string.close_button))
             }
         },
-        title = { Text("Review Questions") },
+        title = {  Text(text = stringResource(id = R.string.review_questions_title)) },
         text = {
             Column (modifier = Modifier.fillMaxWidth()){
 

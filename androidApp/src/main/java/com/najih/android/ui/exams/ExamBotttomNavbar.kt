@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.najih.android.R
 
 
 @Composable
@@ -28,24 +30,24 @@ fun ExamBottomNavBar(
         contentColor = Color.Black,
         modifier = Modifier
     ) {
-        IconButton(onClick = onReviewClick , modifier = Modifier.weight(1f)) {
+        IconButton(onClick = onReviewClick, modifier = Modifier.weight(1f)) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(Icons.Filled.Create, contentDescription = "Review")
-                Text("Review")
+                Icon(Icons.Filled.Create, contentDescription = stringResource(id = R.string.review_content_description))
+                Text(text = stringResource(id = R.string.review_button))
             }
-
         }
-        IconButton(onClick = onSubmitClick,modifier = Modifier.weight(1f)) {
+
+        IconButton(onClick = onSubmitClick, modifier = Modifier.weight(1f)) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(Icons.Filled.Check, contentDescription = "Submit")
-                Text("Submit")
+                Icon(Icons.Filled.Check, contentDescription = stringResource(id = R.string.submit_content_description))
+                Text(text = stringResource(id = R.string.submit_button))
             }
-
         }
-        IconButton(onClick = onNextClick , modifier = Modifier.weight(1f)) {
+
+        IconButton(onClick = onNextClick, modifier = Modifier.weight(1f)) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(Icons.Filled.ArrowForward, contentDescription = "Next Question")
-                Text("Next")
+                Icon(Icons.Filled.ArrowForward, contentDescription = stringResource(id = R.string.next_content_description))
+                Text(text = stringResource(id = R.string.next_button))
             }
 
         }

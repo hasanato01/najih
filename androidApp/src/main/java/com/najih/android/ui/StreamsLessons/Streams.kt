@@ -34,7 +34,6 @@ import com.najih.android.api.subjects.GetStreams
 import com.najih.android.dataClasses.Streams
 import com.najih.android.dataClasses.StreamsInfo
 import com.najih.android.ui.homePage.components.SearchBar
-import com.najih.android.ui.recordedLessons.EnrollmentButtons
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.HomeNavbar
 import io.ktor.client.engine.android.Android
@@ -88,7 +87,7 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
                     .align(Alignment.Start)
                     .padding(start = 11.dp, top = 49.dp)
             )
-            EnrollmentButtons(navController, stage, showDialog)
+
             streamList?.map { stream ->
                 StreamCard(stream)
             }

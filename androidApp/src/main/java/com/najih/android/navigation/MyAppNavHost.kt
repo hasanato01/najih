@@ -1,3 +1,4 @@
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -21,10 +22,10 @@ import com.najih.android.ui.uitilis.LanguageSelectionScreen
 import io.ktor.client.engine.android.Android
 
 @Composable
-fun MyAppNavHost() {
+fun MyAppNavHost(context: Context ) {
     val navController = rememberNavController()
     val httpClient = CreateHttpClient(Android)
-    val context = LocalContext.current
+
 
     NavHost(
         navController = navController,
@@ -54,11 +55,12 @@ fun MyAppNavHost() {
         composable("user_exams") {
             UserExams(navController, httpClient , context )
         }
-        composable("subjects/{type}/{endpoint}") { backStackEntry ->
+        composable("subjects/{type}/{stage}/{endpoint}") { backStackEntry ->
             val type = backStackEntry.arguments?.getString("type")
+            val stage = backStackEntry.arguments?.getString("stage")
             val endpoint = backStackEntry.arguments?.getString("endpoint")
-            if (type != null && endpoint != null) {
-                Subjects(navController, type, endpoint)
+            if (type != null && endpoint != null && stage !== null) {
+                Subjects(navController, type,stage, endpoint)
             }
         }
 

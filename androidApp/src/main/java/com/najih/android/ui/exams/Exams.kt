@@ -19,12 +19,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import io.ktor.client.HttpClient
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.najih.android.R
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.HomeNavbar
 import com.najih.android.ui.uitilis.Navbar
@@ -50,7 +52,9 @@ fun Exams (navController: NavController ,httpClient: HttpClient , context: Conte
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { Navbar(navController  , backText = "test your self" , titleText = "Exams" ) },
+        topBar = { Navbar(navController  , backText = stringResource(R.string.test_your_self) , titleText = stringResource(
+            R.string.exams
+        ) ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding  ->
         Column(
@@ -71,7 +75,7 @@ fun Exams (navController: NavController ,httpClient: HttpClient , context: Conte
             } else {
                 // Render the list of exams using LazyColumn
                 Text(
-                    text = "Exams",
+                    text =  stringResource(R.string.exams),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier.padding(top = 16.dp, start = 11.dp)

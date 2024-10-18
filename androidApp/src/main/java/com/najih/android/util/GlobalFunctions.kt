@@ -1,6 +1,8 @@
 package com.najih.android.util
 
 import android.content.Context
+import android.content.res.Configuration
+import java.util.Locale
 import com.najih.android.dataClasses.UserInfo
 
 
@@ -73,6 +75,17 @@ object  GlobalFunctions {
     val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
     return sharedPreferences.getString("USER_LANGUAGE", "en") // Default language is English ("en")
 }
+    fun setAppLocale(context: Context, languageCode: String): Context {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val resources = context.resources
+        val configuration = Configuration(resources.configuration)
+        configuration.setLocale(locale)
+        resources.updateConfiguration(configuration, resources.displayMetrics)
+        // Create a new context with the updated configuration
+        return context.createConfigurationContext(configuration)
+    }
+
 
 
 }

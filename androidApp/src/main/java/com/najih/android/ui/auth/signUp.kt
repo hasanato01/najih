@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -45,7 +46,7 @@ import kotlinx.coroutines.launch
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun SignUp(navController: NavController) {
     val context = LocalContext.current
@@ -58,7 +59,13 @@ fun SignUp(navController: NavController) {
     var password by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { Navbar(navController, backText ="Welcome to Najih community" , titleText = "Sign up" ) },
+        topBar = {
+            Navbar(
+                navController,
+                backText = stringResource(R.string.welcome_to_najih_community),
+                titleText = stringResource(R.string.sign_up)
+            )
+        },
         content = { paddingValues ->
             Box(
                 modifier = Modifier
@@ -70,7 +77,9 @@ fun SignUp(navController: NavController) {
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
                 ) {
                     // Logo Image
                     Image(
@@ -80,13 +89,14 @@ fun SignUp(navController: NavController) {
                         modifier = Modifier
                             .height(150.dp)
                             .width(150.dp)
-                            .padding( 12.dp)
+                            .padding(12.dp)
                     )
-// Name Field
+
+                    // Name Field
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Name", color = Color.Gray) },
+                        label = { Text(stringResource(R.string.name_label), color = Color.Gray) },
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFFc0c0c0)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
@@ -102,14 +112,17 @@ fun SignUp(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
-                            .background(Color.LightGray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp))
+                            .background(
+                                Color.LightGray.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
                     )
 
-// Phone Field
+                    // Phone Field
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phone = it },
-                        label = { Text("Phone", color = Color.Gray) },
+                        label = { Text(stringResource(R.string.phone_label), color = Color.Gray) },
                         leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Color(0xFFc0c0c0)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
@@ -125,14 +138,17 @@ fun SignUp(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
-                            .background(Color.LightGray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp))
+                            .background(
+                                Color.LightGray.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
                     )
 
-// Email Field
+                    // Email Field
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Email", color = Color.Gray) },
+                        label = { Text(stringResource(R.string.email_label), color = Color.Gray) },
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFFc0c0c0)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
@@ -148,14 +164,17 @@ fun SignUp(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
-                            .background(Color.LightGray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp))
+                            .background(
+                                Color.LightGray.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
                     )
 
-// Password Field
+                    // Password Field
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Password", color = Color.Gray) },
+                        label = { Text(stringResource(R.string.password_label), color = Color.Gray) },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFFc0c0c0)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
@@ -171,7 +190,10 @@ fun SignUp(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)
-                            .background(Color.LightGray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp)),
+                            .background(
+                                Color.LightGray.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(12.dp)
+                            ),
                         visualTransformation = PasswordVisualTransformation() // To hide the password text
                     )
 
@@ -180,7 +202,7 @@ fun SignUp(navController: NavController) {
                         onClick = {
                             coroutineScope.launch {
                                 try {
-                                    val response = signUp(httpClient , context , name, phone, email, password)
+                                    val response = signUp(httpClient, context, name, phone, email, password)
                                     Log.d("SignUpButton", "Sign-up successful: $response")
                                 } catch (e: Exception) {
                                     Log.e("SignUpButton", "Sign-up failed: ${e.message}")
@@ -194,17 +216,10 @@ fun SignUp(navController: NavController) {
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
-                        Text("Sign Up", fontSize = 16.sp, color = Color.White)
+                        Text(stringResource(R.string.sign_up_button), fontSize = 16.sp, color = Color.White)
                     }
                 }
             }
         }
     )
-}
-
-@Preview
-@Composable
-fun SignupPreview() {
-    val navController = rememberNavController()
-    SignUp(navController )
 }

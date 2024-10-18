@@ -10,8 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,13 +30,16 @@ import com.najih.android.ui.subjects.components.ClassSection
 import com.najih.android.ui.subjects.components.SubjectRow
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.Navbar
+import com.najih.android.util.GlobalFunctions
 import com.najih.android.viewModels.Subjects.SubjectsViewModel
 import io.ktor.client.engine.android.Android
 
 @Composable
-fun Subjects(navController: NavController, type: String , endPoint:String) {
+fun Subjects(navController: NavController, type: String , stage : String,endPoint:String) {
+    val context = LocalContext.current
     val httpClient = CreateHttpClient(Android)
     val viewModel: SubjectsViewModel = viewModel(factory = SubjectsViewModelFactory(httpClient))
+    val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
 
     LaunchedEffect(type) {
         viewModel.fetchSubjects(type, endPoint)
@@ -62,7 +69,7 @@ fun Subjects(navController: NavController, type: String , endPoint:String) {
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { Navbar(navController  , backText = type , titleText = "Subjects" ) },
+        topBar = { Navbar(navController  , backText = stage , titleText = stringResource(R.string.subjects) ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
 
@@ -79,17 +86,29 @@ fun Subjects(navController: NavController, type: String , endPoint:String) {
             // Iterate through the groupByClass map directly
             groupByClass.forEach { (classNumber, subjects) ->
                 item {
-                    ClassSection("Class $classNumber")
+                    ClassSection( classNumber)
                 }
 
-                // Mapping the subject data to pairs for each subject row
-                val subjectPair = subjects.map {
-                    when (it) {
-                        is GetSubjectsResponse -> it.name.en to it.id
-                        is StreamsSubjects -> it.name.en to it.id
+                val subjectPair = subjects.map { subject ->
+                    when (subject) {
+                        is GetSubjectsResponse -> {
+                            if (currentLanguage == "ar") {
+                                subject.name.ar to subject.id // Arabic name
+                            } else {
+                                subject.name.en to subject.id // English name
+                            }
+                        }
+                        is StreamsSubjects -> {
+                            if (currentLanguage == "ar") {
+                                subject.name.ar to subject.id // Arabic name
+                            } else {
+                                subject.name.en to subject.id // English name
+                            }
+                        }
                         else -> "Unknown" to "0"
                     }
                 }
+
 
                 item {
                     SubjectRow(navController, subjectPair, endPoint)

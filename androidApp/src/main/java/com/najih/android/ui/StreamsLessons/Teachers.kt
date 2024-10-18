@@ -42,7 +42,9 @@ import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
 @Composable
-fun Teachers (navController: NavController,subjectId:String){
+fun
+
+        Teachers (navController: NavController,subjectId:String){
     val httpClient = CreateHttpClient(Android)
     val coroutineScope = rememberCoroutineScope()
 

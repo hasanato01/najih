@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +47,8 @@ fun HomeNavbar(navController: NavController) {
     val window = (context as Activity).window
     var userInfo by remember { mutableStateOf(GlobalFunctions.getUserInfo(context)) }
     val isLoggedIn = userInfo.userId.isNotEmpty() && userInfo.token.isNotEmpty()
-    val greetingText = userInfo.userName.ifEmpty { "Welcome to Najih" }
+    val greetingText = userInfo.userName.ifEmpty { stringResource(R.string.greetingText) }
+
 
     // Side effect to handle window insets and status bar color
     SideEffect {
@@ -90,11 +92,11 @@ fun HomeNavbar(navController: NavController) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Explore our Categories",
+                        text = stringResource(R.string.explore_our_categories),
                         color = Color.White,
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        style = androidx.compose.ui.text.TextStyle(lineHeight = 36.sp)
+
                     )
                 }
 

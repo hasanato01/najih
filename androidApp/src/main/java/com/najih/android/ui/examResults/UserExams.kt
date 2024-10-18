@@ -23,10 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.najih.android.R
 import com.najih.android.api.exams.getUserExams
 import com.najih.android.dataClasses.SubmitExamRequest
 import com.najih.android.ui.homePage.components.SearchBar
@@ -59,7 +61,9 @@ fun UserExams (navController: NavController, httpClient: HttpClient, context: Co
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {Navbar(navController  , backText = "submitted Exams" , titleText = "My Exams" ) },
+        topBar = {Navbar(navController  , backText = stringResource(R.string.submitted_exams) , titleText = stringResource(
+            R.string.my_exams
+        ) ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(

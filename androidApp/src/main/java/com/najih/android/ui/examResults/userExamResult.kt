@@ -21,16 +21,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.najih.android.R
 import com.najih.android.api.exams.getExamResultById
 import com.najih.android.dataClasses.SubmitExamRequest
 import com.najih.android.ui.uitilis.BottomNavBar
 
 import com.najih.android.ui.uitilis.Navbar
+import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -41,7 +44,7 @@ fun UserExamResult(navController: NavController,httpClient: HttpClient, context:
     var examResult by remember { mutableStateOf<SubmitExamRequest?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
-
+    val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
     val submittedAt = examResult?.submittedAt
     val formattedDate = if (submittedAt != null) {
         try {
@@ -69,11 +72,17 @@ fun UserExamResult(navController: NavController,httpClient: HttpClient, context:
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Navbar(
-                navController = navController,
-                backText = formattedDate,
-                titleText = examResult?.examName?.en ?: "Exam Title"
-            )
+            when (currentLanguage){
+                "en" ->examResult?.examName?.en
+                "ar" -> examResult?.examName?.ar
+                else -> examResult?.examName?.en
+            }?.let {
+                Navbar(
+                    navController = navController,
+                    backText = formattedDate,
+                    titleText = it
+                )
+            }
         },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
@@ -93,12 +102,16 @@ fun UserExamResult(navController: NavController,httpClient: HttpClient, context:
 
                 Column(modifier = Modifier.padding(15.dp)) {
                     Text(
-                        text = "Score: ${result.correctAnswersCount} / ${result.totalQuestions}",
+                        text = stringResource(id = R.string.score_label, result.correctAnswersCount, result.totalQuestions),
                         fontSize = 16.sp,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = "Correct: ${result.correctAnswersCount}, Incorrect: ${result.totalQuestions - result.correctAnswersCount}",
+                        text = stringResource(
+                            id = R.string.correct_incorrect_label,
+                            result.correctAnswersCount,
+                            result.totalQuestions - result.correctAnswersCount
+                        ),
                         fontSize = 16.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )

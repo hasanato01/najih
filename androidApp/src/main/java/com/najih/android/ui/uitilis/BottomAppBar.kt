@@ -23,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.najih.android.dataClasses.NavigationItem
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 
@@ -34,10 +35,10 @@ fun BottomNavBar(navController: NavController) {
             containerColor = Color.White
         ) {
             val navItems = listOf(
-                NavigationItem("Home", painterResource(R.drawable.home), "home_page"),
-                NavigationItem("Exams",painterResource(R.drawable.exam_results), "exams"),
-                NavigationItem("Notifications",painterResource(R.drawable.menu), "exams"),
-                NavigationItem("Profile", painterResource(R.drawable.profile), "My_profile")
+                NavigationItem(stringResource(R.string.label_home), painterResource(R.drawable.home), "home_page"),
+                NavigationItem(stringResource(R.string.label_exams), painterResource(R.drawable.exam_results), "exams"),
+                NavigationItem(stringResource(R.string.label_notifications), painterResource(R.drawable.menu), "exams"),
+                NavigationItem(stringResource(R.string.label_profile), painterResource(R.drawable.profile), "My_profile")
             )
 
             navItems.forEach { item ->

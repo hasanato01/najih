@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowInsetsControllerCompat
 import com.najih.android.R
 
@@ -29,7 +30,6 @@ fun Navbar(navController: NavController, backText: String, titleText: String) {
  val context = LocalContext.current
  val window = (context as Activity).window
  // Set up status bar and allow drawing under it
-
  SideEffect {
   // Set status bar color
   WindowCompat.setDecorFitsSystemWindows(window, false) // Allow content to extend behind the status bar
@@ -55,7 +55,7 @@ fun Navbar(navController: NavController, backText: String, titleText: String) {
    IconButton(onClick = { navController.navigateUp() }) {
     Icon(
      painter = painterResource(id = R.drawable.back_button),
-     contentDescription = "Back",
+     contentDescription = stringResource(R.string.back),
      tint = Color.White
     )
    }
