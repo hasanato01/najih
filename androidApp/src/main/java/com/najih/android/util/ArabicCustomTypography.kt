@@ -3,7 +3,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.TextUnit
 import com.najih.android.R
 
 // Create a FontFamily from your font resource
@@ -12,7 +11,7 @@ val arabicFontFamily = FontFamily(
 )
 
 // Create custom Typography using the Arabic font
-val CustomTypography = Typography(
+val ArabicTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = arabicFontFamily,
         fontSize = 30.sp,

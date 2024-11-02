@@ -1,4 +1,6 @@
-import android.content.Context
+package com.najih.android.appNavigation
+
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -16,15 +18,20 @@ import com.najih.android.ui.exams.ExamPaper
 import com.najih.android.ui.exams.Exams
 import com.najih.android.ui.examResults.UserExams
 import com.najih.android.ui.homePage.HomePage
+import com.najih.android.ui.latestNews.LatestNews
+import com.najih.android.ui.profile.MyProfile
 import com.najih.android.ui.recordedLessons.Lessons
+import com.najih.android.ui.settings.Settings
 import com.najih.android.ui.subjects.Subjects
+import com.najih.android.ui.teachers.OurTeachers
 import com.najih.android.ui.uitilis.LanguageSelectionScreen
 import io.ktor.client.engine.android.Android
 
 @Composable
-fun MyAppNavHost(context: Context ) {
+fun MyAppNavHost( ) {
     val navController = rememberNavController()
     val httpClient = CreateHttpClient(Android)
+    val context = LocalContext.current
 
 
     NavHost(
@@ -35,7 +42,7 @@ fun MyAppNavHost(context: Context ) {
             SplashScreen(navController,context)
         }
         composable("Home_page") {
-            HomePage(navController)
+            HomePage(navController,httpClient,context)
         }
         composable("LanguageSelection") {
             LanguageSelectionScreen(navController)
@@ -48,6 +55,9 @@ fun MyAppNavHost(context: Context ) {
         }
         composable("contact_us") {
             ContactUsForm(navController)
+        }
+        composable("setting") {
+            Settings(navController)
         }
         composable("My_profile") {
             MyProfile(navController )
@@ -94,6 +104,12 @@ fun MyAppNavHost(context: Context ) {
         composable("exam_result/{examResultId}") { backStackEntry ->
             val examResultId = backStackEntry.arguments?.getString("examResultId") ?: return@composable
             UserExamResult(navController , httpClient, context, examResultId)
+        }
+        composable("latest_news") {
+            LatestNews(navController , httpClient, context)
+        }
+        composable("our_teachers") {
+            OurTeachers(navController , httpClient, context)
         }
 
     }

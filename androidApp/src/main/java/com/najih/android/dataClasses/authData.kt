@@ -24,6 +24,7 @@ import kotlinx.serialization.Serializable
         val username: String,
         val teacherId: String,
         val submitedExams: List<String>,
+        val purchasedLessons : List<String>,
         val recorderLessonsIds: List<String>,
         val teachersLessonsIds: List<String>,
         val salt: String,
@@ -43,5 +44,6 @@ data class UserInfo(
     val token: String,
     val userId: String,
     val userName: String,
-    val userEmail: String
+    val userEmail: String,
+    val purchasedLessons: List<String>
 )

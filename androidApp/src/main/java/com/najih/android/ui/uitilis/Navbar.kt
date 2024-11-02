@@ -20,33 +20,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowInsetsControllerCompat
 import com.najih.android.R
 
 @Composable
 fun Navbar(navController: NavController, backText: String, titleText: String) {
- // Get the current context and window
  val context = LocalContext.current
  val window = (context as Activity).window
- // Set up status bar and allow drawing under it
+ val primaryColor = colorResource(id = R.color.primaryColor).toArgb()
  SideEffect {
-  // Set status bar color
-  WindowCompat.setDecorFitsSystemWindows(window, false) // Allow content to extend behind the status bar
-  WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false // Set light/dark status bar
-  window.statusBarColor = Color(0xFF00004B).toArgb() // Set status bar color
+  WindowCompat.setDecorFitsSystemWindows(window, false)
+  WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+  window.statusBarColor =primaryColor
  }
 
  Box(
   modifier = Modifier
    .fillMaxWidth()
-   .background(Color(0xFF00004B))
-   .padding(horizontal = 16.dp)
+   .background(colorResource(id = R.color.primaryColor))
    .statusBarsPadding()
  ) {
   Column(
    modifier = Modifier
     .fillMaxWidth()
+    .padding(horizontal = 16.dp)
     .height(150.dp),
    verticalArrangement = Arrangement.Center,
    horizontalAlignment = Alignment.Start
@@ -75,6 +74,14 @@ fun Navbar(navController: NavController, backText: String, titleText: String) {
     )
    }
   }
+
+  // Bottom Border
+  Box(
+   modifier = Modifier
+    .fillMaxWidth()
+    .height(3.dp)
+    .background(colorResource(id = R.color.secondColor))
+    .align(Alignment.BottomCenter)
+  )
  }
 }
-

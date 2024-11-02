@@ -11,15 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,10 +25,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.contactUsForm.postContactForm
 import io.ktor.client.engine.android.Android
@@ -54,7 +52,7 @@ fun ContactUsForm (navController: NavController) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { HomeNavbar(navController) },
+        topBar = { Navbar(navController, backText = stringResource(R.string.contact_us), titleText = stringResource(R.string.Get_in_touch)) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(
@@ -63,11 +61,8 @@ fun ContactUsForm (navController: NavController) {
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(innerPadding)
+                .padding(16.dp)
         ) {
-            HomeNavbar(navController)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Get in touch", style = MaterialTheme.typography.headlineMedium)
-
             Spacer(modifier = Modifier.height(8.dp))
 
             // Name Input
@@ -75,22 +70,14 @@ fun ContactUsForm (navController: NavController) {
                 value = name,
                 onValueChange = { name = it },
                 label = "Name",
-                icon = {
-                    Icon(
-                        Icons.Filled.Person,
-                        contentDescription = "Person Icon"
-                    )
-                } // Optional icon
+                icon = painterResource(id = R.drawable.user_blue) // Pass your drawable resource
             )
-
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Email Input
             StyledTextField(
                 value = email,
                 onValueChange = { email = it },
                 label = "Email",
-                icon = { Icon(Icons.Filled.Email, contentDescription = "Email Icon") }
+                icon = painterResource(id = R.drawable.email_blue)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -100,7 +87,7 @@ fun ContactUsForm (navController: NavController) {
                 value = phoneNumber,
                 onValueChange = { phoneNumber = it },
                 label = "Phone Number",
-                icon = { Icon(Icons.Filled.Phone, contentDescription = "Phone Icon") }
+                icon = painterResource(id = R.drawable.phone_blue)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -110,22 +97,16 @@ fun ContactUsForm (navController: NavController) {
                 value = country,
                 onValueChange = { country = it },
                 label = "Country",
-                icon = {
-                    Icon(
-                        Icons.Filled.LocationOn,
-                        contentDescription = "Location Icon"
-                    )
-                } // Country Icon
+                icon = painterResource(id = R.drawable.location_blue)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Message Input
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .verticalScroll(rememberScrollState()) // Enables scrolling
+                    .verticalScroll(rememberScrollState())
             ) {
                 StyledTextField(
                     value = message,
@@ -162,17 +143,20 @@ fun ContactUsForm (navController: NavController) {
                 enabled = isFormValid,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .height(50.dp), // Adjust height as needed
+                shape = RoundedCornerShape(12.dp), // Rounds the corners
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF0096c7), // Light blue color
+                    contentColor = Color.White // Text color
+                )
             ) {
-                Text("Send")
+                Text(
+                    text = "Send",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
+
         }
     }
-}
-
-@Preview
-@Composable
-fun  ContactUs () {
-    val navController = rememberNavController()
-    ContactUsForm(navController)
 }

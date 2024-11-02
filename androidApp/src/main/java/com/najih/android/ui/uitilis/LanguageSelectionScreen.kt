@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,48 +24,58 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.najih.android.MainActivity
 import com.najih.android.R
 import com.najih.android.util.GlobalFunctions
 
 @Composable
 fun LanguageSelectionScreen(navController: NavController) {
-    Column(
+
+    Scaffold(
+        topBar = {
+            Navbar(navController, backText = "App language", titleText = "Select Language")
+        },
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF9FFFE))
-            .padding(horizontal = 25.dp, vertical = 47.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Text(
-            text = "Please Select Language",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 12.dp)
-        )
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp)
+                .background(Color(0xFFF9FFFE))
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        Spacer(modifier = Modifier.height(53.dp))
-
-
-        LanguageOption(navController , languageName ="en" , flagResourceId = R.drawable.uk)
-        LanguageOption(navController , languageName ="ar" , flagResourceId = R.drawable.egypt)
-
+            Spacer(modifier = Modifier.height(16.dp))
+            LanguageOption(navController, languageName = "en", flagResourceId = R.drawable.uk)
+            Spacer(modifier = Modifier.height(16.dp))
+            LanguageOption(navController, languageName = "ar", flagResourceId = R.drawable.egypt)
+        }
     }
 }
+
 @Composable
 fun LanguageOption(navController: NavController,languageName: String, flagResourceId: Int) {
     val context = LocalContext.current
+    val activity = context as MainActivity
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(100.dp))
+            .height(50.dp)
             .background(Color.White)
             .border(1.dp, Color(0x2B000000), RoundedCornerShape(100.dp))
-            .padding(6.dp, 8.dp)
+            .padding(10.dp)
             .clickable {
                 GlobalFunctions.saveUserLanguage(context, languageName)
+                activity.updateLocale(languageName)
                 GlobalFunctions.setFirstTimeUser(context, false)
                 navController.navigate("Home_page") {
                     popUpTo("LanguageSelection") { inclusive = true }
@@ -81,9 +92,13 @@ fun LanguageOption(navController: NavController,languageName: String, flagResour
         Spacer(modifier = Modifier.width(44.dp))
 
         Text(
-            text = languageName,
+            text = when (languageName) {
+                "ar" -> "Arabic"
+                else -> "English"
+            },
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
     }
 }
+

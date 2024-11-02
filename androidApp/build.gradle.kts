@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.gson)
+
     // Kotlinx Serialization JSON
     implementation(libs.kotlinx.serialization.json)
     //images
@@ -64,5 +66,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v260)
     // viewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+
+
 
 }

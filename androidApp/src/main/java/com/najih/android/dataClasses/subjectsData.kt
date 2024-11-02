@@ -62,6 +62,8 @@ data class Lesson(
     val description: LanguageContent,
     val startDate: String,
     val endDate: String,
+    val isFree: Boolean,
+    val exLink: String,
     val link: String,
     val subjectId: String,
     val createdAt: String,

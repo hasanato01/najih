@@ -2,38 +2,64 @@ package com.najih.android.util
 
 import android.content.Context
 import android.content.res.Configuration
+import com.google.gson.Gson
 import java.util.Locale
 import com.najih.android.dataClasses.UserInfo
 
 
 object  GlobalFunctions {
     // Function to save user info
-    fun saveUserInfo(context: Context, token: String,userId : String, userName: String, userEmail: String) {
+    fun saveUserInfo(
+        context: Context,
+        token: String,
+        userId: String,
+        userName: String,
+        userEmail: String,
+        purchasedLessons: List<String>
+    ) {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
+
+        // Convert the list of purchased lessons to JSON string using Gson
+        val gson = Gson()
+        val purchasedLessonsJson = gson.toJson(purchasedLessons)
+
         // Save each piece of information
         editor.putString("USER_ID", userId)
         editor.putString("ACCESS_TOKEN", token)
         editor.putString("USER_NAME", userName)
         editor.putString("USER_EMAIL", userEmail)
+        editor.putString("PURCHASED_LESSONS", purchasedLessonsJson)
+
         // Commit the changes
         editor.apply()
     }
     // Function to get user info
     fun getUserInfo(context: Context): UserInfo {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+
         // Retrieve each piece of information
         val userId = sharedPreferences.getString("USER_ID", null)
         val token = sharedPreferences.getString("ACCESS_TOKEN", null)
         val userName = sharedPreferences.getString("USER_NAME", null)
         val userEmail = sharedPreferences.getString("USER_EMAIL", null)
 
+        // Retrieve the purchasedLessons from JSON
+        val gson = Gson()
+        val purchasedLessonsJson = sharedPreferences.getString("PURCHASED_LESSONS", "")
+        val purchasedLessons = if (purchasedLessonsJson.isNullOrEmpty()) {
+            emptyList()
+        } else {
+            gson.fromJson(purchasedLessonsJson, Array<String>::class.java).toList()
+        }
+
         // Return an instance of UserInfo with the retrieved values
         return UserInfo(
             token = token ?: "",
             userId = userId ?: "",
             userName = userName ?: "",
-            userEmail = userEmail ?: ""
+            userEmail = userEmail ?: "",
+            purchasedLessons = purchasedLessons
         )
     }
 

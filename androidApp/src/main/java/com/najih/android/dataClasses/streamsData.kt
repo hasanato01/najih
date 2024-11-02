@@ -73,10 +73,17 @@ data class Teacher(
     val phoneNumber: String,
     val status: String,
     val lessons: List<Lesson>,
+    val image: TeacherImage?, // Made nullable
     val userId: String,
     val createdAt: String,
     val updatedAt: String,
     @SerialName("__v") val version: Int
+)
+
+@Serializable
+data class TeacherImage(
+    val filename: String?, // Made nullable
+    val url: String?       // Made nullable
 )
 
 @Serializable

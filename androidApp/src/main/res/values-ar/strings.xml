@@ -15,8 +15,7 @@
     <string name="highschool">الثانوية العامة</string>
     <string name="preparatory">الإعدادية</string>
     <string name="primary">الابتدائية</string>
-    <string name="kindergarten1">رياض الأطفال 1</string>
-    <string name="kindergarten2">رياض الأطفال 2</string>
+    <string name="kindergarten">رياض الأطفال</string>
     <string name="subjects">المواد الدراسية</string>
     <string name="nice_to_have_you_back">سعداء بعودتك</string>
     <string name="sign_in">تسجيل الدخول</string>
@@ -84,5 +83,16 @@
     <string name="sign_in_error">خطأ في تسجيل الدخول: %1$s</string>
     <string name="name_label">الاسم</string>
     <string name="phone_label">الهاتف</string>
-
+    <string name="no_exams_available">لا توجد امتحانات متاحة</string>
+    <string name="no_questions_available">لا توجد أسئلة متاحة</string>
+    <string name="contact_us"> تواصل معنا</string>
+    <string name="confirm_and_upload">confirm_and_upload</string>
+    <string name="upload_image_pdf">upload_image_pdf</string>
+    <string name="upload_file">upload_file</string>
+    <string name="upload_prompt">upload_prompt</string>
+    <string name="submit">submit\n</string>
+    <string name="cancel">cancel</string>
+    <string name="setting">setting</string>
+    <string name="conditions_and_privacy_experience">conditions_and_privacy_experience</string>
+    <string name="Get_in_touch">Get_in_touch</string>
 </resources>

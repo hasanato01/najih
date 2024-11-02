@@ -48,7 +48,8 @@ suspend fun signIn(
                 val accessToken = signInResponse.accessToken
                 val userName = signInResponse.user.name
                 val userEmail = signInResponse.user.username
-                GlobalFunctions.saveUserInfo(context, accessToken ,userId, userName , userEmail)
+                val purchasedLessons = signInResponse.user.purchasedLessons
+                GlobalFunctions.saveUserInfo(context, accessToken ,userId, userName , userEmail,purchasedLessons)
                 val responseBody = response.bodyAsText()
                 Log.d("ApiClient", "Response Body: $responseBody")
                 json.decodeFromString(responseBody)

@@ -1,8 +1,7 @@
 package com.najih.android.ui.homePage.components
 
 
-import android.net.Uri
-import android.util.Log
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,14 +13,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,62 +28,64 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.najih.android.R
-import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.globalData.RECORDED_SUBJECTS_ENDPOINT
 import com.najih.android.api.globalData.STREAMS_SUBJECTS_ENDPOINT
-import com.najih.android.util.GlobalFunctions
-import io.ktor.client.engine.android.Android
-import kotlinx.coroutines.launch
+
 
 @Composable
 fun StageCard(
     stage: String,
     type: String,
-    modifier: Modifier = Modifier, // Provide a default modifier
+    image : Int,
+    modifier: Modifier = Modifier,
     navController: NavController
 ) {
     Card(
         modifier = modifier
             .shadow(5.dp, RoundedCornerShape(10.dp))
+            .fillMaxSize()
             .background(Color.White)
-            .padding(16.dp), // Adjusted padding
+            .padding(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.elevatedCardElevation(0.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Left image
-            Image(
-                painter = painterResource(id = R.drawable.k),
-                contentDescription = "$stage image 1",
+            Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .weight(0.2f) // Smaller weight for image
-            )
+                    .size(60.dp) // or any other size you prefer
+                    .weight(0.2f)
+                    .clip(RoundedCornerShape(10.dp)) // Adjust the radius as needed
+            ) {
+                Image(
+                    painter = painterResource(id = image),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "$stage image 1",
+                    modifier = Modifier.fillMaxSize() // Fills the Box
+                )
+            }
 
-            // Column with stage text and buttons
             Column(
                 modifier = Modifier
                     .weight(0.8f)
-                    .padding(start = 16.dp), // Space between image and text
+                    .padding(start = 16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                // Stage text
                 Text(
                     text = stage,
-                    fontSize = 18.sp, // Slightly larger font for clarity
-                    fontWeight = FontWeight.Bold, // Bold to give more emphasis
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
 
-                // Row of two buttons (Live and Recorded Lessons)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp), // Space between text and buttons
+                        .padding(top = 20.dp), // Space between text and buttons
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     // Button 1: Live Lessons
@@ -142,10 +143,3 @@ fun StageButton(
     }
 }
 
-@Preview
-@Composable
-fun StageCardPreview() {
-    val navController = rememberNavController() // Correcting to rememberNavController
-    val modifier = Modifier // Ensure Modifier is initialized
-    StageCard(stage = "High School", type = "sss", modifier = modifier, navController = navController)
-}

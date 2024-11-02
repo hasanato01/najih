@@ -42,7 +42,7 @@ import com.najih.android.R
 fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
     var isExpanded by remember { mutableStateOf(false) }
 
-    // Display if the question was correct or not
+    val secureImageUrl = result.question.image.url.replace("http://", "https://")
     val isCorrectText = if (result.isCorrect) stringResource(id = R.string.correct) else stringResource(id = R.string.incorrect)
     val correctnessIcon = if (result.isCorrect) {
         Icons.Default.CheckCircle // Use a checkmark icon for correct answers
@@ -95,9 +95,9 @@ fun QuestionResultCard(result: QuestionResultData, questionIndex: Int) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Conditionally display image if available
-                if (result.question.image.url.isNotEmpty()) {
+                if (secureImageUrl.isNotEmpty()) {
                     AsyncImage(
-                        model = result.question.image.url,
+                        model = secureImageUrl,
                         contentDescription = stringResource(id = R.string.question_image),
                         modifier = Modifier
                             .fillMaxWidth()

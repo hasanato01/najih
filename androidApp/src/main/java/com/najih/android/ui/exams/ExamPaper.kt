@@ -12,10 +12,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
 import com.najih.android.api.exams.getExamById
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -41,8 +44,6 @@ import com.najih.android.dataClasses.Question
 import com.najih.android.dataClasses.QuestionResult
 import com.najih.android.dataClasses.QuestionResultData
 import com.najih.android.dataClasses.ResultImage
-import com.najih.android.ui.uitilis.BottomNavBar
-import com.najih.android.ui.uitilis.Navbar
 import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.delay
@@ -57,7 +58,7 @@ fun ExamPaper(
     context: Context,
     examId: String
 ) {
-    var currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
+    val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
     val token = GlobalFunctions.getUserInfo(context).token
     val userID = GlobalFunctions.getUserInfo(context).userId
     val userName = GlobalFunctions.getUserInfo(context).userName
@@ -79,17 +80,13 @@ fun ExamPaper(
         try {
             exam = getExamById(httpClient, context, examId)
             exam?.let {
-                // Convert the exam time from minutes to seconds
                 remainingTime = it.time * 60
                 coroutineScope.launch {
                     while (remainingTime > 0) {
                         delay(1000)
                         remainingTime -= 1
-                        val minutes = remainingTime / 60
-                        val seconds = remainingTime % 60
                     }
 
-                    // Trigger exam submission when time is up
                     val resultsArray = buildExamResults(exam!!, userAnswers)
                     val correctAnswersCount = calculateCorrectAnswersCount(exam!!, userAnswers)
                     val examName = LanguageContent(
@@ -195,61 +192,87 @@ fun ExamPaper(
                 .padding(innerPadding)
         ) {
             if (isLoading) {
-                Text("Loading exam...")
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator() // Loader
+                }
             } else if (errorMessage != null) {
-                Text(errorMessage ?: "Unknown error")
+                Text(
+                    text = errorMessage ?: "Unknown error",
+                    modifier = Modifier.padding(16.dp)
+                )
             } else {
                 exam?.let { exam ->
-                    AnimatedContent(
-                        targetState = currentQuestionIndex,
-                        transitionSpec = {
-                            (expandIn(animationSpec = tween(durationMillis = 300)) + fadeIn()).togetherWith(
-                                shrinkOut(animationSpec = tween(durationMillis = 300)) + fadeOut()
+                    if (exam.questions.isEmpty()) {
+                        // Display a message if no questions are available
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.no_questions_available),
+                                modifier = Modifier.padding(16.dp)
                             )
-                        }, label = ""
-                    ) { targetIndex ->
-                        QuestionCard(
-                            question = exam.questions[targetIndex],
-                            index = targetIndex,
-                            userAnswers,
-                            onAnswer = { answer ->
-                                Log.d("ExamPaper", "Answer selected: $answer")
-                                userAnswers[targetIndex] = answer.selectedOption
-                                Log.d("ExamPaper", "userAnswers: $userAnswers")
-                            }
-                        )
-                    }
-
-                    if (showReviewDialog) {
-                        ReviewDialog(
-                            totalQuestions = exam.questions.size,
-                            userAnswers = userAnswers,
-                            onQuestionClick = { selectedQuestionIndex ->
-                                currentQuestionIndex = selectedQuestionIndex
-                                showReviewDialog = false
+                        }
+                    } else {
+                        AnimatedContent(
+                            targetState = currentQuestionIndex,
+                            transitionSpec = {
+                                (expandIn(animationSpec = tween(durationMillis = 300)) + fadeIn()).togetherWith(
+                                    shrinkOut(animationSpec = tween(durationMillis = 300)) + fadeOut()
+                                )
                             },
-                            onDismiss = { showReviewDialog = false }
-                        )
-                    }
-                    if (showSubmissionDialog) {
-                        AlertDialog(
-                            onDismissRequest = { showSubmissionDialog = false },
-                            confirmButton = {
-                                TextButton(onClick = { showSubmissionDialog = false }) {
-                                    Text(stringResource(id = R.string.ok_button))  // OK button text
+                            label = ""
+                        ) { targetIndex ->
+                            QuestionCard(
+                                question = exam.questions[targetIndex],
+                                index = targetIndex,
+                                userAnswers,
+                                onAnswer = { answer ->
+                                    Log.d("ExamPaper", "Answer selected: $answer")
+                                    userAnswers[targetIndex] = answer.selectedOption
+                                    Log.d("ExamPaper", "userAnswers: $userAnswers")
                                 }
-                            },
-                            title = {
-                                Text(text = stringResource(id = R.string.exam_submitted_title))  // Dialog title
-                            },
-                            text = {
-                                Text(text = submissionMessage)
-                            }
-                        )
+                            )
+                        }
+
+                        if (showReviewDialog) {
+                            ReviewDialog(
+                                totalQuestions = exam.questions.size,
+                                userAnswers = userAnswers,
+                                onQuestionClick = { selectedQuestionIndex ->
+                                    currentQuestionIndex = selectedQuestionIndex
+                                    showReviewDialog = false
+                                },
+                                onDismiss = { showReviewDialog = false }
+                            )
+                        }
+                        if (showSubmissionDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showSubmissionDialog = false },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        showSubmissionDialog = false
+                                        navController.navigate("user_exams")
+                                    }) {
+                                        Text(stringResource(id = R.string.ok_button))  // OK button text
+                                    }
+                                },
+                                title = {
+                                    Text(text = stringResource(id = R.string.exam_submitted_title))  // Dialog title
+                                },
+                                text = {
+                                    Text(text = submissionMessage)
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
+
     }
 
 }

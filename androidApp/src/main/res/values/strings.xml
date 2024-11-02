@@ -15,8 +15,7 @@
     <string name="highschool">HighSchool</string>
     <string name="preparatory">Preparatory</string>
     <string name="primary">Primary</string>
-    <string name="kindergarten1">Kindergarten1</string>
-    <string name="kindergarten2">Kindergarten2</string>
+    <string name="kindergarten">Kindergarten</string>
     <string name="subjects">Subjects</string>
     <string name="nice_to_have_you_back">Nice to have you back</string>
     <string name="sign_in">Sign in</string>
@@ -84,5 +83,18 @@
     <string name="sign_in_error">Sign-in error: %1$s</string>
     <string name="name_label">Name</string>
     <string name="phone_label">Phone</string>
+    <string name="no_exams_available">No exams available</string>
+    <string name="no_questions_available">No questions available</string>
+    <string name="contact_us">contact us</string>
+    <string name="confirm_and_upload">confirm_and_upload</string>
+    <string name="upload_image_pdf">upload_image_pdf</string>
+    <string name="upload_file">upload_file</string>
+    <string name="upload_prompt">upload_prompt</string>
+    <string name="submit">submit\n</string>
+    <string name="cancel">cancel</string>
+    <string name="setting">setting</string>
+    <string name="conditions_and_privacy_experience">conditions_and_privacy_experience</string>
+    <string name="Get_in_touch">Get_in_touch</string>
+
 
 </resources>
