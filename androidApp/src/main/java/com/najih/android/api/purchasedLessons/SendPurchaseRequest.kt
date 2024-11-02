@@ -68,7 +68,6 @@ suspend fun savePurchasedLessons(
 
         val fileResponseBody = fileResponse.bodyAsText()
         val bill = json.decodeFromString<Bill>(fileResponseBody)
-
         // Convert state lists to standard lists
         val standardPurchasedLessons = purchasedLessons.toMap().mapValues { it.value.toList() }
         val standardRecorderLessonsIds = recorderLessonsIds.toList()
