@@ -63,7 +63,7 @@ data class Teacher(
     @SerialName("_id") val id: String,
     val name: String,
     val age: String,
-    val levels: LanguageContent,
+    val levels: List<LanguageContent>,
     val schoolName: String,
     val experience: String,
     val subjects: String,

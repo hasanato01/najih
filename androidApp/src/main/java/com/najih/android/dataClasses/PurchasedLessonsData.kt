@@ -28,5 +28,5 @@ data class Bill(
 @Serializable
 data class PurchaseResponse(
     val status: String,
-    val message: String
+
 )

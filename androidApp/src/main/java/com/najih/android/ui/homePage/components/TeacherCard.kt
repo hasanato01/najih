@@ -28,7 +28,7 @@ import com.najih.android.R
 fun TeacherCard(
     name: String,
     schoolName: String,
-    level: String,
+    level: List<String>,
     experience: String,
     subjects: String,
     image: Painter,

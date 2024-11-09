@@ -3,6 +3,7 @@ package com.najih.android.ui.recordedLessons
 import Lesson
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -38,10 +39,17 @@ fun UploadFileDialog(
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri ->
+            Log.d("ApiClient", "Selected URI: $uri") // Log the URI
             selectedFileUri = uri
-            selectedFile = uri?.let { uriToFile(it, context) }
+            if (uri != null) {
+                selectedFile = uriToFile(uri, context)
+                Log.d("ApiClient", "Converted file: $selectedFile") // Log the resulting file
+            } else {
+                Log.e("ApiClient", "URI is null")
+            }
         }
     )
+
 
     AlertDialog(
         onDismissRequest = onDismiss,

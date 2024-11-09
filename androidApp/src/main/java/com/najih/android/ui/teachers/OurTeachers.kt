@@ -65,7 +65,10 @@ fun OurTeachers(
                     items(teachersList) { teacher ->
                         val name = if (currentLanguage == "ar") teacher.name else teacher.name
                         val schoolName = if (currentLanguage == "ar") teacher.schoolName else teacher.schoolName
-                        val levels = if (currentLanguage == "ar") teacher.levels.ar else teacher.levels.en
+                        val levels = teacher.levels.map {
+                            if (currentLanguage == "ar") it.ar else it.en
+                        }
+
                         val subjects = teacher.subjects
                         val secureImageUrl = teacher.image?.url?.replace("http://", "https://")
 

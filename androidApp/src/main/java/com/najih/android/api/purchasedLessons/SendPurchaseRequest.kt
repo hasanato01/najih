@@ -43,11 +43,13 @@ suspend fun savePurchasedLessons(
         ignoreUnknownKeys = true
     }
 
+    Log.d("ApiClient", "Purchase Request JSON: $file")
     val uploadUrl = "${BASE_URL}${UPLOAD_FILE_ENDPOINT}"
     val purchaseUrl = "${BASE_URL}${SEND_PURCHASE_REQUEST_ENDPOINT}"
     val token = GlobalFunctions.getUserInfo(context).token
     val userName = GlobalFunctions.getUserInfo(context).userName
     val userEmail = GlobalFunctions.getUserInfo(context).userEmail
+
 
     try {
         // First Request: Upload the file
@@ -67,7 +69,8 @@ suspend fun savePurchasedLessons(
         }
 
         val fileResponseBody = fileResponse.bodyAsText()
-        val bill = json.decodeFromString<Bill>(fileResponseBody)
+        var bill = json.decodeFromString<Bill>(fileResponseBody)
+        bill = bill.copy(status = 200)
         // Convert state lists to standard lists
         val standardPurchasedLessons = purchasedLessons.toMap().mapValues { it.value.toList() }
         val standardRecorderLessonsIds = recorderLessonsIds.toList()
@@ -93,12 +96,13 @@ suspend fun savePurchasedLessons(
                 append(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json) // Set the content type for JSON
             }
-            setBody(purchaseRequestJson) // Send the serialized request
+            setBody(updatedPurchaseRequest) // Send the serialized request
         }
 
         return when (purchaseResponse.status) {
             HttpStatusCode.OK -> {
                 val responseBody = purchaseResponse.bodyAsText()
+                Log.d("ApiClient", "Response Body: $responseBody")
                 json.decodeFromString<PurchaseResponse>(responseBody)
             }
             else -> {

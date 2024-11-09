@@ -3,6 +3,7 @@ package com.najih.android.ui.recordedLessons
 import GetSubjectLessons
 import Lesson
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import com.najih.android.api.subjects.GetLessonsBySubject
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.Navbar
 import com.najih.android.util.GlobalFunctions
+import com.najih.android.util.VideoPlayerDialog
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
@@ -50,14 +52,13 @@ fun Lessons(navController: NavController, subjectId: String) {
     val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
     var isCheckableMode by remember { mutableStateOf(false) }
     var showConfirmationDialog by remember { mutableStateOf(false) }
-
-    // Selected lessons data structures
+    val userPurchasedLessons = GlobalFunctions.getUserInfo(context).purchasedLessons
     val purchasedLessons = remember { mutableStateMapOf<String, MutableList<String>>() }
     val recorderLessonsIds = remember { mutableStateListOf<String>() }
     val recorderLessons = remember { mutableStateListOf<Lesson>() }
     val selectedLessons = remember { mutableStateMapOf<String, Boolean>() }
+    var previewVideoUrl by remember { mutableStateOf<String?>(null) } // State to hold video URL for preview
 
-    // Data fetching
     LaunchedEffect(subjectId) {
         coroutineScope.launch {
             try {
@@ -88,7 +89,7 @@ fun Lessons(navController: NavController, subjectId: String) {
                 .padding(innerPadding)
                 .background(Color.White)
         ) {
-            // Static SubjectInfo Section (not part of LazyColumn)
+            // SubjectInfo Section (not part of LazyColumn)
             SubjectInfo(
                 subjectInfo = subjectInfo,
                 isCheckableMode = isCheckableMode,
@@ -97,12 +98,13 @@ fun Lessons(navController: NavController, subjectId: String) {
                 onToggleConfirmDialog = { newState -> showConfirmationDialog = newState },
                 selectedLessons = selectedLessons
             )
+
             if (isCheckableMode) {
                 Text(
                     text = "Please Select lessons",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding( 16.dp)
+                    modifier = Modifier.padding(16.dp)
                 )
             }
 
@@ -117,67 +119,60 @@ fun Lessons(navController: NavController, subjectId: String) {
                     httpClient
                 )
             }
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 itemsIndexed(lessonsList ?: emptyList()) { index, lesson ->
                     val isChecked = selectedLessons[lesson.id] == true
+                    val isPurchased = userPurchasedLessons.contains(lesson.id)
+
                     LessonCard(
-                                lesson = lesson,
-                                lessonNumber = index + 1,
-                                isCheckableMode = isCheckableMode,
-                                isChecked = isChecked,
-                                onCheckedChange = { isSelected ->
-                                    if (isSelected) {
-                                        selectedLessons[lesson.id] = true
-
-                                        // Add lesson ID to purchasedLessons map
-                                        val subjectLessonIds = purchasedLessons.getOrPut(subjectId) { mutableListOf() }
-                                        if (!subjectLessonIds.contains(lesson.id)) {
-                                            subjectLessonIds.add(lesson.id)
-                                        }
-
-                                        // Add lesson ID to recorderLessonsIds list if not already present
-                                        if (!recorderLessonsIds.contains(lesson.id)) {
-                                            recorderLessonsIds.add(lesson.id)
-                                        }
-
-                                        // Add full lesson details to recorderLessons if not already present
-                                        if (!recorderLessons.any { it.id == lesson.id }) {
-                                            recorderLessons.add(lesson)
-                                        }
-
-                                    } else {
-                                        selectedLessons.remove(lesson.id)
-
-                                        // Remove lesson ID from purchasedLessons map
-                                        purchasedLessons[subjectId]?.remove(lesson.id)
-                                        if (purchasedLessons[subjectId]?.isEmpty() == true) {
-                                            purchasedLessons.remove(subjectId)
-                                        }
-
-                                        // Remove lesson ID from recorderLessonsIds list
-                                        recorderLessonsIds.remove(lesson.id)
-
-                                        // Remove full lesson details from recorderLessons
-                                        recorderLessons.removeAll { it.id == lesson.id }
-                                    }
-
-                                    // Logging for debugging
-                                    Log.d("LessonCard", "Purchased Lessons: $purchasedLessons")
-                                    Log.d("LessonCard", "Recorder Lesson IDs: $recorderLessonsIds")
-                                    Log.d("LessonCard", "Recorder Lessons: $recorderLessons")
+                        lesson = lesson,
+                        lessonNumber = index + 1,
+                        isCheckableMode = isCheckableMode,
+                        isChecked = isChecked,
+                        isPurchased = isPurchased,
+                        onCheckedChange = { isSelected ->
+                            if (isSelected) {
+                                selectedLessons[lesson.id] = true
+                                val subjectLessonIds = purchasedLessons.getOrPut(subjectId) { mutableListOf() }
+                                if (!subjectLessonIds.contains(lesson.id)) {
+                                    subjectLessonIds.add(lesson.id)
                                 }
-
-
-
-                            )
-
+                                if (!recorderLessonsIds.contains(lesson.id)) {
+                                    recorderLessonsIds.add(lesson.id)
+                                }
+                                if (!recorderLessons.any { it.id == lesson.id }) {
+                                    recorderLessons.add(lesson)
+                                }
+                            } else {
+                                selectedLessons.remove(lesson.id)
+                                purchasedLessons[subjectId]?.remove(lesson.id)
+                                if (purchasedLessons[subjectId]?.isEmpty() == true) {
+                                    purchasedLessons.remove(subjectId)
+                                }
+                                recorderLessonsIds.remove(lesson.id)
+                                recorderLessons.removeAll { it.id == lesson.id }
+                            }
+                        },
+                        onLessonPurchasedClick = {
+                            Toast.makeText(context, "This lesson is already purchased", Toast.LENGTH_SHORT).show()
+                        },
+                        onPreviewLessonClick = { url -> previewVideoUrl = url } // Set the preview URL to show dialog
+                    )
                 }
             }
         }
     }
 
+    // Show VideoPlayerDialog if previewVideoUrl is not null
+    previewVideoUrl?.let { url ->
+        VideoPlayerDialog(
+            videoUrl = url,
+            onDismiss = { previewVideoUrl = null } // Dismiss dialog by resetting previewVideoUrl
+        )
+    }
 }
 

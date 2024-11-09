@@ -1,6 +1,7 @@
 package com.najih.android.ui.latestNews
 
 import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -23,9 +24,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.najih.android.dataClasses.NewsItem
 import com.najih.android.ui.homePage.components.NewsCard
 
 @Composable
@@ -38,6 +41,8 @@ fun LatestNews(
     val newsList by viewModel.newsList.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
+
+    var selectedNewsItem by remember { mutableStateOf<NewsItem?>(null) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -55,9 +60,8 @@ fun LatestNews(
             } else if (newsList.isEmpty()) {
                 Text("No news available", modifier = Modifier.align(Alignment.CenterHorizontally))
             } else {
-                // Display items in two columns
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2), // Display 2 items per row
+                    columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -75,10 +79,22 @@ fun LatestNews(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp)
+                                .clickable {
+                                    selectedNewsItem = newsItem // Set selected news item when clicked
+                                }
                         )
                     }
                 }
             }
+        }
+
+        // This is where you call the NewsDetailsDialog composable within the composable scope
+        selectedNewsItem?.let { newsItem ->
+            NewsDetailsDialog(
+                newsItem = newsItem,
+                currentLanguage = currentLanguage,
+                onDismiss = { selectedNewsItem = null }
+            )
         }
     }
 }
