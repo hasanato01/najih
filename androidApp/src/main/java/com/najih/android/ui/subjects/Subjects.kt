@@ -114,7 +114,7 @@ fun Subjects(navController: NavController, type: String, stage: String, endPoint
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
-                    groupByClass.forEach { (classNumber, subjects) ->
+                    groupByClass.toList().asReversed().forEach { (classNumber, subjects) ->
                         item {
                             ClassSection(classNumber)
                         }

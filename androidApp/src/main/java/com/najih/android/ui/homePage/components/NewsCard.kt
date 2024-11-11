@@ -33,9 +33,9 @@ fun NewsCard(
         modifier = modifier
             .width(150.dp) // Fixed width for news cards
             .height(200.dp)
-        .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)) // Light grey border
-    .padding(8.dp),
-        colors = CardDefaults.cardColors(
+            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)) // Light grey border
+            .padding(8.dp),
+            colors = CardDefaults.cardColors(
             containerColor = Color.White // Set the card background color directly here
         ),
         shape = RoundedCornerShape(8.dp) // Rounded corners
@@ -53,7 +53,6 @@ fun NewsCard(
                 modifier = Modifier
                     .height(80.dp) // Half of the card height
                     .fillMaxWidth() // Fill the width of the card
-                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
                     .background(Color.Transparent) // Rounded corners on top
             )
 

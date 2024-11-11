@@ -27,14 +27,16 @@ import io.ktor.client.HttpClient
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.najih.android.R
 import com.najih.android.viewModels.News.LatestNewsViewModel
 import com.najih.android.viewModels.News.LatestNewsViewModelFactory
 
 @Composable
 fun HomePageLatestNews(
-    navController:NavController,
+    navController: NavController,
     httpClient: HttpClient,
     context: Context,
 ) {
@@ -53,7 +55,7 @@ fun HomePageLatestNews(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Latest News",
+                text = stringResource(R.string.latest_news),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
@@ -62,7 +64,7 @@ fun HomePageLatestNews(
                 navController.navigate("latest_news")
             }) {
                 Text(
-                    text = "See All →",
+                    text = stringResource(R.string.see_all),
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
@@ -73,16 +75,15 @@ fun HomePageLatestNews(
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else if (newsList.isEmpty()) {
-            Text("No news available", modifier = Modifier.align(Alignment.CenterHorizontally))
+            Text(stringResource(R.string.no_news_available), modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
             LazyRow(
+                modifier = Modifier.padding(8.dp),  // Add padding here to align with teachers' layout
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 val limitedNewsListSize = minOf(5, newsList.size)
                 items(limitedNewsListSize) { index ->
                     val newsItem = newsList[index]
-
-                    // Get the title and description based on the current language
                     val title = if (currentLanguage == "ar") newsItem.title.ar else newsItem.title.en
                     val description = if (currentLanguage == "ar") newsItem.des.ar else newsItem.des.en
                     val secureImageUrl = newsItem.image.url.replace("http://", "https://")
@@ -90,7 +91,8 @@ fun HomePageLatestNews(
                     NewsCard(
                         headline = title,
                         description = description,
-                        imagePainter = rememberAsyncImagePainter(secureImageUrl)  // Use Coil for loading the image
+                        imagePainter = rememberAsyncImagePainter(secureImageUrl),
+                        modifier = Modifier.padding(8.dp)  // Match padding for items
                     )
                 }
             }

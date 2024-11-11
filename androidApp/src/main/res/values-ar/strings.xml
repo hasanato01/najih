@@ -86,13 +86,27 @@
     <string name="no_exams_available">لا توجد امتحانات متاحة</string>
     <string name="no_questions_available">لا توجد أسئلة متاحة</string>
     <string name="contact_us"> تواصل معنا</string>
-    <string name="confirm_and_upload">confirm_and_upload</string>
-    <string name="upload_image_pdf">upload_image_pdf</string>
-    <string name="upload_file">upload_file</string>
-    <string name="upload_prompt">upload_prompt</string>
-    <string name="submit">submit\n</string>
-    <string name="cancel">cancel</string>
-    <string name="setting">setting</string>
-    <string name="conditions_and_privacy_experience">conditions_and_privacy_experience</string>
-    <string name="Get_in_touch">Get_in_touch</string>
+    <string name="confirm_and_upload">تأكيد ورفع</string>
+    <string name="upload_image_pdf">رفع صورة أو ملف PDF</string>
+    <string name="upload_file">رفع ملف</string>
+    <string name="upload_prompt">تنبيه للرفع</string>
+    <string name="submit">إرسال</string>
+    <string name="cancel">إلغاء</string>
+    <string name="setting">الإعدادات</string>
+    <string name="conditions_and_privacy_experience">الشروط وسياسة الخصوصية</string>
+    <string name="Get_in_touch">تواصل معنا</string>
+    <string name="see_all">عرض الكل →</string>
+    <string name="latest_news">آخر الأخبار</string>
+    <string name="no_news_available">لا توجد أخبار متاحة</string>
+    <string name="our_teachers">المعلمين</string>
+    <string name="no_teachers_available">لا يوجد معلمون متاحون</string>
+    <string name="name">الاسم: %1$s</string>
+    <string name="school">المدرسة: %1$s</string>
+    <string name="experience">الخبرة: %1$s</string>
+    <string name="TeacherSubjects">المواد: %1$s</string>
+    <string name="stay_up_to_date">stay up to date</string>
+    <string name="free">Free</string>
+    <string name="watch_lesson">Watch Lesson</string>
+    <string name="preview_lesson">Preview Lesson</string>
+
 </resources>

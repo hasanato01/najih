@@ -26,8 +26,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.najih.android.R
 import com.najih.android.dataClasses.NewsItem
 import com.najih.android.ui.homePage.components.NewsCard
 
@@ -46,7 +48,7 @@ fun LatestNews(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { Navbar(navController, backText = "stay up to date", titleText = "Latest News") },
+        topBar = { Navbar(navController, backText = stringResource(R.string.stay_up_to_date), titleText = stringResource(R.string.latest_news)) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(
@@ -80,7 +82,8 @@ fun LatestNews(
                                 .fillMaxWidth()
                                 .padding(8.dp)
                                 .clickable {
-                                    selectedNewsItem = newsItem // Set selected news item when clicked
+                                    selectedNewsItem =
+                                        newsItem // Set selected news item when clicked
                                 }
                         )
                     }

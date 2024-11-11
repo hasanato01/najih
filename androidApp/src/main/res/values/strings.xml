@@ -95,6 +95,19 @@
     <string name="setting">setting</string>
     <string name="conditions_and_privacy_experience">conditions_and_privacy_experience</string>
     <string name="Get_in_touch">Get_in_touch</string>
+    <string name="see_all">See All →</string>
+    <string name="latest_news">Latest News</string>
+    <string name="no_news_available">No news available</string>
+    <string name="our_teachers">Our Teachers</string>
+    <string name="no_teachers_available">No teachers available</string>
+    <string name="name">Name: %1$s</string>
+    <string name="school">School: %1$s</string>
+    <string name="experience">Experience: %1$s</string>
+    <string name="TeacherSubjects">Subjects: %1$s</string>
+    <string name="stay_up_to_date">stay up to date</string>
+    <string name="free">Free</string>
+    <string name="watch_lesson">Watch Lesson</string>
+    <string name="preview_lesson">Preview Lesson</string>
 
 
 </resources>

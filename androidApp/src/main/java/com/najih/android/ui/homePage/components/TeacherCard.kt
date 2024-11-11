@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.najih.android.R
@@ -68,7 +69,7 @@ fun TeacherCard(
                     .padding(4.dp)
             ) {
                 Text(
-                    text = "Name: $name",
+                    text = stringResource(R.string.name, name),
                     fontSize = 12.sp,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -76,7 +77,7 @@ fun TeacherCard(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "School: $schoolName",
+                    text = stringResource(R.string.school, schoolName),
                     fontSize = 10.sp,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -92,7 +93,7 @@ fun TeacherCard(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Experience: $experience",
+                    text = stringResource(R.string.experience, experience),
                     fontSize = 10.sp,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,7 +101,7 @@ fun TeacherCard(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Subjects: $subjects",
+                    text = stringResource(R.string.TeacherSubjects, subjects),
                     fontSize = 10.sp,
                     modifier = Modifier
                         .fillMaxWidth()

@@ -27,6 +27,7 @@ import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
 
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.najih.android.viewModels.Teachers.TeachersViewModel
@@ -49,14 +50,14 @@ fun HomePageTeachers(navController: NavController,httpClient: HttpClient, contex
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Our Teachers",
+                text = stringResource(R.string.our_teachers),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
 
             TextButton(onClick = { navController.navigate("our_teachers")}) {
                 Text(
-                    text = "See All →",
+                    text = stringResource(R.string.see_all),
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
@@ -67,7 +68,7 @@ fun HomePageTeachers(navController: NavController,httpClient: HttpClient, contex
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else if (teachersList.isEmpty()) {
-            Text("No teachers available", modifier = Modifier.align(Alignment.CenterHorizontally))
+            Text(stringResource(R.string.no_teachers_available), modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 val limitedTeachersListSize = minOf(5, teachersList.size)
