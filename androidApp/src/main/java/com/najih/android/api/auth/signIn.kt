@@ -5,8 +5,10 @@ import android.content.Context
 import android.util.Log
 import com.najih.android.api.globalData.BASE_URL
 import com.najih.android.api.globalData.SIGNING_ENDPOINT
+import com.najih.android.dataClasses.ErrorDetails
 import com.najih.android.dataClasses.SignInRequest
 import com.najih.android.dataClasses.SignInResponse
+import com.najih.android.dataClasses.User
 import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -41,27 +43,39 @@ suspend fun signIn(
             setBody(SignInRequest(email, password))
         }
 
-        when (response.status) {
-            HttpStatusCode.OK -> {
-                val signInResponse = response.body<SignInResponse>()
-                val userId = signInResponse.user.id
-                val accessToken = signInResponse.accessToken
-                val userName = signInResponse.user.name
-                val userEmail = signInResponse.user.username
-                val purchasedLessons = signInResponse.user.purchasedLessons
-                GlobalFunctions.saveUserInfo(context, accessToken ,userId, userName , userEmail,purchasedLessons)
-                val responseBody = response.bodyAsText()
-                Log.d("ApiClient", "Response Body: $responseBody")
-                json.decodeFromString(responseBody)
+        if (response.status == HttpStatusCode.OK) {
+            val responseBody = response.bodyAsText()
+            Log.d("ApiClient", "Response Body: $responseBody")
+
+            val signInResponse = json.decodeFromString<SignInResponse>(responseBody)
+            signInResponse.user?.let {
+                signInResponse.accessToken?.let { it1 ->
+                    GlobalFunctions.saveUserInfo(
+                        context,
+                        it1,
+                        it.id,
+                        signInResponse.user.name,
+                        signInResponse.user.username,
+                        signInResponse.user.purchasedLessons
+                    )
+                }
             }
-            else -> {
-                val errorMessage = "Sign-in failed with status ${response.status}\nResponse: ${response.bodyAsText()}"
-                Log.e("ApiClient", errorMessage)
-                throw Exception(errorMessage)
-            }
+            signInResponse
+        } else {
+            // Parse error response and return a SignInResponse object with an error
+            val errorBody = response.bodyAsText()
+            Log.e("ApiClient", "Sign-in failed with status ${response.status}\nResponse: $errorBody")
+
+            json.decodeFromString<SignInResponse>(errorBody)
         }
     } catch (e: Exception) {
         Log.e("ApiClient", "Error during signIn: ${e.message}", e)
-        throw e
+        SignInResponse(
+            success = false,
+            status = "Sign-in failed",
+            accessToken = "",
+            user = null,
+            err = ErrorDetails(e.message)
+        )
     }
 }

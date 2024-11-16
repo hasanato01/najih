@@ -80,7 +80,7 @@
     <string name="password_label">كلمة المرور</string>
     <string name="sign_in_button">تسجيل الدخول</string>
     <string name="sign_up_button">إنشاء حساب</string>
-    <string name="sign_in_error">خطأ في تسجيل الدخول: %1$s</string>
+    <string name="sign_in_error">خطأ في تسجيل الدخول</string>
     <string name="name_label">الاسم</string>
     <string name="phone_label">الهاتف</string>
     <string name="no_exams_available">لا توجد امتحانات متاحة</string>
@@ -104,9 +104,23 @@
     <string name="school">المدرسة: %1$s</string>
     <string name="experience">الخبرة: %1$s</string>
     <string name="TeacherSubjects">المواد: %1$s</string>
-    <string name="stay_up_to_date">stay up to date</string>
-    <string name="free">Free</string>
-    <string name="watch_lesson">Watch Lesson</string>
-    <string name="preview_lesson">Preview Lesson</string>
+    <string name="stay_up_to_date">ابقَ على اطلاع</string>
+    <string name="free">مجاني</string>
+    <string name="watch_lesson">مشاهدة الدرس</string>
+    <string name="preview_lesson">لمحة عن الدرس</string>
+    <string name="buy_now">اشترِ الآن</string>
+    <string name="please_select_lessons">يرجى اختيار الدروس</string>
+    <string name="selected_file">الملف المحدد: %1$s</string>
+    <string name="purchase_successful">تم الشراء بنجاح!</string>
+    <string name="purchase_failed_please_try_again">فشل الشراء. يرجى المحاولة مرة أخرى.</string>
+    <string name="ok">حسنًا</string>
+    <string name="teachers">Teachers</string>
+    <string name="invalid_credentials">invalid_credentials</string>
+    <string name="sign_in_failed">sign_in_failed</string>
+    <string name="purchased">تم شراؤه</string>
+    <string name="missing_credentials_message">يرجى إدخال البريد الإلكتروني وكلمة المرور.</string>
+    <string name="incorrect_credentials_message">اسم المستخدم أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.</string>
+    <string name="generic_error_message">حدث خطأ غير متوقع. يرجى المحاولة لاحقًا.</string>
+
 
 </resources>

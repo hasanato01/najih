@@ -168,7 +168,7 @@ fun SubjectInfo(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = stringResource(id = R.string.continue_enrollment),
+                            text = stringResource(id = R.string.buy_now),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.White

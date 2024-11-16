@@ -44,24 +44,30 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SignIn(navController: NavController ) {
+fun SignIn(navController: NavController) {
     val context = LocalContext.current
     val httpClient = CreateHttpClient(Android)
     val coroutineScope = rememberCoroutineScope()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val signInError by remember { mutableStateOf<String?>(null) }
+    var signInError by remember { mutableStateOf<String?>(null) }
+    var showDialog by remember { mutableStateOf(false) }
+
     Scaffold(
-        topBar = { Navbar(navController, backText = stringResource(R.string.nice_to_have_you_back) , titleText = stringResource(
-            R.string.sign_in
-        ) )},
+        topBar = {
+            Navbar(
+                navController,
+                backText = stringResource(R.string.nice_to_have_you_back),
+                titleText = stringResource(R.string.sign_in)
+            )
+        },
         content = { paddingValues ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White)
-                    .padding(10.dp)  // Apply the padding values from the Scaffold
-                    .consumeWindowInsets(paddingValues), // Consume the insets to avoid extra padding
+                    .padding(10.dp)
+                    .consumeWindowInsets(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -69,9 +75,8 @@ fun SignIn(navController: NavController ) {
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier.padding(12.dp)
                 ) {
-                    // Logo Image
                     Image(
-                        painter = painterResource(id = R.drawable.logo), // Replace with your logo resource ID
+                        painter = painterResource(id = R.drawable.logo),
                         contentDescription = "Logo",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
@@ -80,12 +85,11 @@ fun SignIn(navController: NavController ) {
                             .padding(24.dp)
                     )
 
-                    // Email Field
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
                         label = { Text(stringResource(id = R.string.email_label), color = Color.Gray) },
-                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFFc0c0c0 )) },  // Add a leading icon
+                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFFc0c0c0)) },
                         singleLine = true,
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -109,10 +113,10 @@ fun SignIn(navController: NavController ) {
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text(stringResource(id = R.string.password_label), color = Color.Gray) },  // Use a subtle color for the label
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFFc0c0c0 )) },  // Add a leading icon
+                        label = { Text(stringResource(id = R.string.password_label), color = Color.Gray) },
+                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFFc0c0c0)) },
                         singleLine = true,
-                        shape = RoundedCornerShape(12.dp),  // Rounded corners for a modern look
+                        shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.Black,
                             focusedBorderColor = Color(0xFFc0c0c0),
@@ -124,30 +128,37 @@ fun SignIn(navController: NavController ) {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)  // Add some padding for better spacing
+                            .padding(vertical = 8.dp)
                             .background(
                                 Color.LightGray.copy(alpha = 0.1f),
                                 shape = RoundedCornerShape(12.dp)
-                            )  // Light background for contrast
+                            )
                     )
 
-                    // Sign In Button
                     Button(
                         onClick = {
                             coroutineScope.launch {
                                 try {
-                                    val response = signIn(
-                                        httpClient,
-                                        context,
-                                        email = "hazem@gmail.com",
-                                        password = "123123"
-                                    )
-                                    if(response.success) {
+                                    val response = signIn(httpClient, context, email, password)
+                                    Log.d("ApiClient", "Response: $response")  // Log response details
+
+                                    if (response.success) {
                                         navController.navigate("Home_Page")
+                                    } else {
+                                        signInError = response.err?.message?.let { message ->
+                                            Log.d("ApiClient", "Error details: $message")
+                                            when (message) {
+                                                "Missing credentials" -> context.getString(R.string.missing_credentials_message)
+                                                "Password or username is incorrect" -> context.getString(R.string.incorrect_credentials_message)
+                                                else -> context.getString(R.string.generic_error_message)
+                                            }
+                                        } ?: context.getString(R.string.generic_error_message)
+                                        showDialog = true
                                     }
-                                    Log.d("SignInButton", "Sign-in successful: ${response.accessToken}")
                                 } catch (e: Exception) {
-                                    Log.e("SignInButton", "Sign-in failed: ${e.message}")
+                                    signInError = e.message ?: context.getString(R.string.sign_in_failed)
+                                    showDialog = true
+                                    Log.e("ApiClient", "Exception: ${e.message}")
                                 }
                             }
                         },
@@ -158,19 +169,31 @@ fun SignIn(navController: NavController ) {
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
-                        Text(stringResource(id = R.string.sign_in_button), fontSize = 16.sp, color = Color.White)
-                    }
-
-                    // Show sign-in error if any
-                    signInError?.let { error ->
                         Text(
-                            text = stringResource(id = R.string.sign_in_error, error),
-                            color = Color.Red,
-                            modifier = Modifier.padding(top = 16.dp)
+                            text = stringResource(id = R.string.sign_in_button),
+                            fontSize = 16.sp,
+                            color = Color.White
                         )
                     }
 
-                    // Sign Up Text Button
+
+
+                    signInError?.let {
+                        if (showDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showDialog = false },
+                                title = { Text(stringResource(id = R.string.sign_in_error)) },
+                                text = { Text(it) },  // Directly use the existing `signInError` message
+                                confirmButton = {
+                                    TextButton(onClick = { showDialog = false }) {
+                                        Text(stringResource(id = R.string.ok))
+                                    }
+                                }
+                            )
+                        }
+                    }
+
+
                     TextButton(
                         onClick = { navController.navigate("sign_up") },
                         modifier = Modifier.padding(top = 16.dp)
@@ -180,7 +203,6 @@ fun SignIn(navController: NavController ) {
                 }
             }
         }
-
     )
 }
 

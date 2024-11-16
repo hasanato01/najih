@@ -21,8 +21,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.najih.android.R
 import com.najih.android.ui.homePage.components.TeacherCard
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.Navbar
@@ -40,7 +42,7 @@ fun OurTeachers(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { Navbar(navController, backText = "Teachers", titleText = "Our Teachers") },
+        topBar = { Navbar(navController, backText = stringResource(R.string.teachers), titleText = stringResource(R.string.our_teachers)) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
         Column(

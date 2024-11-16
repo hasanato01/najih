@@ -25,10 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.subjects.GetLessonsBySubject
 import com.najih.android.ui.uitilis.BottomNavBar
@@ -37,6 +39,7 @@ import com.najih.android.util.GlobalFunctions
 import com.najih.android.util.VideoPlayerDialog
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 @Composable
 fun Lessons(navController: NavController, subjectId: String) {
@@ -59,6 +62,7 @@ fun Lessons(navController: NavController, subjectId: String) {
     val selectedLessons = remember { mutableStateMapOf<String, Boolean>() }
     var previewVideoUrl by remember { mutableStateOf<String?>(null) } // State to hold video URL for preview
 
+    Log.d("ApiClient",userPurchasedLessons.toString())
     LaunchedEffect(subjectId) {
         coroutineScope.launch {
             try {
@@ -101,7 +105,7 @@ fun Lessons(navController: NavController, subjectId: String) {
 
             if (isCheckableMode) {
                 Text(
-                    text = "Please Select lessons",
+                    text = stringResource(R.string.please_select_lessons),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(16.dp)

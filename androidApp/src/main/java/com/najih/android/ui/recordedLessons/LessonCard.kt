@@ -79,7 +79,7 @@ fun LessonCard(
             ) {
                 Column {
                     Text(
-                        text =  lessonName,
+                        text = lessonName,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Light
                     )
@@ -105,14 +105,22 @@ fun LessonCard(
                 }
 
                 // Right Column for Checkboxes and Buttons
-                Column {
-                    if (isCheckableMode && !isPurchased && !isFree) {
-                        Checkbox(
-                            checked = isChecked,
-                            onCheckedChange = onCheckedChange,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
+                Column(
+                    horizontalAlignment = Alignment.End // Align buttons and checkbox to the right
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(), // Make the Box fill the full width
+                        contentAlignment = Alignment.CenterEnd // Align Checkbox to the end
+                    ) {
+                        if (isCheckableMode && !isPurchased && !isFree) {
+                            Checkbox(
+                                checked = isChecked,
+                                onCheckedChange = onCheckedChange,
+                                modifier = Modifier.padding(start = 8.dp),
+                            )
+                        }
                     }
+
                     Button(
                         onClick = { onPreviewLessonClick(lesson.link) },
                         modifier = Modifier
@@ -124,6 +132,7 @@ fun LessonCard(
                     ) {
                         Text(stringResource(R.string.preview_lesson), color = Color.White, fontSize = 12.sp)
                     }
+
                     if (isPurchased || isFree) {
                         Button(
                             onClick = { /* Handle action for purchased or free lesson */ },
@@ -140,13 +149,13 @@ fun LessonCard(
             }
 
             if (isPurchased) {
-                Tag(text = "Purchased", color = Color(0xFF50c878), modifier = Modifier.align(Alignment.TopEnd))
+                Tag(text = stringResource(R.string.purchased), color = Color(0xFF50c878), modifier = Modifier.align(Alignment.TopEnd))
             }
             if (isFree) {
                 Tag(text = stringResource(R.string.free), color = Color(0xFFFFA500), modifier = Modifier.align(Alignment.TopEnd))
             }
-
         }
+
     }
 }
 

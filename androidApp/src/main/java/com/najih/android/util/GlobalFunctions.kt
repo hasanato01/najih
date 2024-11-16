@@ -3,6 +3,7 @@ package com.najih.android.util
 import android.content.Context
 import android.content.res.Configuration
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.Locale
 import com.najih.android.dataClasses.UserInfo
 
@@ -15,7 +16,7 @@ object  GlobalFunctions {
         userId: String,
         userName: String,
         userEmail: String,
-        purchasedLessons: List<String>
+        purchasedLessons:List<Map<String, List<String>>>
     ) {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -47,10 +48,11 @@ object  GlobalFunctions {
         // Retrieve the purchasedLessons from JSON
         val gson = Gson()
         val purchasedLessonsJson = sharedPreferences.getString("PURCHASED_LESSONS", "")
-        val purchasedLessons = if (purchasedLessonsJson.isNullOrEmpty()) {
+        val purchasedLessons: List<Map<String, List<String>>> = if (purchasedLessonsJson.isNullOrEmpty()) {
             emptyList()
         } else {
-            gson.fromJson(purchasedLessonsJson, Array<String>::class.java).toList()
+            val type = object : TypeToken<List<Map<String, List<String>>>>() {}.type
+            gson.fromJson(purchasedLessonsJson, type)
         }
 
         // Return an instance of UserInfo with the retrieved values
@@ -59,9 +61,10 @@ object  GlobalFunctions {
             userId = userId ?: "",
             userName = userName ?: "",
             userEmail = userEmail ?: "",
-            purchasedLessons = purchasedLessons
+            purchasedLessons = purchasedLessons.flatMap { it.values }.flatten()
         )
     }
+
 
     fun clearUserInfo(context: Context) {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)

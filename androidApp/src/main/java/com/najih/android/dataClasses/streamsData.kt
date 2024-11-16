@@ -12,7 +12,6 @@ data class StreamsInfo(
     val subject : StreamsSubjects,
     val lessons : List<Streams>,
     val teacher: Teacher
-
 )
 @Serializable
 data class StreamsSubjects(

@@ -26,15 +26,10 @@ fun SplashScreen(navController: NavController ,context: Context) {
     LaunchedEffect(Unit) {
         delay(500L)
         try {
-            if (GlobalFunctions.isFirstTimeUser(context)) {
-                navController.navigate("LanguageSelection") {
-                    popUpTo("splash_screen") { inclusive = true }
 
-                }
-            } else {
                 navController.navigate("Home_page") {
                     popUpTo("splash_screen") { inclusive = true }
-                }
+
             }
         } catch (e: Exception) {
             Log.e("SplashScreenError", "Navigation error: ${e.message}", e)

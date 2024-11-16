@@ -80,7 +80,7 @@
     <string name="password_label">Password</string>
     <string name="sign_in_button">Sign In</string>
     <string name="sign_up_button">Sign Up</string>
-    <string name="sign_in_error">Sign-in error: %1$s</string>
+    <string name="sign_in_error">Sign-in error</string>
     <string name="name_label">Name</string>
     <string name="phone_label">Phone</string>
     <string name="no_exams_available">No exams available</string>
@@ -108,6 +108,19 @@
     <string name="free">Free</string>
     <string name="watch_lesson">Watch Lesson</string>
     <string name="preview_lesson">Preview Lesson</string>
+    <string name="buy_now">buy now</string>
+    <string name="please_select_lessons">Please Select lessons</string>
+    <string name="selected_file">Selected file: %1$s</string>
+    <string name="purchase_successful">Purchase Successful!</string>
+    <string name="purchase_failed_please_try_again">Purchase Failed. Please try again.</string>
+    <string name="ok">OK</string>
+    <string name="teachers">Teachers</string>
+    <string name="invalid_credentials">invalid_credentials</string>
+    <string name="sign_in_failed">sign_in_failed</string>
+    <string name="purchased">Purchased</string>
+    <string name="missing_credentials_message">Please fill in both email and password.</string>
+    <string name="incorrect_credentials_message">Incorrect username or password. Please try again.</string>
+    <string name="generic_error_message">An unexpected error occurred. Please try again later.</string>
 
 
 </resources>

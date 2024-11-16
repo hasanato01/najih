@@ -15,14 +15,13 @@ import com.najih.android.util.GlobalFunctions
 
 
 class MainActivity : ComponentActivity() {
-    private var currentLanguage by mutableStateOf("en") // State for the current language
+    private var currentLanguage by mutableStateOf("ar") // State for the current language
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
         // Retrieve the saved language or default to English
-        currentLanguage = GlobalFunctions.getUserLanguage(this) ?: "en"
+        currentLanguage = GlobalFunctions.getUserLanguage(this) ?: "ar"
         updateLocale(currentLanguage)
 
         setContent {

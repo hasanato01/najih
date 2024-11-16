@@ -4,14 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +16,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.najih.android.R
 
@@ -39,11 +33,12 @@ fun ExamBottomNavBar(
     ) {
         // Review Button
         IconButton(onClick = onReviewClick, modifier = Modifier.weight(1f)) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(
                     painter = painterResource(id = R.drawable.review),
                     contentDescription = stringResource(id = R.string.review_content_description),
-                    modifier = Modifier.size(25.dp),
+                    modifier = Modifier.size(20.dp),
                     tint = Color.Unspecified
                 )
                 Text(
@@ -59,7 +54,7 @@ fun ExamBottomNavBar(
                 Icon(
                     painter = painterResource(id = R.drawable.submit),
                     contentDescription = stringResource(id = R.string.submit_content_description),
-                    modifier = Modifier.size(25.dp),
+                    modifier = Modifier.size(20.dp),
                     tint = Color.Unspecified
                 )
                 Text(
@@ -75,7 +70,7 @@ fun ExamBottomNavBar(
                 Icon(
                     painter = painterResource(id = R.drawable.next_question),
                     contentDescription = stringResource(id = R.string.next_content_description),
-                    modifier = Modifier.size(25.dp),
+                    modifier = Modifier.size(20.dp),
                     tint = Color.Unspecified
                 )
                 Text(
