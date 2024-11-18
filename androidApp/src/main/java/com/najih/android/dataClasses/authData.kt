@@ -63,5 +63,5 @@ data class UserInfo(
     val userId: String,
     val userName: String,
     val userEmail: String,
-    val purchasedLessons: List<String>
+    val purchasedLessons: List<Map<String, List<String>>>
 )

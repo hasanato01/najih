@@ -27,7 +27,6 @@ suspend fun GetStreams (httpClient: HttpClient,subjectId:String,teacherId:String
         val response: HttpResponse = httpClient.get(requestUrl) {
             contentType(ContentType.Application.Json)
         }
-
         when (response.status) {
             HttpStatusCode.OK -> {
                 val responseBody = response.bodyAsText()

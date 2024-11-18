@@ -121,6 +121,8 @@
     <string name="missing_credentials_message">Please fill in both email and password.</string>
     <string name="incorrect_credentials_message">Incorrect username or password. Please try again.</string>
     <string name="generic_error_message">An unexpected error occurred. Please try again later.</string>
+    <string name="address">Address: %1$s</string>
+    <string name="phone">Phone: %1$s</string>
 
 
 </resources>

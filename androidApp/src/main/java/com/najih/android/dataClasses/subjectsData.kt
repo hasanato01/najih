@@ -22,18 +22,19 @@ data class GetSubjectsResponse(
     val updatedAt: String,
     @SerialName("__v") val version: Int
 )
+
 @Serializable
 data class LanguageContent(
     val en: String,
     val ar: String
 )
 
-
 @Serializable
 data class OtherPrice(
     val key: Int,
     val value: Int
 )
+
 @Serializable
 data class GetSubjectLessons(
     @SerialName("_id") val id: String,
@@ -55,6 +56,7 @@ data class GetSubjectLessons(
     val updatedAt: String,
     @SerialName("__v") val version: Int
 )
+
 @Serializable
 data class Lesson(
     @SerialName("_id") val id: String,

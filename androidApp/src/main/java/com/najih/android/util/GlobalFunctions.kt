@@ -16,12 +16,12 @@ object  GlobalFunctions {
         userId: String,
         userName: String,
         userEmail: String,
-        purchasedLessons:List<Map<String, List<String>>>
+        purchasedLessons: List<Map<String, List<String>>>
     ) {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
-        // Convert the list of purchased lessons to JSON string using Gson
+        // Convert the list of purchased lessons to a JSON string using Gson
         val gson = Gson()
         val purchasedLessonsJson = gson.toJson(purchasedLessons)
 
@@ -35,6 +35,7 @@ object  GlobalFunctions {
         // Commit the changes
         editor.apply()
     }
+
     // Function to get user info
     fun getUserInfo(context: Context): UserInfo {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
@@ -61,9 +62,10 @@ object  GlobalFunctions {
             userId = userId ?: "",
             userName = userName ?: "",
             userEmail = userEmail ?: "",
-            purchasedLessons = purchasedLessons.flatMap { it.values }.flatten()
+            purchasedLessons = purchasedLessons
         )
     }
+
 
 
     fun clearUserInfo(context: Context) {

@@ -60,7 +60,7 @@ fun Lessons(navController: NavController, subjectId: String) {
     val recorderLessonsIds = remember { mutableStateListOf<String>() }
     val recorderLessons = remember { mutableStateListOf<Lesson>() }
     val selectedLessons = remember { mutableStateMapOf<String, Boolean>() }
-    var previewVideoUrl by remember { mutableStateOf<String?>(null) } // State to hold video URL for preview
+    var previewVideoUrl by remember { mutableStateOf<String?>(null) }
 
     Log.d("ApiClient",userPurchasedLessons.toString())
     LaunchedEffect(subjectId) {
@@ -76,6 +76,7 @@ fun Lessons(navController: NavController, subjectId: String) {
                     else -> "${subjectInfo?.level?.en ?: "Unknown"} "
                 }
                 lessonsList = subjectInfo?.listoflessons
+                Log.d("ApiClient", "userPurchasedStreams: ($userPurchasedLessons)")
             } catch (e: Exception) {
                 Log.e("ApiClientError", "Error fetching subject info", e)
             }
@@ -130,7 +131,10 @@ fun Lessons(navController: NavController, subjectId: String) {
             ) {
                 itemsIndexed(lessonsList ?: emptyList()) { index, lesson ->
                     val isChecked = selectedLessons[lesson.id] == true
-                    val isPurchased = userPurchasedLessons.contains(lesson.id)
+                    val isPurchased = userPurchasedLessons.any {
+                        it[subjectId]?.contains(lesson.id) == true
+                    }
+
 
                     LessonCard(
                         lesson = lesson,

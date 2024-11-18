@@ -15,6 +15,18 @@ data class PurchaseRequest(
     val status: String,
     val price: Int
 )
+@Serializable
+data class StreamsPurchaseRequest(
+    val purchasedLessons: Map<String, List<String>>,
+    val recorderLessonsIds: List<String>,
+    val bill: Bill,
+    val userName: String,
+    val userEmail: String,
+    val recorderLessons: List<Streams>,
+    val status: String,
+    val price: Int
+)
+
 
 @Serializable
 data class Bill(

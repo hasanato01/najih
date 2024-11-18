@@ -21,10 +21,9 @@ suspend fun GetLessonsBySubject  (
         prettyPrint = true
         ignoreUnknownKeys = true
     }
+
     val endPoint = "r_subjects/getByFilter"
     val requestUrl = "https://nserver.najih1.com/$endPoint/$subjectId"
-    // Log the request details
-
     // Log the request details
     Log.d("ApiClient", "Making GET request to URL: $requestUrl")
     Log.d("ApiClient", "Content-Type: ${ContentType.Application.Json}")

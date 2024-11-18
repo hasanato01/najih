@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -34,7 +35,7 @@ fun NewsCard(
             .width(150.dp) // Fixed width for news cards
             .height(200.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)) // Light grey border
-            .padding(8.dp),
+            ,
             colors = CardDefaults.cardColors(
             containerColor = Color.White // Set the card background color directly here
         ),
@@ -51,9 +52,10 @@ fun NewsCard(
                 painter = imagePainter,
                 contentDescription = "News Image",
                 modifier = Modifier
-                    .height(80.dp) // Half of the card height
+                    .height(100.dp) // Half of the card height
                     .fillMaxWidth() // Fill the width of the card
-                    .background(Color.Transparent) // Rounded corners on top
+                    .background(Color.Transparent),
+                contentScale = ContentScale.Crop
             )
 
             // Column for text elements

@@ -60,6 +60,7 @@ fun Subjects(navController: NavController, type: String, stage: String, endPoint
         "t_subjects" -> groupByStreamsClass
         else -> emptyMap()
     }
+    val sortedGroupByClass = groupByClass.toSortedMap() // Ensures class numbers are sorted
 
     val subjects = when (endPoint) {
         "r_subjects" -> recordedSubjects
@@ -114,7 +115,7 @@ fun Subjects(navController: NavController, type: String, stage: String, endPoint
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
-                    groupByClass.toList().asReversed().forEach { (classNumber, subjects) ->
+                    sortedGroupByClass.forEach { (classNumber, subjects) ->
                         item {
                             ClassSection(classNumber)
                         }

@@ -8,10 +8,8 @@ import com.najih.android.api.globalData.SIGNING_ENDPOINT
 import com.najih.android.dataClasses.ErrorDetails
 import com.najih.android.dataClasses.SignInRequest
 import com.najih.android.dataClasses.SignInResponse
-import com.najih.android.dataClasses.User
 import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse

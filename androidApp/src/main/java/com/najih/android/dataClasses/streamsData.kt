@@ -92,6 +92,7 @@ data class Streams(
     val description: LanguageContent,
     val startDate: String,
     val endDate: String,
+    val isFree: Boolean,
     val link: String,
     val teacherId: String,
     val subjectId: String,

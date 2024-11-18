@@ -3,6 +3,7 @@ package com.najih.android.ui.StreamsLessons
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,29 +27,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
 import com.najih.android.api.subjects.GetTeachersBySubject
 import com.najih.android.dataClasses.StreamsSubjectWithTeachers
 import com.najih.android.dataClasses.Teacher
-import com.najih.android.ui.homePage.components.SearchBar
 import com.najih.android.ui.uitilis.BottomNavBar
-import com.najih.android.ui.uitilis.HomeNavbar
 import com.najih.android.ui.uitilis.Navbar
+import com.najih.android.util.GlobalFunctions
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
 @Composable
 fun Teachers (navController: NavController,subjectId:String){
     val httpClient = CreateHttpClient(Android)
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
     // State for managing subject information and dialog visibility
     var subjectInfo by remember { mutableStateOf<StreamsSubjectWithTeachers?>(null) }
     val showDialog = rememberSaveable { mutableStateOf(false) }
+    val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "ar") }
     var subjectName by remember { mutableStateOf("Unknown") }
     var stage by remember { mutableStateOf("") }
     var teacherList by remember { mutableStateOf<List<Teacher>?>(null) }
@@ -58,8 +61,14 @@ fun Teachers (navController: NavController,subjectId:String){
         coroutineScope.launch {
             try {
                 subjectInfo = GetTeachersBySubject(httpClient, subjectId)
-                subjectName = subjectInfo?.name?.en ?: "Unknown"
-                stage = "${subjectInfo?.level?.en} ${subjectInfo?.classNumber}"
+                subjectName = when (currentLanguage) {
+                    "ar" -> subjectInfo?.name?.ar ?: "غير معروف"
+                    else -> subjectInfo?.name?.en ?: "Unknown"
+                }
+                stage = when (currentLanguage) {
+                    "ar" -> "${subjectInfo?.level?.ar ?: "غير معروف"} "
+                    else -> "${subjectInfo?.level?.en ?: "Unknown"} "
+                }
                 teacherList = subjectInfo?.teachersIds
                 Log.d("ApiClient", "Subject info fetched: $subjectInfo")
             } catch (e: Exception) {
@@ -80,16 +89,6 @@ fun Teachers (navController: NavController,subjectId:String){
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SearchBar()
-            Text(
-
-                text = subjectName,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(start = 11.dp, top = 49.dp)
-            )
             teacherList?.map { teacher ->
                 TeacherCard(navController, teacher, subjectId)
             }
@@ -100,53 +99,66 @@ fun Teachers (navController: NavController,subjectId:String){
 }
 
 @Composable
-fun TeacherCard(navController: NavController, teacher: Teacher,subjectId: String) {
+fun TeacherCard(navController: NavController, teacher: Teacher, subjectId: String) {
     Log.d("ApiClient", "Making GET request to URL: $teacher")
     val teacherName = teacher.name
     val teacherId = teacher.id
+    val schoolName = teacher.schoolName
+    val experience = teacher.experience
+    val subjects = teacher.subjects
+    val address = teacher.address
+    val phoneNumber = teacher.phoneNumber
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
-            .padding(top = 20.dp)
-            .shadow(4.dp, RoundedCornerShape(5.dp))
+            .padding(vertical = 10.dp, horizontal = 16.dp)
+            .shadow(6.dp, RoundedCornerShape(8.dp))
             .clickable {
                 navController.navigate("streams/${subjectId}/${teacherId}")
             }
     ) {
         Card(
             modifier = Modifier.fillMaxSize(),
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
-            shape = RoundedCornerShape(5.dp),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
+            shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = teacherName,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
-//                Text(
-//                    text = lessonDesc,
-//                    fontSize = 10.sp,
-//                    fontWeight = FontWeight.Light,
-//                    modifier = Modifier.padding(top = 16.dp)
-//                )
-//                Text(
-//                    text = "startData : $startData",
-//                    fontSize = 10.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    modifier = Modifier.padding(top = 11.dp)
-//                )
-//                Text(
-//                    text = "endDate : $endDate",
-//                    fontSize = 10.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    modifier = Modifier.padding(top = 11.dp)
-//                )
+
+                Text(
+                    text = stringResource(R.string.school, schoolName),
+                    color = Color.DarkGray
+                )
+
+                Text(
+                    text = stringResource(R.string.experience, experience),
+                    color = Color.DarkGray
+                )
+
+                Text(
+                    text = stringResource(R.string.TeacherSubjects, subjects),
+                    color = Color.DarkGray
+                )
+
+                Text(
+                    text = stringResource(R.string.address, address),
+                    color = Color.DarkGray
+                )
+
+                Text(
+                    text = stringResource(R.string.phone, phoneNumber),
+                    color = Color.DarkGray
+                )
             }
         }
     }
