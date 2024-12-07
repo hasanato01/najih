@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
+import com.najih.android.api.auth.checkJWT
 import com.najih.android.api.subjects.GetLessonsBySubject
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.Navbar
@@ -66,6 +67,7 @@ fun Lessons(navController: NavController, subjectId: String) {
     LaunchedEffect(subjectId) {
         coroutineScope.launch {
             try {
+                val jwtResponse = checkJWT(httpClient, context)
                 subjectInfo = GetLessonsBySubject(httpClient, subjectId)
                 subjectName = when (currentLanguage) {
                     "ar" -> subjectInfo?.name?.ar ?: "غير معروف"

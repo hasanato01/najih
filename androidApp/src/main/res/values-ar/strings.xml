@@ -123,6 +123,22 @@
     <string name="generic_error_message">حدث خطأ غير متوقع. يرجى المحاولة لاحقًا.</string>
     <string name="address">العنوان: %1$s</string>
     <string name="phone">رقم الهاتف: %1$s</string>
+    <string name="Name">الاسم</string>
+    <string name="last_name">اسم العائلة</string>
+    <string name="fathers_name">اسم الأب</string>
+    <string name="gender">الجنس</string>
+    <string name="Nationality">الجنسية</string>
+    <string name="birth_year">سنة الميلاد</string>
+    <string name="SchoolType">نوع المدرسة</string>
+    <string name="Residence">مكان الإقامة</string>
+    <string name="whatsApp">الواتساب</string>
+    <string name="heardFrom">كيف سمعت عنا</string>
+    <string name="confirm_password">تأكيد كلمة المرور</string>
+    <string name="fix_validation_errors">يرجى تصحيح الأخطاء!</string>
+    <string name="unknown_error">حدث خطأ غير معروف.</string>
+    <string name="Unauthorized">ليس لديك صلاحية</string>
+    <string name="please_log_in_title">يرجى تسجيل الدخول</string>
+    <string name="log_in_required_message">يجب تسجيل الدخول للوصول إلى الاختبارات الخاصة بك.</string>
 
 
 </resources>

@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import com.najih.android.R
+import com.najih.android.api.auth.checkJWT
 import com.najih.android.api.purchasedLessons.savePurchasedLessons
 import com.najih.android.dataClasses.PurchaseResponse
 import com.najih.android.util.uriToFile
@@ -109,11 +110,13 @@ fun UploadFileDialog(
     )
     // Show Purchase Dialog if there is a response
     if (showDialog) {
+
         PurchaseDialog(
             onDismiss = { showDialog = false },
             response = purchaseResponse
         )
     }
+
 }
 
 @Composable

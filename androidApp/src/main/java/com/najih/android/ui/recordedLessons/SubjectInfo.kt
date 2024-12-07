@@ -2,6 +2,7 @@ package com.najih.android.ui.recordedLessons
 
 import GetSubjectLessons
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.najih.android.R
+import com.najih.android.util.GlobalFunctions
 
 @Composable
 fun SubjectInfo(
@@ -49,11 +52,13 @@ fun SubjectInfo(
     selectedLessons: Map<String, Boolean>
 ) {
     // States to manage dropdown visibility for each section
+    val context = LocalContext.current
     var showPricingSection by remember { mutableStateOf(false) }
     var showOtherOptionsSection by remember { mutableStateOf(false) }
     var showCourseDatesSection by remember { mutableStateOf(false) }
     var showPaymentMethodSection by remember { mutableStateOf(false) }
     var showSeatsInfoSection by remember { mutableStateOf(false) }
+    val token = GlobalFunctions.getUserInfo(context).token
     Log.d("ApiClient",subjectInfo.toString())
 
     Card(
@@ -158,9 +163,15 @@ fun SubjectInfo(
                             color = Color.White
                         )
                     }
-                } else {
+                } else  {
                     Button(
-                        onClick = { onToggleCheckableMode(!isCheckableMode) },
+                        onClick = {
+                            if (token.isNotEmpty()) {
+                                onToggleCheckableMode(!isCheckableMode)
+                            } else {
+                                Toast.makeText(context, "you have to Log in first", Toast.LENGTH_SHORT).show()
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp),
@@ -174,6 +185,7 @@ fun SubjectInfo(
                             color = Color.White
                         )
                     }
+
                 }
             }
         }

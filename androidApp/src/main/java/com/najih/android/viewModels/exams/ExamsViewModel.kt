@@ -25,10 +25,17 @@ class ExamsViewModel(private val httpClient: HttpClient) : ViewModel() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
+                _errorMessage.value = null // Clear any previous error
+
                 val fetchedExams = getAllExams(httpClient, context)
                 _exams.value = fetchedExams
             } catch (e: Exception) {
-                _errorMessage.value = "Error fetching exams"
+                val errorResponse = e.message ?: "An unexpected error occurred"
+                if (errorResponse.contains("401 Unauthorized", ignoreCase = true)) {
+                    _errorMessage.value = "401 Unauthorized: Session expired."
+                } else {
+                    _errorMessage.value = errorResponse
+                }
                 Log.e("ExamsError", "Failed to fetch exams", e)
             } finally {
                 _isLoading.value = false

@@ -2,6 +2,7 @@ package com.najih.android.ui.exams
 
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +17,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,8 +46,7 @@ import com.najih.android.viewModels.exams.ExamsViewModel
 
 
 @Composable
-fun Exams (navController: NavController ,httpClient: HttpClient , context: Context) {
-
+fun Exams(navController: NavController, httpClient: HttpClient, context: Context) {
     val viewModelFactory = ExamViewModelFactory(httpClient)
     val examsViewModel: ExamsViewModel = viewModel(factory = viewModelFactory)
 
@@ -74,59 +76,91 @@ fun Exams (navController: NavController ,httpClient: HttpClient , context: Conte
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Top
             ) {
-
-
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .size(40.dp)
-                            .padding(8.dp),
-                        color = colorResource(id = R.color.secondColor),
-                        strokeWidth = 4.dp
-                    )
-                } else if (errorMessage != null) {
-                    Text(
-                        text = errorMessage ?: "Unknown error",
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(16.dp)
-                    )
-                } else if (exams.isEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.books),
-                            contentDescription = stringResource(R.string.no_exams_available),
-                            modifier = Modifier.size(100.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.no_exams_available),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Normal,
-                            modifier = Modifier.padding(top = 8.dp)
+                when {
+                    isLoading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .size(40.dp)
+                                .padding(8.dp),
+                            color = colorResource(id = R.color.secondColor),
+                            strokeWidth = 4.dp
                         )
                     }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        items(exams) { exam ->
-                            ExamCard(navController, exam)
+                    errorMessage != null -> {
+                        if (errorMessage?.contains("401 Unauthorized", ignoreCase = true) == true) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(Alignment.Center),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.Unauthorized),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                                Button (
+                                    onClick = {
+                                        navController.navigate("sign_in") {
+                                            popUpTo(0) // Clear the back stack
+                                        }
+                                    },
+                                    modifier = Modifier.padding(top = 8.dp)
+                                ) {
+                                    Text(text = stringResource(R.string.sign_in))
+                                }
+                            }
+                        } else {
+                            Text(
+                                text = errorMessage ?: stringResource(R.string.unknown_error),
+                                fontSize = 16.sp,
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
+                    exams.isEmpty() -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .wrapContentSize(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.books),
+                                contentDescription = stringResource(R.string.no_exams_available),
+                                modifier = Modifier.size(100.dp)
+                            )
+                            Text(
+                                text = stringResource(R.string.no_exams_available),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Normal,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+                    }
+                    else -> {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        ) {
+                            items(exams) { exam ->
+                                ExamCard(navController, exam)
+                            }
                         }
                     }
                 }
             }
         }
     }
-
-
-
 }
+
+
+

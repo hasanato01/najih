@@ -123,6 +123,22 @@
     <string name="generic_error_message">An unexpected error occurred. Please try again later.</string>
     <string name="address">Address: %1$s</string>
     <string name="phone">Phone: %1$s</string>
+    <string name="Name">Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="fathers_name">Father Name</string>
+    <string name="gender">Gender</string>
+    <string name="Nationality">Nationality</string>
+    <string name="birth_year">Birth Year</string>
+    <string name="SchoolType">School Type</string>
+    <string name="Residence">Residence</string>
+    <string name="whatsApp">WhatsApp</string>
+    <string name="heardFrom">Heard From</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="fix_validation_errors">Fix validation errors!</string>
+    <string name="unknown_error">Unknown error occurred.</string>
+    <string name="Unauthorized">Unauthorized</string>
+    <string name="please_log_in_title">Please log in</string>
+    <string name="log_in_required_message">You need to be logged in to access your exams.</string>
 
 
 </resources>

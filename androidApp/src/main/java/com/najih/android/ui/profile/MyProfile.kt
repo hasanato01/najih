@@ -83,11 +83,11 @@ fun MyProfile(navController: NavController) {
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                title = { Text(text = "Please log in") },
-                text = { Text("You need to be logged in to access your exams.") },
+                title = { Text(text = stringResource(R.string.please_log_in_title)) },
+                text = { Text(text = stringResource(R.string.log_in_required_message)) },
                 confirmButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("OK")
+                    TextButton(onClick = { showDialog = false ; navController.navigate("sign_in") }) {
+                        Text(stringResource(R.string.sign_in))
                     }
                 }
             )
