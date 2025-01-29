@@ -35,6 +35,9 @@ fun UploadFileDialog(
     purchasedLessons: SnapshotStateMap<String, MutableList<String>>,
     recorderLessonsIds: SnapshotStateList<String>,
     recorderLessons: SnapshotStateList<Lesson>,
+    subjectNameAR : String,
+    subjectClass : String,
+    lessonsPrice : Double,
     context: Context,
     httpClient: HttpClient
 ) {
@@ -90,6 +93,9 @@ fun UploadFileDialog(
                                 purchasedLessons = purchasedLessons,
                                 recorderLessonsIds = recorderLessonsIds,
                                 recorderLessons = recorderLessons,
+                                 subjectNameAR,
+                                 subjectClass,
+                                 lessonsPrice,
                                 file = file
                             )
 

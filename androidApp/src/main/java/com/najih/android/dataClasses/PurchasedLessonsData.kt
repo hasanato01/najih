@@ -13,7 +13,10 @@ data class PurchaseRequest(
     val userEmail: String,
     val recorderLessons: List<Lesson>,
     val status: String,
-    val price: Int
+    val price: Int,
+    val lessonsPrice : Double,
+    val subjectName: String,
+    val subjectClass: String
 )
 @Serializable
 data class StreamsPurchaseRequest(

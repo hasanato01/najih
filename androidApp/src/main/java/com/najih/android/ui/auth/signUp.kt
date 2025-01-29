@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -38,15 +39,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.najih.android.R
 import com.najih.android.api.CreateHttpClient
+import com.najih.android.api.auth.ResendCode
+import com.najih.android.api.auth.VerifyCode
 import com.najih.android.api.auth.signUp
 import com.najih.android.dataClasses.PurchaseResponse
 import com.najih.android.dataClasses.SignUpRequest
 import com.najih.android.dataClasses.SignUpResponse
 import com.najih.android.ui.uitilis.Navbar
 import io.ktor.client.engine.android.Android
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,8 +96,12 @@ fun SignUp(navController: NavController) {
     var schoolExpanded by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
+    var showVerificationDialog by remember { mutableStateOf(false) }
     var dialogMessage by remember { mutableStateOf("") }
     var isSignUpSuccess by remember { mutableStateOf(false) }
+    var verificationCode by remember { mutableStateOf("") }
+    var isCountdownActive by remember { mutableStateOf(false) }  // To track if countdown is active
+    var countdownTime by remember { mutableStateOf(3) }  // Start countdown from 3 seconds
 
     Scaffold(
         topBar = {
@@ -344,7 +352,12 @@ fun SignUp(navController: NavController) {
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                         isError = emailError,
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        ),
                         modifier = Modifier.fillMaxWidth()
+
                     )
 
                 }
@@ -357,7 +370,10 @@ fun SignUp(navController: NavController) {
                         label = { Text(stringResource(R.string.password_label)) },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                         isError = passwordError,
-                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Next
+                        ),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -372,7 +388,10 @@ fun SignUp(navController: NavController) {
                         label = { Text(stringResource(R.string.confirm_password)) },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                         isError = confirmPasswordError,
-                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Next
+                        ),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -432,14 +451,27 @@ fun SignUp(navController: NavController) {
                                             role = role
                                         )
                                     )
-                                    isSignUpSuccess = true
-                                    dialogMessage = response.status
+                                    if (response.success) {
+                                        dialogMessage = "You have successfully signed up"
+                                        showDialog = true
+                                        coroutineScope.launch {
+                                            delay(3000) // Wait for 3 seconds
+                                            navController.navigate("sign_in")
+                                        }
+                                    }
+
+
                                 } catch (e: Exception) {
-                                    isSignUpSuccess = false
-                                    dialogMessage = e.message ?: "Unknown error occurred."
-                                } finally {
-                                    isLoading = false
+                                    dialogMessage = if (e.message != null && e.message!!.contains("UserExistsError")) {
+                                        "A user with the given username is already registered"
+                                    } else {
+                                        "Sign-up failed. Please try again."
+                                    }
                                     showDialog = true
+                                }
+                                finally {
+                                    isLoading = false
+
                                 }
                             }
                         },
@@ -462,6 +494,7 @@ fun SignUp(navController: NavController) {
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
+            title = { Text("Sign-up Error") },
             text = { Text(dialogMessage) },
             confirmButton = {
                 Button(onClick = { showDialog = false }) {
@@ -470,4 +503,102 @@ fun SignUp(navController: NavController) {
             }
         )
     }
+//    if (showVerificationDialog) {
+//        AlertDialog(
+//            onDismissRequest = { showVerificationDialog = false },
+//            title = { Text("Enter Verification Code") },
+//            text = {
+//                Column(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    verticalArrangement = Arrangement.spacedBy(8.dp),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    OutlinedTextField(
+//                        value = verificationCode,
+//                        onValueChange = { verificationCode = it },
+//                        label = { Text("Verification Code") },
+//                        singleLine = true,
+//                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+//                        textStyle = TextStyle(fontSize = 30.sp),  // Set the font size to a large value
+//                        modifier = Modifier.fillMaxWidth()
+//                    )
+//
+//
+//                    Button(
+//                        onClick = {
+//                            coroutineScope.launch {
+//                                try {
+//                                    val response = VerifyCode(httpClient, email, verificationCode)
+//                                    if (response.success == true) {
+//                                        showVerificationDialog = false
+//                                        isCountdownActive = true  // Start the countdown dialog
+//                                        for (i in 3 downTo 1) {
+//                                            countdownTime = i  // Update the countdown time
+//                                            delay(1000) // Wait 1 second
+//                                        }
+//                                        Toast.makeText(context, response.message ?: "Verification Successful!", Toast.LENGTH_LONG).show()
+//                                        navController.navigate("sign_in")  // Navigate after countdown finishes
+//                                    }
+//                                } catch (e: Exception) {
+//                                    Toast.makeText(context, e.message ?: "Verification failed", Toast.LENGTH_SHORT).show()
+//                                }
+//                            }
+//                        },
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        Text("Verify")
+//                    }
+//
+//                    Button(
+//                        onClick = {
+//                            coroutineScope.launch {
+//                                try {
+//                                    ResendCode(httpClient, email)
+//                                    Toast.makeText(context, "Verification email resent!", Toast.LENGTH_SHORT).show()
+//                                } catch (e: Exception) {
+//                                    Toast.makeText(context, e.message ?: "Failed to resend email", Toast.LENGTH_SHORT).show()
+//                                }
+//                            }
+//                        },
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        Text("Resend Email")
+//                    }
+//
+//                    Button(
+//                        onClick = { showVerificationDialog = false },
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        Text("Cancel")
+//                    }
+//                }
+//            },
+//            confirmButton = {},
+//            dismissButton = {}
+//        )
+//    }
+//    if (isCountdownActive) {
+//        AlertDialog(
+//            onDismissRequest = { },
+//            title = { Text("Verification Complete") },
+//            text = {
+//                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                    Text(
+//                        text = "You will be redirected to sign-in in:",
+//                        fontSize = 20.sp
+//                    )
+//                    Text(
+//                        text = "$countdownTime",  // Countdown time displayed
+//                        fontSize = 50.sp,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//                }
+//            },
+//            confirmButton = {
+//                // No need for a confirm button, this will just show the countdown
+//            }
+//        )
+//    }
+
+
 }

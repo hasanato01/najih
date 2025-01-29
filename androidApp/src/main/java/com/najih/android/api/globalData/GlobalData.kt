@@ -22,3 +22,6 @@ const val SEND_PURCHASE_REQUEST_ENDPOINT="studentsLessons"
 const val UPLOAD_FILE_ENDPOINT="usersRouter/upload/all-files"
 // RE FETCH USER INFO
 const val RE_FETCH_USER_INFO="users/check/JWT"
+// SIGN UP VERIFY EMAIL
+const val VERIFY_EMAIL="users/verify-code"
+const val RESEND_CODE="usersRouter/resendActivateEmail"

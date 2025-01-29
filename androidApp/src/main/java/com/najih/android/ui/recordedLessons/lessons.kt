@@ -51,6 +51,9 @@ fun Lessons(navController: NavController, subjectId: String) {
     // States
     var subjectInfo by remember { mutableStateOf<GetSubjectLessons?>(null) }
     var subjectName by remember { mutableStateOf("Unknown") }
+    var subjectNameAR by remember { mutableStateOf("Unknown") }
+    var subjectClass by remember { mutableStateOf("Unknown") }
+    var lessonsPrice by remember { mutableStateOf(0.0) }
     var stage by remember { mutableStateOf("") }
     var lessonsList by remember { mutableStateOf<List<Lesson>?>(null) }
     val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }
@@ -69,6 +72,11 @@ fun Lessons(navController: NavController, subjectId: String) {
             try {
                 val jwtResponse = checkJWT(httpClient, context)
                 subjectInfo = GetLessonsBySubject(httpClient, subjectId)
+                Log.d("ApiClient", "$subjectInfo")
+                subjectNameAR = subjectInfo?.name?.ar.toString()
+                subjectClass = "${subjectInfo?.level?.ar ?: ""} ${subjectInfo?.classNumber ?: ""}".trim()
+                lessonsPrice = subjectInfo?.lessonPrice?.toDoubleOrNull() ?: 0.0
+
                 subjectName = when (currentLanguage) {
                     "ar" -> subjectInfo?.name?.ar ?: "غير معروف"
                     else -> subjectInfo?.name?.en ?: "Unknown"
@@ -122,6 +130,9 @@ fun Lessons(navController: NavController, subjectId: String) {
                     purchasedLessons,
                     recorderLessonsIds,
                     recorderLessons,
+                    subjectNameAR,
+                    subjectClass,
+                    lessonsPrice,
                     context,
                     httpClient
                 )

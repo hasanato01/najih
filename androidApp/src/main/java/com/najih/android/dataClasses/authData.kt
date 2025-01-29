@@ -55,7 +55,7 @@ data class User(
     @SerialName("_id") val id: String,
     val name: String,
     val role: String,
-    val verificationToken: String,
+    val verificationToken: String? = null,
     val verification: Boolean,
     val username: String,
     val teacherId: String,
@@ -63,8 +63,8 @@ data class User(
     val purchasedLessons: List<Map<String, List<String>>>,
     val recorderLessonsIds: List<String>,
     val teachersLessonsIds: List<String>,
-    val salt: String,
-    val hash: String,
+    val salt: String? = null,
+    val hash:  String? = null,
     val createdAt: String,
     val updatedAt: String,
     val __v: Int,
@@ -72,8 +72,11 @@ data class User(
     val lastResendTime: String? = null,
     val image: String? = null,
     val cv: String? = null,
-    val allowedPages: List<String>? = emptyList()
-)
+    val allowedPages: List<String>? = emptyList(),
+    val privatesLessonsIds: List<String>,
+    val courseLessonsIds: List<String>,
+
+    )
 
 @Serializable
 data class TeacherDetails(
@@ -113,4 +116,14 @@ data class UserInfo(
     val userName: String,
     val userEmail: String,
     val purchasedLessons: List<Map<String, List<String>>>
+)
+@Serializable
+data class VerificationRequest(
+    val email: String,
+    val code: String
+)
+@Serializable
+data class VerificationResponse(
+    val success: Boolean? = null,
+    val message: String? = null
 )
