@@ -115,7 +115,10 @@ data class UserInfo(
     val userId: String,
     val userName: String,
     val userEmail: String,
-    val purchasedLessons: List<Map<String, List<String>>>
+    val purchasedLessons: List<Map<String, List<String>>> ,
+    val recorderLessonsIds: List<String> ,
+    val teachersLessonsIds: List<String> ,
+
 )
 @Serializable
 data class VerificationRequest(

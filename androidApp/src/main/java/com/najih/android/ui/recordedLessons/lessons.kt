@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +54,7 @@ fun Lessons(navController: NavController, subjectId: String) {
     var subjectName by remember { mutableStateOf("Unknown") }
     var subjectNameAR by remember { mutableStateOf("Unknown") }
     var subjectClass by remember { mutableStateOf("Unknown") }
-    var lessonsPrice by remember { mutableStateOf(0.0) }
+    var lessonsPrice by remember { mutableDoubleStateOf(0.0) }
     var stage by remember { mutableStateOf("") }
     var lessonsList by remember { mutableStateOf<List<Lesson>?>(null) }
     val currentLanguage by remember { mutableStateOf(GlobalFunctions.getUserLanguage(context) ?: "en") }

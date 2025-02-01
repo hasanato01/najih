@@ -36,6 +36,9 @@ fun UploadFileForStreamsDialog(
     purchasedLessons: SnapshotStateMap<String, MutableList<String>>,
     recorderLessonsIds: SnapshotStateList<String>,
     recorderLessons: SnapshotStateList<Streams>,
+    subjectNameAR : String,
+    subjectClass : String,
+    lessonsPrice : Double,
     context: Context,
     httpClient: HttpClient
 ) {
@@ -91,6 +94,9 @@ fun UploadFileForStreamsDialog(
                                 purchasedLessons = purchasedLessons,
                                 recorderLessonsIds = recorderLessonsIds,
                                 recorderLessons = recorderLessons,
+                                subjectNameAR,
+                                subjectClass,
+                                lessonsPrice,
                                 file = file
                             )
 

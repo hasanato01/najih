@@ -21,6 +21,7 @@ import com.najih.android.ui.homePage.HomePage
 import com.najih.android.ui.latestNews.LatestNews
 import com.najih.android.ui.profile.MyProfile
 import com.najih.android.ui.recordedLessons.Lessons
+import com.najih.android.ui.recordedLessons.UserRecordedLesson
 import com.najih.android.ui.settings.Settings
 import com.najih.android.ui.subjects.Subjects
 import com.najih.android.ui.teachers.OurTeachers
@@ -63,6 +64,12 @@ fun MyAppNavHost( ) {
             MyProfile(navController )
         }
         composable("user_exams") {
+            UserExams(navController, httpClient , context )
+        }
+        composable("user_recorded_lessons") {
+            UserRecordedLesson(navController, httpClient , context )
+        }
+        composable("user_streams") {
             UserExams(navController, httpClient , context )
         }
         composable("subjects/{type}/{stage}/{endpoint}") { backStackEntry ->

@@ -25,3 +25,7 @@ const val RE_FETCH_USER_INFO="users/check/JWT"
 // SIGN UP VERIFY EMAIL
 const val VERIFY_EMAIL="users/verify-code"
 const val RESEND_CODE="usersRouter/resendActivateEmail"
+// GET MY RECORDED LESSONS
+const val GET_MY_RECORDED_LESSONS = "studentsLessons/getUser/r-lessons"
+// GET MY STREAMS
+const val GET_MY_STREAMS = "studentsLessons/getUser/t-lessons"

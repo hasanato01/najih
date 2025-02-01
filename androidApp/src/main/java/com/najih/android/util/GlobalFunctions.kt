@@ -40,14 +40,14 @@ object  GlobalFunctions {
     fun getUserInfo(context: Context): UserInfo {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
 
-        // Retrieve each piece of information
         val userId = sharedPreferences.getString("USER_ID", null)
         val token = sharedPreferences.getString("ACCESS_TOKEN", null)
         val userName = sharedPreferences.getString("USER_NAME", null)
         val userEmail = sharedPreferences.getString("USER_EMAIL", null)
 
-        // Retrieve the purchasedLessons from JSON
         val gson = Gson()
+
+        // Retrieve purchasedLessons
         val purchasedLessonsJson = sharedPreferences.getString("PURCHASED_LESSONS", "")
         val purchasedLessons: List<Map<String, List<String>>> = if (purchasedLessonsJson.isNullOrEmpty()) {
             emptyList()
@@ -56,15 +56,25 @@ object  GlobalFunctions {
             gson.fromJson(purchasedLessonsJson, type)
         }
 
-        // Return an instance of UserInfo with the retrieved values
+        // Retrieve recorderLessonsIds
+        val recorderLessonsJson = sharedPreferences.getString("RECORDER_LESSONS_IDS", "[]")
+        val recorderLessonsIds: List<String> = gson.fromJson(recorderLessonsJson, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+
+        // Retrieve teachersLessonsIds
+        val teachersLessonsJson = sharedPreferences.getString("TEACHERS_LESSONS_IDS", "[]")
+        val teachersLessonsIds: List<String> = gson.fromJson(teachersLessonsJson, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+
         return UserInfo(
             token = token ?: "",
             userId = userId ?: "",
             userName = userName ?: "",
             userEmail = userEmail ?: "",
-            purchasedLessons = purchasedLessons
+            purchasedLessons = purchasedLessons,
+            recorderLessonsIds = recorderLessonsIds,
+            teachersLessonsIds = teachersLessonsIds
         )
     }
+
 
 
 

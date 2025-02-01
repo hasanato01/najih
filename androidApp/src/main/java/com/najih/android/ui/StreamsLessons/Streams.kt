@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +64,9 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
     // State for managing subject information and dialog visibility
     var streamObjectInfo by remember { mutableStateOf<StreamsInfo?>(null) }
     var subjectName by remember { mutableStateOf("Unknown") }
+    var subjectNameAR by remember { mutableStateOf("Unknown") }
+    var subjectClass by remember { mutableStateOf("Unknown") }
+    var lessonsPrice by remember { mutableDoubleStateOf(0.0) }
     var stage by remember { mutableStateOf("") }
     var streamList by remember { mutableStateOf<List<Streams>?>(null) }
     var isCheckableMode by remember { mutableStateOf(false) }
@@ -78,6 +82,9 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
         coroutineScope.launch {
             try {
                 streamObjectInfo = GetStreams(httpClient, subjectId,teacherId)
+                subjectNameAR = streamObjectInfo?.subject?.name?.ar.toString()
+                subjectClass = "${streamObjectInfo?.subject?.level?.ar ?: ""} ${streamObjectInfo?.subject?.classNumber ?: ""}".trim()
+                lessonsPrice = streamObjectInfo?.subject?.lessonPrice?.toDoubleOrNull() ?: 0.0
                 subjectName = when (currentLanguage) {
                     "ar" -> streamObjectInfo?.subject?.name?.ar ?: "غير معروف"
                     else -> streamObjectInfo?.subject?.name?.en ?: "Unknown"
@@ -134,6 +141,9 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
                     purchasedStreams,
                     recorderStreamIds,
                     recorderStreams,
+                    subjectNameAR,
+                    subjectClass,
+                    lessonsPrice,
                     context,
                     httpClient
                 )

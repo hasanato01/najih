@@ -2,6 +2,7 @@ package com.najih.android.dataClasses
 
 import LanguageContent
 import Lesson
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,7 +28,10 @@ data class StreamsPurchaseRequest(
     val userEmail: String,
     val recorderLessons: List<Streams>,
     val status: String,
-    val price: Int
+    val price: Int,
+    val lessonsPrice : Double,
+    val subjectName: String,
+    val subjectClass: String
 )
 
 
@@ -44,4 +48,19 @@ data class Bill(
 data class PurchaseResponse(
     val status: String,
 
+)
+@Serializable
+data class MyRecorderLessonsResponse(
+    val isFree: Boolean,
+    @SerialName("_id") val id: String,
+    val name: LanguageContent,
+    val description: LanguageContent,
+    val startDate: String,
+    val endDate: String,
+    val link: String,
+    val exLink: String,
+    val subjectId: String,
+    val createdAt: String,
+    val updatedAt: String,
+    @SerialName("__v") val version: Int
 )

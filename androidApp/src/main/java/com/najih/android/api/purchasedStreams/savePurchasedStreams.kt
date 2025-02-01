@@ -38,6 +38,9 @@ suspend fun savePurchasedStreams(
     purchasedLessons: SnapshotStateMap<String, MutableList<String>>,
     recorderLessonsIds: SnapshotStateList<String>,
     recorderLessons: SnapshotStateList<Streams>,
+    subjectNameAR : String,
+    subjectClass : String,
+    lessonsPrice : Double,
     file: File
 ): PurchaseResponse {
     val json = Json {
@@ -85,7 +88,10 @@ suspend fun savePurchasedStreams(
             userEmail = userEmail,
             recorderLessons = recorderLessons.toList(),
             status = "in progress",
-            price = 0
+            price = 0,
+            lessonsPrice = lessonsPrice,
+            subjectName= subjectNameAR,
+            subjectClass= subjectClass
         )
 
         // Log the purchase request JSON

@@ -137,6 +137,8 @@
     <string name="fix_validation_errors">Fix validation errors!</string>
     <string name="unknown_error">Unknown error occurred.</string>
     <string name="Unauthorized">Unauthorized</string>
+    <string name="MyRecordedLessons">My Recorded Lessons</string>
+    <string name="MyStreams">My Streams</string>
     <string name="please_log_in_title">Please log in</string>
     <string name="log_in_required_message">You need to be logged in to access your exams.</string>
 
