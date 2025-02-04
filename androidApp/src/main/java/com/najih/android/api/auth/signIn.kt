@@ -54,7 +54,9 @@ suspend fun signIn(
                         it.id,
                         signInResponse.user.name,
                         signInResponse.user.username,
-                        signInResponse.user.purchasedLessons
+                        signInResponse.user.purchasedLessons,
+                        signInResponse.user.recorderLessonsIds,
+                        signInResponse.user.teachersLessonsIds
                     )
                 }
             }

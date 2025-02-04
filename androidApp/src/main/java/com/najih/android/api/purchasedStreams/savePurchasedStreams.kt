@@ -81,6 +81,7 @@ suspend fun savePurchasedStreams(
         val standardRecorderLessonsIds = recorderLessonsIds.toList()
         // Create the updated purchase request
         val updatedPurchaseRequest = StreamsPurchaseRequest(
+            source = "teachersLessonsIds",
             purchasedLessons = standardPurchasedLessons,
             recorderLessonsIds =standardRecorderLessonsIds,
             bill = bill, // Ensure bill has valid data

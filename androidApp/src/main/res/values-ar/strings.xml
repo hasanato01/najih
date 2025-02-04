@@ -139,6 +139,8 @@
     <string name="Unauthorized">ليس لديك صلاحية</string>
     <string name="please_log_in_title">يرجى تسجيل الدخول</string>
     <string name="log_in_required_message">يجب تسجيل الدخول للوصول إلى الاختبارات الخاصة بك.</string>
-
+    <string name="start_Learning">ابدأ رحلتك بالتعليم</string>
+    <string name="my_Recorded_lessons">دروسي المسجلة</string>
+    <string name="my_strams">دروسي المباشرة</string>
 
 </resources>

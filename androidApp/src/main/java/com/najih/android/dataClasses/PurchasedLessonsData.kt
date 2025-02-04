@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PurchaseRequest(
+    val source : String,
     val purchasedLessons: Map<String, List<String>>,
     val recorderLessonsIds: List<String>,
     val bill: Bill,
@@ -21,6 +22,7 @@ data class PurchaseRequest(
 )
 @Serializable
 data class StreamsPurchaseRequest(
+    val source : String,
     val purchasedLessons: Map<String, List<String>>,
     val recorderLessonsIds: List<String>,
     val bill: Bill,

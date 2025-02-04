@@ -9,71 +9,79 @@ import com.najih.android.dataClasses.UserInfo
 
 
 object  GlobalFunctions {
-    // Function to save user info
     fun saveUserInfo(
         context: Context,
         token: String,
         userId: String,
         userName: String,
         userEmail: String,
-        purchasedLessons: List<Map<String, List<String>>>
+        purchasedLessons: List<Map<String, List<String>>>,
+        recorderLessonsIds: List<String>,
+        teachersLessonsIds: List<String>
     ) {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
-        // Convert the list of purchased lessons to a JSON string using Gson
         val gson = Gson()
-        val purchasedLessonsJson = gson.toJson(purchasedLessons)
 
-        // Save each piece of information
         editor.putString("USER_ID", userId)
         editor.putString("ACCESS_TOKEN", token)
         editor.putString("USER_NAME", userName)
         editor.putString("USER_EMAIL", userEmail)
-        editor.putString("PURCHASED_LESSONS", purchasedLessonsJson)
 
-        // Commit the changes
+        // Save JSON Strings
+        editor.putString("PURCHASED_LESSONS", gson.toJson(purchasedLessons))
+        editor.putString("RECORDER_LESSONS_IDS", gson.toJson(recorderLessonsIds))
+        editor.putString("TEACHERS_LESSONS_IDS", gson.toJson(teachersLessonsIds))
+
         editor.apply()
     }
+
 
     // Function to get user info
     fun getUserInfo(context: Context): UserInfo {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
 
-        val userId = sharedPreferences.getString("USER_ID", null)
-        val token = sharedPreferences.getString("ACCESS_TOKEN", null)
-        val userName = sharedPreferences.getString("USER_NAME", null)
-        val userEmail = sharedPreferences.getString("USER_EMAIL", null)
+        val userId = sharedPreferences.getString("USER_ID", null) ?: ""
+        val token = sharedPreferences.getString("ACCESS_TOKEN", null) ?: ""
+        val userName = sharedPreferences.getString("USER_NAME", null) ?: ""
+        val userEmail = sharedPreferences.getString("USER_EMAIL", null) ?: ""
 
         val gson = Gson()
 
-        // Retrieve purchasedLessons
-        val purchasedLessonsJson = sharedPreferences.getString("PURCHASED_LESSONS", "")
-        val purchasedLessons: List<Map<String, List<String>>> = if (purchasedLessonsJson.isNullOrEmpty()) {
+        // Retrieve and parse JSON arrays safely
+        val purchasedLessonsJson = sharedPreferences.getString("PURCHASED_LESSONS", "[]")
+        val purchasedLessons: List<Map<String, List<String>>> = try {
+            gson.fromJson(purchasedLessonsJson, object : TypeToken<List<Map<String, List<String>>>>() {}.type) ?: emptyList()
+        } catch (e: Exception) {
             emptyList()
-        } else {
-            val type = object : TypeToken<List<Map<String, List<String>>>>() {}.type
-            gson.fromJson(purchasedLessonsJson, type)
         }
 
-        // Retrieve recorderLessonsIds
         val recorderLessonsJson = sharedPreferences.getString("RECORDER_LESSONS_IDS", "[]")
-        val recorderLessonsIds: List<String> = gson.fromJson(recorderLessonsJson, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+        val recorderLessonsIds: List<String> = try {
+            gson.fromJson(recorderLessonsJson, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
 
-        // Retrieve teachersLessonsIds
         val teachersLessonsJson = sharedPreferences.getString("TEACHERS_LESSONS_IDS", "[]")
-        val teachersLessonsIds: List<String> = gson.fromJson(teachersLessonsJson, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+        val teachersLessonsIds: List<String> = try {
+            gson.fromJson(teachersLessonsJson, object : TypeToken<List<String>>() {}.type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
 
         return UserInfo(
-            token = token ?: "",
-            userId = userId ?: "",
-            userName = userName ?: "",
-            userEmail = userEmail ?: "",
+            token = token,
+            userId = userId,
+            userName = userName,
+            userEmail = userEmail,
             purchasedLessons = purchasedLessons,
             recorderLessonsIds = recorderLessonsIds,
             teachersLessonsIds = teachersLessonsIds
         )
     }
+
 
 
 

@@ -54,7 +54,9 @@ suspend fun checkJWT(
                     it.id,
                     it.name,
                     it.username,
-                    it.purchasedLessons
+                    it.purchasedLessons,
+                    it.recorderLessonsIds,
+                    it.teachersLessonsIds
                 )
             }
             checkJWTResponse
