@@ -54,7 +54,12 @@ suspend fun savePurchasedStreams(
     val token = GlobalFunctions.getUserInfo(context).token
     val userName = GlobalFunctions.getUserInfo(context).userName
     val userEmail = GlobalFunctions.getUserInfo(context).userEmail
-
+    val maxFileSizeInBytes =  1024 * 1024 // 10MB (Adjust as needed)
+    if (file.length() > maxFileSizeInBytes) {
+        return PurchaseResponse(
+           status = "413"
+        )
+    }
 
     try {
         // First Request: Upload the file

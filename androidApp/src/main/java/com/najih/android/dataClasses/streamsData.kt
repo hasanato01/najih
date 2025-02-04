@@ -100,3 +100,4 @@ data class Streams(
     val updatedAt: String,
     @SerialName("__v") val version: Int
 )
+

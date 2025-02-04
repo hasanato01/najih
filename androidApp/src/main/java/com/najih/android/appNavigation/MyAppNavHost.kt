@@ -11,6 +11,7 @@ import com.najih.android.ui.uitilis.ContactUsForm
 import com.najih.android.ui.uitilis.SplashScreen
 import com.najih.android.ui.StreamsLessons.Streams
 import com.najih.android.ui.StreamsLessons.Teachers
+import com.najih.android.ui.StreamsLessons.UserStreams
 import com.najih.android.ui.auth.SignIn
 import com.najih.android.ui.auth.SignUp
 import com.najih.android.ui.examResults.UserExamResult
@@ -70,7 +71,7 @@ fun MyAppNavHost( ) {
             UserRecordedLesson(navController, httpClient , context )
         }
         composable("user_streams") {
-            UserExams(navController, httpClient , context )
+            UserStreams(navController, httpClient , context )
         }
         composable("subjects/{type}/{stage}/{endpoint}") { backStackEntry ->
             val type = backStackEntry.arguments?.getString("type")

@@ -6,8 +6,10 @@ import android.content.Context
 import android.util.Log
 import com.najih.android.api.globalData.BASE_URL
 import com.najih.android.api.globalData.GET_MY_RECORDED_LESSONS
+import com.najih.android.api.globalData.GET_MY_STREAMS
 import com.najih.android.dataClasses.Exam
 import com.najih.android.dataClasses.MyRecorderLessonsResponse
+import com.najih.android.dataClasses.Streams
 import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
 import io.ktor.client.request.headers
@@ -24,18 +26,18 @@ import kotlinx.serialization.json.Json
 suspend fun GetMyStreams(
     httpClient: HttpClient,
     context: Context
-):List <MyRecorderLessonsResponse>{
+):List <Streams>{
     val json = Json {
         prettyPrint = true
         ignoreUnknownKeys = true
     }
 
-    val requestUrl = "${BASE_URL}${GET_MY_RECORDED_LESSONS}"
+    val requestUrl = "${BASE_URL}${GET_MY_STREAMS}"
 
     // Retrieve the JWT token using the getUserInfo function
     val token = GlobalFunctions.getUserInfo(context).token
     val user = GlobalFunctions.getUserInfo(context).userName
-    val purchasedLessonsIDS = GlobalFunctions.getUserInfo(context).recorderLessonsIds
+    val purchasedLessonsIDS = GlobalFunctions.getUserInfo(context).teachersLessonsIds
 
     // Log the request details
     Log.d("ApiClient", "Making GET request to URL: $requestUrl")
@@ -58,13 +60,13 @@ suspend fun GetMyStreams(
                 json.decodeFromString(responseBody)  // Deserialize into a list of Exam objects
             }
             else -> {
-                val errorMessage = "Get User Recorded Lessons failed with status ${response.status}\nResponse: ${response.bodyAsText()}"
+                val errorMessage = "Get User Streams failed with status ${response.status}\nResponse: ${response.bodyAsText()}"
                 Log.e("ApiClient", errorMessage)
                 throw Exception(errorMessage)
             }
         }
     } catch (e: Exception) {
-        Log.e("ApiClient", "Error during getting User Recorded Lessons: ${e.message}", e)
+        Log.e("ApiClient", "Error during getting User Streams: ${e.message}", e)
         throw e
     }
 }

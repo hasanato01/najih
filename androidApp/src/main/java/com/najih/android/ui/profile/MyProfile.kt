@@ -46,7 +46,7 @@ fun MyProfile(navController: NavController) {
             // My Recorded Lessons
             item {
                 SettingCard(
-                    title = stringResource(R.string.MyRecordedLessons),
+                    title = stringResource(R.string.my_Recorded_lessons),
                     icon = painterResource(id = R.drawable.video_camera), // Replace with your drawable resource
                     onClick = {
                         if (isLoggedIn) {
@@ -61,11 +61,11 @@ fun MyProfile(navController: NavController) {
             // My Exams Card
             item {
                 SettingCard(
-                    title = stringResource(R.string.MyStreams),
+                    title = stringResource(R.string.my_strams),
                     icon = painterResource(id = R.drawable.microphone), // Replace with your drawable resource
                     onClick = {
                         if (isLoggedIn) {
-                            navController.navigate("user_exams")
+                            navController.navigate("user_streams")
                         } else {
                             // Show the dialog if not logged in
                             showDialog = true
