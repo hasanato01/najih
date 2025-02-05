@@ -138,9 +138,10 @@
     <string name="unknown_error">حدث خطأ غير معروف.</string>
     <string name="Unauthorized">ليس لديك صلاحية</string>
     <string name="please_log_in_title">يرجى تسجيل الدخول</string>
-    <string name="log_in_required_message">يجب تسجيل الدخول للوصول إلى الاختبارات الخاصة بك.</string>
+    <string name="log_in_required_message">يجب تسجيل الدخول للوصول إلى الآقسام الخاصة بك.</string>
     <string name="start_Learning">ابدأ رحلتك بالتعليم</string>
-    <string name="my_Recorded_lessons">دروسي المسجلة</string>
-    <string name="my_strams">دروسي المباشرة</string>
+    <string name="MyRecordedLessons">دروسي المسجلة</string>
+    <string name="MyStreams">دروسي المباشرة</string>
+    <string name="remember_me">remeber_me</string>
 
 </resources>

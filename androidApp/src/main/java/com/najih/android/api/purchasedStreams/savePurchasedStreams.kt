@@ -38,6 +38,8 @@ suspend fun savePurchasedStreams(
     purchasedLessons: SnapshotStateMap<String, MutableList<String>>,
     recorderLessonsIds: SnapshotStateList<String>,
     recorderLessons: SnapshotStateList<Streams>,
+    subjectId : String,
+    teacherId : String,
     subjectNameAR : String,
     subjectClass : String,
     lessonsPrice : Double,
@@ -53,6 +55,7 @@ suspend fun savePurchasedStreams(
     val purchaseUrl = "${BASE_URL}${SEND_PURCHASE_REQUEST_ENDPOINT}"
     val token = GlobalFunctions.getUserInfo(context).token
     val userName = GlobalFunctions.getUserInfo(context).userName
+    val userId = GlobalFunctions.getUserInfo(context).userId
     val userEmail = GlobalFunctions.getUserInfo(context).userEmail
     val maxFileSizeInBytes =  1024 * 1024 // 10MB (Adjust as needed)
     if (file.length() > maxFileSizeInBytes) {
@@ -88,14 +91,17 @@ suspend fun savePurchasedStreams(
         val updatedPurchaseRequest = StreamsPurchaseRequest(
             source = "teachersLessonsIds",
             purchasedLessons = standardPurchasedLessons,
-            recorderLessonsIds =standardRecorderLessonsIds,
+            teachersLessonsIds =standardRecorderLessonsIds,
             bill = bill, // Ensure bill has valid data
             userName = userName,
             userEmail = userEmail,
-            recorderLessons = recorderLessons.toList(),
+            teachersLessons = recorderLessons.toList(),
             status = "in progress",
             price = 0,
             lessonsPrice = lessonsPrice,
+            subjectId = subjectId,
+            teacherId =teacherId,
+            userId = userId,
             subjectName= subjectNameAR,
             subjectClass= subjectClass
         )

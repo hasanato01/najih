@@ -143,7 +143,8 @@
     <string name="MyRecordedLessons">My Recorded Lessons</string>
     <string name="MyStreams">My Streams</string>
     <string name="please_log_in_title">Please log in</string>
-    <string name="log_in_required_message">You need to be logged in to access your exams.</string>
+    <string name="log_in_required_message">You need to be logged in to access your sections.</string>
+    <string name="remember_me">remeber_me</string>
 
 
 </resources>

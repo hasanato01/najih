@@ -143,6 +143,8 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
                     recorderStreams,
                     subjectNameAR,
                     subjectClass,
+                    subjectId,
+                    teacherId,
                     lessonsPrice,
                     context,
                     httpClient
