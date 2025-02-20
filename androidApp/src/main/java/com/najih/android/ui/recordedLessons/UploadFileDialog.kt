@@ -4,6 +4,7 @@ import Lesson
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -47,20 +48,32 @@ fun UploadFileDialog(
     var showDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
+
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri ->
             Log.d("ApiClient", "Selected URI: $uri") // Log the URI
             selectedFileUri = uri
+
             if (uri != null) {
-                selectedFile = uriToFile(uri, context)
-                Log.d("ApiClient", "Converted file: $selectedFile") // Log the resulting file
+                val file = uriToFile(uri, context)
+
+                if (file != null) {
+                    if (file.length() > 1024 * 1024) { // 1MB limit
+                        selectedFile = null
+                        selectedFileUri = null
+                        Toast.makeText(context, "File too large! Must be under 1MB.", Toast.LENGTH_LONG).show()
+                        Log.e("ApiClient", "File too large: ${file.length()} bytes")
+                    } else {
+                        selectedFile = file
+                        Log.d("ApiClient", "File selected: ${file.length()} bytes")
+                    }
+                }
             } else {
                 Log.e("ApiClient", "URI is null")
             }
         }
     )
-
 
     AlertDialog(
         onDismissRequest = onDismiss,

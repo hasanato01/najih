@@ -4,12 +4,17 @@ import Lesson
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -20,6 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import com.najih.android.R
 import com.najih.android.api.purchasedLessons.savePurchasedLessons
 import com.najih.android.api.purchasedStreams.savePurchasedStreams
@@ -56,8 +64,18 @@ fun UploadFileForStreamsDialog(
             Log.d("ApiClient", "Selected URI: $uri") // Log the URI
             selectedFileUri = uri
             if (uri != null) {
-                selectedFile = uriToFile(uri, context)
-                Log.d("ApiClient", "Converted file: $selectedFile") // Log the resulting file
+                val file = uriToFile(uri, context)
+                if (file != null) {
+                    if (file.length() > 1024 * 1024) { // Check if file is > 1MB
+                        selectedFile = null
+                        selectedFileUri = null
+                        Toast.makeText(context, "File too large! Must be under 1MB.", Toast.LENGTH_LONG).show()
+                        Log.e("ApiClient", "File too large: ${file.length()} bytes")
+                    } else {
+                        selectedFile = file
+                        Log.d("ApiClient", "File selected: ${file.length()} bytes")
+                    }
+                }
             } else {
                 Log.e("ApiClient", "URI is null")
             }
@@ -67,26 +85,57 @@ fun UploadFileForStreamsDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = stringResource(id = R.string.upload_file)) },
         text = {
-            Column {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Upload Button
                 Button(
-                    onClick = {
-                        filePickerLauncher.launch(arrayOf("application/pdf", "image/*"))
-                    },
+                    onClick = { filePickerLauncher.launch(arrayOf("application/pdf", "image/*")) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_cloud_upload_24),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = stringResource(id = R.string.upload_image_pdf))
                 }
 
-                selectedFileUri?.let {
-                    Text(text = stringResource(R.string.selected_file, it), modifier = Modifier.padding(top = 8.dp))
+                // Selected File Display
+                if (selectedFileUri != null) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp), // Added padding to avoid layout issues
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.LightGray.copy(alpha = 0.3f))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_description_24),
+                                contentDescription = null
+                            )
+                            Text(
+                                text = selectedFileUri.toString(),
+                                fontSize = 14.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
                 }
             }
         },
         confirmButton = {
             Button(
-                modifier = Modifier.padding(10.dp),
                 onClick = {
                     selectedFile?.let { file ->
                         coroutineScope.launch {
@@ -103,18 +152,35 @@ fun UploadFileForStreamsDialog(
                                 lessonsPrice,
                                 file = file
                             )
-
                             showDialog = true
                         }
                     }
                 },
-                enabled = selectedFileUri != null // Enable only if a file is selected
+                modifier = Modifier
+                    .padding(10.dp) // Padding must be before fillMaxWidth()
+                    .fillMaxWidth(),
+                enabled = selectedFileUri != null
             ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_check_24),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(text = stringResource(id = R.string.submit))
             }
         },
         dismissButton = {
-            Button(onClick = onDismiss, modifier = Modifier.padding(10.dp)) {
+            OutlinedButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_cancel_24),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(text = stringResource(id = R.string.cancel))
             }
         }

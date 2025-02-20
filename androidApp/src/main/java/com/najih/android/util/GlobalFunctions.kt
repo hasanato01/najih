@@ -82,10 +82,6 @@ object  GlobalFunctions {
         )
     }
 
-
-
-
-
     fun clearUserInfo(context: Context) {
         val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -113,12 +109,6 @@ object  GlobalFunctions {
         editor.apply()
     }
 
-    // Function to check if it's the user's first time selecting a language
-    fun isFirstTimeUser(context: Context): Boolean {
-    val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
-    return sharedPreferences.getBoolean("IS_FIRST_TIME_USER", true)
-}
-
     // Function to retrieve the saved language
     fun getUserLanguage(context: Context): String? {
     val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
@@ -135,7 +125,35 @@ object  GlobalFunctions {
         return context.createConfigurationContext(configuration)
     }
 
+    fun saveUserCredentials(context: Context, email: String, password: String) {
+        val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("SAVED_EMAIL", email)
+        editor.putString("SAVED_PASSWORD", password)
+        editor.putBoolean("REMEMBER_ME", true) // Save the remember me state
+        editor.apply()
+    }
 
+    fun getUserCredentials(context: Context): Pair<String?, String?> {
+        val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        val email = sharedPreferences.getString("SAVED_EMAIL", null)
+        val password = sharedPreferences.getString("SAVED_PASSWORD", null)
+        return Pair(email, password)
+    }
+
+    fun isRememberMeEnabled(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("REMEMBER_ME", false)
+    }
+
+    fun clearUserCredentials(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove("SAVED_EMAIL")
+        editor.remove("SAVED_PASSWORD")
+        editor.putBoolean("REMEMBER_ME", false)
+        editor.apply()
+    }
 
 }
 

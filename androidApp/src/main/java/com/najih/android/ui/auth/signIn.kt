@@ -24,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +35,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.najih.android.api.CreateHttpClient
@@ -48,10 +53,23 @@ fun SignIn(navController: NavController) {
     val context = LocalContext.current
     val httpClient = CreateHttpClient(Android)
     val coroutineScope = rememberCoroutineScope()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var rememberMe by remember { mutableStateOf(false) }
     var signInError by remember { mutableStateOf<String?>(null) }
     var showDialog by remember { mutableStateOf(false) }
+
+    // Load saved credentials when the screen opens
+    LaunchedEffect(Unit) {
+        val (savedEmail, savedPassword) = GlobalFunctions.getUserCredentials(context)
+        if (GlobalFunctions.isRememberMeEnabled(context)) {
+            email = savedEmail ?: ""
+            password = savedPassword ?: ""
+            rememberMe = true
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -85,64 +103,88 @@ fun SignIn(navController: NavController) {
                             .padding(24.dp)
                     )
 
+                    // Email Field
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
                         label = { Text(stringResource(id = R.string.email_label), color = Color.Gray) },
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFFc0c0c0)) },
                         singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.Black,
-                            focusedBorderColor = Color(0xFFc0c0c0),
-                            unfocusedBorderColor = Color.Gray,
-                        ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
                         ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .background(
-                                Color.LightGray.copy(alpha = 0.1f),
-                                shape = RoundedCornerShape(12.dp)
-                            )
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                     )
 
+                    // Password Field
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
                         label = { Text(stringResource(id = R.string.password_label), color = Color.Gray) },
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFFc0c0c0)) },
+                        leadingIcon = {
+                            Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFFc0c0c0))
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Image(
+                                    painter = painterResource(
+                                        id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24
+                                    ), // 👁️ Custom eye icon from drawable
+                                    contentDescription = "Toggle Password Visibility"
+                                )
+                            }
+                        },
                         singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.Black,
-                            focusedBorderColor = Color(0xFFc0c0c0),
-                            unfocusedBorderColor = Color.Gray,
-                        ),
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Next
                         ),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                    )
+
+                    // Remember Me Checkbox
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
-                            .background(
-                                Color.LightGray.copy(alpha = 0.1f),
-                                shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.remember_me),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Gray
+                        )
+                        Switch(
+                            checked = rememberMe,
+                            onCheckedChange = { rememberMe = it },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.Blue,
+                                uncheckedThumbColor = Color.LightGray,
+                                checkedTrackColor = Color(0xFFADD8E6),
+                                uncheckedTrackColor = Color.Gray
                             )
-                    )
+                        )
+                    }
 
+                    // Sign In Button
                     Button(
                         onClick = {
                             coroutineScope.launch {
                                 try {
                                     val response = signIn(httpClient, context, email, password)
-                                    Log.d("ApiClient", "Response: $response")  // Log response details
+                                    Log.d("ApiClient", "Response: $response")
 
                                     if (response.success) {
+                                        // ✅ Save credentials if "Remember Me" is checked
+                                        if (rememberMe) {
+                                            GlobalFunctions.saveUserCredentials(context, email, password)
+                                        } else {
+                                            GlobalFunctions.clearUserCredentials(context)
+                                        }
                                         navController.navigate("Home_Page")
                                     } else {
                                         signInError = response.err?.message?.let { message ->
@@ -162,10 +204,7 @@ fun SignIn(navController: NavController) {
                                 }
                             }
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .padding(top = 10.dp),
+                        modifier = Modifier.fillMaxWidth().height(60.dp).padding(top = 10.dp),
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                     ) {
@@ -176,14 +215,13 @@ fun SignIn(navController: NavController) {
                         )
                     }
 
-
-
+                    // Error Dialog
                     signInError?.let {
                         if (showDialog) {
                             AlertDialog(
                                 onDismissRequest = { showDialog = false },
                                 title = { Text(stringResource(id = R.string.sign_in_error)) },
-                                text = { Text(it) },  // Directly use the existing `signInError` message
+                                text = { Text(it) },
                                 confirmButton = {
                                     TextButton(onClick = { showDialog = false }) {
                                         Text(stringResource(id = R.string.ok))
@@ -193,7 +231,7 @@ fun SignIn(navController: NavController) {
                         }
                     }
 
-
+                    // Sign Up Button
                     TextButton(
                         onClick = { navController.navigate("sign_up") },
                         modifier = Modifier.padding(top = 16.dp)
@@ -204,14 +242,4 @@ fun SignIn(navController: NavController) {
             }
         }
     )
-}
-
-
-@Preview
-@Composable
-fun SignInPreview() {
-    val navController = rememberNavController()
-    SignIn(navController)
-
-
 }

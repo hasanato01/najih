@@ -35,7 +35,6 @@ suspend fun GetMyRecordedLessons(
     val token = GlobalFunctions.getUserInfo(context).token
     val user = GlobalFunctions.getUserInfo(context).userName
     val purchasedLessonsIDS = GlobalFunctions.getUserInfo(context).recorderLessonsIds
-
     // Log the request details
     Log.d("ApiClient", "Making GET request to URL: $requestUrl")
     Log.d("ApiClient", "token: $token for $user")
