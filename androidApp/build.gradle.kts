@@ -65,10 +65,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v260)
     // viewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    // ExoPlayer dependency
-    implementation(libs.exoplayer)
-    implementation(libs.accompanist.swiperefresh.v0301)
-    implementation( libs.androidx.material3.v111)
+    implementation (libs.core)
+
 
 
 }

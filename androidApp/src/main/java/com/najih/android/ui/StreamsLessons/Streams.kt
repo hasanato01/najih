@@ -50,7 +50,8 @@ import com.najih.android.ui.recordedLessons.UploadFileDialog
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.HomeNavbar
 import com.najih.android.util.GlobalFunctions
-import com.najih.android.util.VideoPlayerDialog
+import com.najih.android.util.YouTubePlayerDialog
+import com.najih.android.util.extractYouTubeVideoId
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 
@@ -77,6 +78,7 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
     val recorderStreams = remember { mutableStateListOf<Streams>() }
     val selectedStreams = remember { mutableStateMapOf<String, Boolean>() }
     var previewVideoUrl by remember { mutableStateOf<String?>(null) }
+    var previewVideoId by remember { mutableStateOf<String?>(null) }
     // Asynchronous data fetching
     LaunchedEffect(subjectId) {
         coroutineScope.launch {
@@ -192,17 +194,19 @@ fun Streams (navController: NavController,subjectId:String,teacherId:String){
                         onLessonPurchasedClick = {
                             Toast.makeText(context, "This stream is already purchased", Toast.LENGTH_SHORT).show()
                         },
-                        onPreviewLessonClick = { url -> previewVideoUrl = url } // Set the preview URL to show dialog
+                        onPreviewLessonClick = { url ->
+                            previewVideoId = extractYouTubeVideoId(url) // Extract and store video ID
+                        }
                     )
                 }
             }
 
         }
     }
-    previewVideoUrl?.let { url ->
-        VideoPlayerDialog(
-            videoUrl = url,
-            onDismiss = { previewVideoUrl = null } // Dismiss dialog by resetting previewVideoUrl
+    previewVideoId?.let { videoId ->
+        YouTubePlayerDialog   (
+            videoId = videoId,
+            onDismiss = { previewVideoId = null }
         )
     }
 }

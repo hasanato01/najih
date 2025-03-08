@@ -91,12 +91,13 @@
     <string name="contact_us">contact us</string>
     <string name="confirm_and_upload">confirm and upload receipt</string>
     <string name="upload_image_pdf">upload image or pdf</string>
-    <string name="upload_file">upload_file</string>
+    <string name="upload_file">upload file</string>
     <string name="upload_prompt">upload_prompt</string>
     <string name="submit">submit</string>
     <string name="cancel">Cancel</string>
     <string name="setting">setting</string>
-    <string name="conditions_and_privacy_experience">conditions_and_privacy_experience</string>
+    <string name="privacy_policy">privacy policy</string>
+    <string name="cookies_policy">cookies policy</string>
     <string name="Get_in_touch">Get_in_touch</string>
     <string name="see_all">See All →</string>
     <string name="latest_news">Latest News</string>

@@ -143,5 +143,7 @@
     <string name="MyRecordedLessons">دروسي المسجلة</string>
     <string name="MyStreams">دروسي المباشرة</string>
     <string name="remember_me">تذكرني لاحقا</string>
+    <string name="privacy_policy">سياسة الخصوصية</string>
+    <string name="cookies_policy">سياسة الكوكيز</string>
 
 </resources>

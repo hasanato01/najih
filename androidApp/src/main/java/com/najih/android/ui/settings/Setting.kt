@@ -1,6 +1,7 @@
 package com.najih.android.ui.settings
 
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,6 +35,16 @@ fun Settings(navController: NavController) {
     val languageIcon = if (currentLanguage == "en") R.drawable.uk else R.drawable.emirates
     val languageText = if (currentLanguage == "en") "English" else "العربية"
 
+
+    val openUrl: (String) -> Unit = { baseUrl ->
+        val url = when (currentLanguage) {
+            "ar" -> "https://najih1.com/ar/$baseUrl"
+            else -> "https://najih1.com/en/$baseUrl"
+        }
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context.startActivity(intent)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { Navbar(navController, backText = userName, titleText = stringResource(R.string.setting)) },
@@ -54,9 +65,16 @@ fun Settings(navController: NavController) {
             }
             item {
                 SettingCard(
-                    title = stringResource(R.string.conditions_and_privacy_experience),
+                    title = stringResource(R.string.privacy_policy),
                     icon = painterResource(id = R.drawable.location_blue),
-                    onClick = { /* Privacy policy logic */ }
+                    onClick = { openUrl("privacyPolicy") }
+                )
+            }
+            item {
+                SettingCard(
+                    title = stringResource(R.string.cookies_policy),
+                    icon = painterResource(id = R.drawable.location_blue),
+                    onClick = { openUrl("cookiesPolicy") }
                 )
             }
             item {

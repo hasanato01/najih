@@ -38,7 +38,8 @@ import com.najih.android.api.subjects.GetLessonsBySubject
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.Navbar
 import com.najih.android.util.GlobalFunctions
-import com.najih.android.util.VideoPlayerDialog
+import com.najih.android.util.YouTubePlayerDialog
+import com.najih.android.util.extractYouTubeVideoId
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
 import kotlin.math.log
@@ -65,7 +66,7 @@ fun Lessons(navController: NavController, subjectId: String) {
     val recorderLessonsIds = remember { mutableStateListOf<String>() }
     val recorderLessons = remember { mutableStateListOf<Lesson>() }
     val selectedLessons = remember { mutableStateMapOf<String, Boolean>() }
-    var previewVideoUrl by remember { mutableStateOf<String?>(null) }
+    var previewVideoId by remember { mutableStateOf<String?>(null) }
 
     Log.d("ApiClient",userPurchasedLessons.toString())
     LaunchedEffect(subjectId) {
@@ -182,7 +183,9 @@ fun Lessons(navController: NavController, subjectId: String) {
                         onLessonPurchasedClick = {
                             Toast.makeText(context, "This lesson is already purchased", Toast.LENGTH_SHORT).show()
                         },
-                        onPreviewLessonClick = { url -> previewVideoUrl = url } // Set the preview URL to show dialog
+                        onPreviewLessonClick = { url ->
+                            previewVideoId = extractYouTubeVideoId(url) // Extract and store video ID
+                        }
                     )
                 }
             }
@@ -190,10 +193,10 @@ fun Lessons(navController: NavController, subjectId: String) {
     }
 
     // Show VideoPlayerDialog if previewVideoUrl is not null
-    previewVideoUrl?.let { url ->
-        VideoPlayerDialog(
-            videoUrl = url,
-            onDismiss = { previewVideoUrl = null } // Dismiss dialog by resetting previewVideoUrl
+    previewVideoId?.let { videoId ->
+        YouTubePlayerDialog (
+            videoId = videoId,
+            onDismiss = { previewVideoId = null }
         )
     }
 }
