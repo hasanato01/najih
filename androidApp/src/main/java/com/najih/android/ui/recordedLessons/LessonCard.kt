@@ -135,7 +135,7 @@ fun LessonCard(
 
                     if (isPurchased || isFree) {
                         Button(
-                            onClick = { /* Handle action for purchased or free lesson */ },
+                            onClick = { onPreviewLessonClick(lesson.exLink) },
                             modifier = Modifier
                                 .padding(4.dp)
                                 .width(120.dp)

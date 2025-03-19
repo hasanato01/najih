@@ -184,7 +184,21 @@ fun Lessons(navController: NavController, subjectId: String) {
                             Toast.makeText(context, "This lesson is already purchased", Toast.LENGTH_SHORT).show()
                         },
                         onPreviewLessonClick = { url ->
-                            previewVideoId = extractYouTubeVideoId(url) // Extract and store video ID
+                            Log.d("PreviewLesson", "Lesson preview clicked. URL: $url")
+                            try {
+                                val extractedVideoId = extractYouTubeVideoId(url)
+                                Log.d("PreviewLesson", "Extracted Video ID: $extractedVideoId")
+
+                                if (extractedVideoId.isNullOrEmpty()) {
+                                    Toast.makeText(context, "Error extracting video ID", Toast.LENGTH_SHORT).show()
+                                    return@LessonCard
+                                }
+
+                                previewVideoId = extractedVideoId
+                            } catch (e: Exception) {
+                                Log.e("PreviewLesson", "Error extracting video ID", e)
+                                Toast.makeText(context, "Failed to load video", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     )
                 }
@@ -194,10 +208,14 @@ fun Lessons(navController: NavController, subjectId: String) {
 
     // Show VideoPlayerDialog if previewVideoUrl is not null
     previewVideoId?.let { videoId ->
-        YouTubePlayerDialog (
-            videoId = videoId,
-            onDismiss = { previewVideoId = null }
-        )
+        if (videoId.isNotEmpty()) {
+            YouTubePlayerDialog(
+                videoId = videoId,
+                onDismiss = { previewVideoId = null }
+            )
+        } else {
+            Log.e("PreviewLesson", "Invalid Video ID: $videoId")
+        }
     }
 }
 

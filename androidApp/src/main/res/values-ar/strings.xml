@@ -111,7 +111,7 @@
     <string name="buy_now">اشترِ الآن</string>
     <string name="please_select_lessons">يرجى اختيار الدروس</string>
     <string name="selected_file">الملف المحدد: %1$s</string>
-    <string name="purchase_successful">تم الشراء بنجاح!</string>
+    <string name="purchase_successful">تم ارسال طلب الشراء بنجاح!</string>
     <string name="purchase_failed_please_try_again">فشل الشراء. يرجى المحاولة مرة أخرى.</string>
     <string name="ok">حسنًا</string>
     <string name="teachers">Teachers</string>
