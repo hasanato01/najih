@@ -1,5 +1,6 @@
 package com.najih.android.ui.StreamsLessons
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import com.najih.android.ui.exams.ExamCard
 import com.najih.android.ui.recordedLessons.UserLessonItem
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.Navbar
+import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
@@ -46,10 +48,13 @@ fun UserStreams(navController: NavController, httpClient: HttpClient, context: C
     var MyStreams by remember { mutableStateOf<List<Streams>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val userInfo by remember { mutableStateOf(GlobalFunctions.getUserInfo(context)) }
+    val userName = userInfo.userName
 
     LaunchedEffect(Unit) {
         try {
             MyStreams = GetMyStreams(httpClient, context)
+            Log.d("ApiClient" , MyStreams.toString())
         } catch (e: Exception) {
             errorMessage = e.message ?: "Failed to fetch recorded lessons"
         } finally {
@@ -58,8 +63,8 @@ fun UserStreams(navController: NavController, httpClient: HttpClient, context: C
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { Navbar(navController, backText = stringResource(R.string.start_Learning), titleText = stringResource(
-            R.string.my_strams)
+        topBar = { Navbar(navController, backText = userName, titleText = stringResource(
+            R.string.MyStreams)
         ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->

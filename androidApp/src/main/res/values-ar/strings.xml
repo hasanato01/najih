@@ -93,7 +93,6 @@
     <string name="submit">إرسال</string>
     <string name="cancel">إلغاء</string>
     <string name="setting">الإعدادات</string>
-    <string name="conditions_and_privacy_experience">الشروط وسياسة الخصوصية</string>
     <string name="Get_in_touch">تواصل معنا</string>
     <string name="see_all">عرض الكل →</string>
     <string name="latest_news">آخر الأخبار</string>
@@ -145,5 +144,10 @@
     <string name="remember_me">تذكرني لاحقا</string>
     <string name="privacy_policy">سياسة الخصوصية</string>
     <string name="cookies_policy">سياسة الكوكيز</string>
+    <string name="go_to_subject">اذهب إلى المادة</string>
+    <string name="watch_now">شاهد الآن</string>
+    <string name="join_now">انضم الآن</string>
+    <string name="error_opening_link">تعذر فتح الرابط</string>
+    <string name="link_not_available">الرابط غير متوفر</string>
 
 </resources>

@@ -146,6 +146,11 @@
     <string name="please_log_in_title">Please log in</string>
     <string name="log_in_required_message">You need to be logged in to access your sections.</string>
     <string name="remember_me">Remember me</string>
+    <string name="go_to_subject">Go To Subject</string>
+    <string name="watch_now">Watch Now</string>
+    <string name="join_now">Join Now</string>
+    <string name="error_opening_link"> error opening link</string>
+    <string name="link_not_available">link not available</string>
 
 
 </resources>

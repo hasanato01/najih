@@ -1,6 +1,9 @@
 package com.najih.android.ui.StreamsLessons
 
 import Lesson
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,7 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.najih.android.R
 import com.najih.android.dataClasses.Streams
 import com.najih.android.util.GlobalFunctions
-
+import androidx.core.net.toUri
 
 
 @Composable
@@ -178,42 +181,56 @@ fun StreamCard(
                         verticalArrangement = Arrangement.Bottom
                     ) {
                         // Preview Button
+//                        Button(
+//                            onClick = { onPreviewLessonClick(stream.link) },
+//                            modifier = Modifier
+//                                .width(130.dp)
+//                                .height(40.dp),
+//                            contentPadding = PaddingValues(0.dp),
+//                            shape = RoundedCornerShape(5.dp),
+//                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
+//                        ) {
+//                            Text(
+//                                text = stringResource(R.string.preview_lesson),
+//                                color = Color.White,
+//                                fontSize = 14.sp,
+//                                modifier = Modifier.fillMaxWidth(),
+//                                textAlign = TextAlign.Center
+//                            )
+//                        }
+
+                        // Watch Button (for Purchased/Free Lessons)
                         Button(
-                            onClick = { onPreviewLessonClick(stream.link) },
+                            onClick = {
+                                if ((isPurchased || isFree) &&
+                                    !stream.link.isNullOrBlank() &&
+                                    stream.link != "." &&
+                                    stream.link != ",,"
+                                ) {
+                                    try {
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(stream.link))
+                                        context.startActivity(intent)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        Toast.makeText(context, context.getString(R.string.error_opening_link), Toast.LENGTH_SHORT).show()
+                                    }
+                                } else {
+                                    Toast.makeText(context, context.getString(R.string.link_not_available), Toast.LENGTH_SHORT).show()
+                                }
+                            },
                             modifier = Modifier
                                 .width(130.dp)
                                 .height(40.dp),
-                            contentPadding = PaddingValues(0.dp),
                             shape = RoundedCornerShape(5.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
                         ) {
                             Text(
-                                text = stringResource(R.string.preview_lesson),
+                                text = stringResource(R.string.watch_lesson),
                                 color = Color.White,
-                                fontSize = 14.sp,
+                                fontSize = 12.sp,
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center
                             )
-                        }
-
-                        // Watch Button (for Purchased/Free Lessons)
-                        if (isPurchased || isFree) {
-                            Button(
-                                onClick = { /* Handle action for purchased or free lesson */ },
-                                modifier = Modifier
-                                    .width(130.dp)
-                                    .height(40.dp),
-                                shape = RoundedCornerShape(5.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF50C878))
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.watch_lesson),
-                                    color = Color.White,
-                                    fontSize = 12.sp,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
                         }
                     }
                 }

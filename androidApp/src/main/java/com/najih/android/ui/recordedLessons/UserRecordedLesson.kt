@@ -33,6 +33,7 @@ import com.najih.android.dataClasses.MyRecorderLessonsResponse
 import com.najih.android.ui.exams.ExamCard
 import com.najih.android.ui.uitilis.BottomNavBar
 import com.najih.android.ui.uitilis.Navbar
+import com.najih.android.util.GlobalFunctions
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import kotlinx.coroutines.launch
@@ -42,6 +43,8 @@ fun UserRecordedLesson(navController: NavController, httpClient: HttpClient, con
     var recordedLessons by remember { mutableStateOf<List<MyRecorderLessonsResponse>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val userInfo by remember { mutableStateOf(GlobalFunctions.getUserInfo(context)) }
+    val userName = userInfo.userName
 
     LaunchedEffect(Unit) {
         try {
@@ -54,8 +57,8 @@ fun UserRecordedLesson(navController: NavController, httpClient: HttpClient, con
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { Navbar(navController, backText = stringResource(R.string.test_your_self), titleText = stringResource(
-            R.string.exams)
+        topBar = { Navbar(navController, backText = userName, titleText = stringResource(
+            R.string.MyRecordedLessons)
         ) },
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
